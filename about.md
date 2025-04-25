@@ -13,6 +13,5 @@ title: About Me
 	<ul>
 		<li>Author of "Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)" published in Amino Acids.</li>
   		<li>Developer of CrossTalk, a tool for inferring pathway crosstalk using protein–protein interaction networks and mutual information.</li>
-  		
-  	</ul>
+    	</ul>
 </div>

@@ -1,8 +1,9 @@
 ---
 layout: post
 title: "Multi-omics Integration (MOFA) - Part 1"
-date: "2025-04-26"
+date: 2025-04-26
 ---
+
 Multi-omics integration aims to combine multiple layers of molecular data—such as transcriptomics, proteomics, epigenomics, and metabolomics—from the same set of biological samples. One powerful approach for integrating multi-omics data is matrix factorization, a family of dimensionality reduction techniques designed to uncover hidden structures or patterns shared across different data types.
 
 ### So, what is Matrix Factorization?

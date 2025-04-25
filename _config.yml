@@ -12,7 +12,7 @@ permalink: blog/:title/
 
 sass:
     style: compressed
-
+future: true
 markdown: kramdown
 highlighter: rouge
 plugins: [jekyll-paginate]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Multi-omics Integration MOFA Part 1"
+title: "Multi Omics Integration MOFA"
 date:   2025-04-26
 ---
 

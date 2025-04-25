@@ -18,8 +18,6 @@ The second matrix produced through matrix factorization is the **activity matrix
 
 When you multiply the latent factor matrix by the activity matrix, you get an approximation of the original matrix but with far fewer parameters. This allows you to uncover hidden patterns in the data.
 
-![image](/_assets/img/MOFA_img.png)
-
 In the previous example, we have an expression matrix (**A**), which is decomposed into:
 
 - **Weight matrix (W)**: Latent factors, representing the major axes of variation in the data.

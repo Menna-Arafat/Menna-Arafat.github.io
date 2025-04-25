@@ -22,7 +22,7 @@ navigation:
     - title: Home
       url: /index.html
     - title: Research
-      url: /Research.md
+      url: /research
     - title: Service
       url: /service
     - title: About

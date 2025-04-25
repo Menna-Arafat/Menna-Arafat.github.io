@@ -22,7 +22,7 @@ navigation:
     - title: Home
       url: /index.html
     - title: Research
-      url: https://menna-arafat.github.io/Research.md
+      url: /Research.md
     - title: Service
       url: /service
     - title: About

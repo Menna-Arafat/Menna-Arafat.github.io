@@ -7,8 +7,8 @@ title: Contact Me
   <h1 class="pageTitle">Contact Me</h1>
   <div class="contactContent">
     <p class="intro">Looking for expert bioinformatics analysis or want to collaborate? Drop me a message below — I’d love to hear from you.</p>
-    <p>The form is provided by <a href="http://formspree.io/">Formspree.</a> Follow the directions on their site to set up the form for use.</p>
     <p>Feel free to <a href="mennaarafat.info@gmail.com">email me!</a> 
+
       
   </div>
   <form action="http://formspree.io/your@mail.com" method="POST">

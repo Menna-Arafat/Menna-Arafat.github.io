@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Contact Menna Arafat
+title: Contact Me
 ---
 
 <div id="contact">

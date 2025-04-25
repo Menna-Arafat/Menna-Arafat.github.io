@@ -8,7 +8,7 @@ title: Contact Me
 
   <div class="contactContent">
     <p class="intro">
-      Looking for expert bioinformatics analysis or want to collaborate? Drop me a message below — I’d love to hear from you.
+      Looking for expert bioinformatics analysis or want to collaborate? Drop me a message below — I’d love to hear from you!
     </p>
     <p>
       Or feel free to <a href="mailto:mennaarafat.info@gmail.com">email me directly</a>.

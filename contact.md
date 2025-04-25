@@ -8,8 +8,6 @@ title: Contact Me
   <div class="contactContent">
     <p class="intro">Looking for expert bioinformatics analysis or want to collaborate? Drop me a message below — I’d love to hear from you.</p>
     <p>Feel free to <a href="mennaarafat.info@gmail.com">email me!</a> 
-
-      
   </div>
   <form action="http://formspree.io/your@mail.com" method="POST">
     <label for="name">Name</label>

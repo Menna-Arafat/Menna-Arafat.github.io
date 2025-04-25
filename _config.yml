@@ -1,7 +1,7 @@
 title: Menna Arafat
 description: Personal Blog
 
-url: https://M-Arafat.github.io
+url: https://Menna-Arafat.github.io
 # Only necessary when hosting your site in a sub-directory. Project sites hosted on GitHub Pages are the common use-case of this variable.
 baseurl: # Ex: /project-page
 paginate_path: "blog/page:num/"

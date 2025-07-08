@@ -29,14 +29,21 @@ In this project, I applied a comprehensive multi-omics framework for drug target
 🔍 Key Findings
 
 1. Combining PLK1 inhibitors with PARP inhibitors could benefit PARPi-resistant BRCA1-deficient TNBC by overcoming resistance mechanisms like ABC transporter overexpression and secondary HDR restoration.
-
 2. A dual PARP1 and PI3K inhibitor could be a potential drug combination as it previously showed strong antiproliferative effects in both BRCA-deficient and proficient tumor cells.
-
 3. Dual PARP1 and HDAC inhibitors, with strong inhibitory activity in BRCA1/2-proficient cells, also could inhibit tumor migration and angiogenesis, making them promising candidates for preclinical studies.
-
 4. A dual VEGF receptor (VEGFR-2) and HDAC inhibitor could effectively overcome Pazopanib resistance, and exhibit significant antiproliferative effects.
 
 **[Additional Figures](figures_tnbc.html)** 
+
+***
+
+## Multi-Dataset Integration of microRNA Profiles for Breast Cancer Subtype Classification and Functional Interpretation
+
+🧬 Project Highlights
+I applied an integrative omics analysis to identify microRNA (miRNA) signatures associated with breast cancer and its subtypes using publicly available GEO datasets. The analysis encompassed differential expression testing, multivariate integration, target prediction, and pathway enrichment. The goal was to uncover subtype-specific regulatory miRNAs and their functional targets, providing insights into breast cancer molecular heterogeneity.
+
+🔍 Key Findings
+The enrichment analysis revealed distinct pathway signatures across breast cancer subtypes, reflecting their molecular heterogeneity. HER2-Enriched tumors were primarily associated with DNA damage response and oncogene-induced senescence pathways, indicating genomic instability. Luminal A showed enrichment in stress-related and survival pathways such as PI3K/AKT and p53 signaling. Luminal HER2 was characterized by cell cycle regulation and C-MYB transcription factor activity. Triple-Negative Breast Cancer (TNBC) exhibited strong signatures of autophagy regulation, C-MYB signaling, and integrated cancer pathways, consistent with its aggressive phenotype. Luminal B uniquely showed enrichment in purine metabolism, TP53, and interleukin signaling, suggesting distinct metabolic and immune-modulatory mechanisms.
 
 ***
 

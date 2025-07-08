@@ -40,9 +40,11 @@ In this project, I applied a comprehensive multi-omics framework for drug target
 ## Multi-Dataset Integration of microRNA Profiles for Breast Cancer Subtype Classification and Functional Interpretation
 
 🧬 Project Highlights
+
 I applied an integrative omics analysis to identify microRNA (miRNA) signatures associated with breast cancer and its subtypes using publicly available GEO datasets. The analysis encompassed differential expression testing, multivariate integration, target prediction, and pathway enrichment. The goal was to uncover subtype-specific regulatory miRNAs and their functional targets, providing insights into breast cancer molecular heterogeneity.
 
 🔍 Key Findings
+
 The enrichment analysis revealed distinct pathway signatures across breast cancer subtypes, reflecting their molecular heterogeneity. HER2-Enriched tumors were primarily associated with DNA damage response and oncogene-induced senescence pathways, indicating genomic instability. Luminal A showed enrichment in stress-related and survival pathways such as PI3K/AKT and p53 signaling. Luminal HER2 was characterized by cell cycle regulation and C-MYB transcription factor activity. Triple-Negative Breast Cancer (TNBC) exhibited strong signatures of autophagy regulation, C-MYB signaling, and integrated cancer pathways, consistent with its aggressive phenotype. Luminal B uniquely showed enrichment in purine metabolism, TP53, and interleukin signaling, suggesting distinct metabolic and immune-modulatory mechanisms.
 
 ***

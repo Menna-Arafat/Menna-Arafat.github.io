@@ -21,14 +21,14 @@ paginate: 5
 navigation:
     - title: Research
       url: /research
-    - title: Home
+    - title: Blogs
       url: /index.html
     - title: About
       url: /about
-    - title: Contact
-      url: /contact
     - title: Service
       url: /service
+    - title: Contact
+      url: /contact
 
 social:
     github: Menna-Arafat

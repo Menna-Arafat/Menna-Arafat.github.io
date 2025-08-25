@@ -44,7 +44,7 @@ Active transcription factors were inferred using the decoupleR framework, provid
 ***
 
 ### **Integrative Analysis of Extracellular Vesicle miRNAs Reveals Molecular Signatures and Regulatory Networks in Breast Cancer Subtypes**  
-Conducted a comprehensive analysis of publicly available breast cancer miRNA datasets (GSE197020, GSE141326, GSE241784, and GSE241785), including data preprocessing, batch correction, and differential expression analysis. Applied the MINT-sPLS-DA algorithm from mixOmics for multivariate integration to identify robust, discriminative miRNA signatures for disease and subtype classification. Constructed miRNA–target interaction networks, retaining predicted targets regulated by at least three differentially expressed miRNAs, and performed functional enrichment analysis to uncover key pathways and regulatory mechanisms, providing insights into molecular alterations and potential biomarkers specific to breast cancer subtypes.  
+Conducted an integrative analysis of publicly available breast cancer miRNA datasets, including data preprocessing, batch correction, and differential expression analysis. Applied the MINT-sPLS-DA algorithm from mixOmics for multivariate integration to identify robust, discriminative miRNA signatures for disease and subtype classification. Constructed miRNA–target interaction networks, retaining predicted targets regulated by at least three differentially expressed miRNAs, and performed functional enrichment analysis to uncover key pathways and regulatory mechanisms, providing insights into molecular alterations and potential biomarkers specific to breast cancer subtypes.  
 **[Source Code](https://github.com/Menna-Arafat/BC_EVs_miRNA)**     
 
 ***
@@ -54,6 +54,7 @@ Led a network-based analysis to characterize temporal protein dynamics and funct
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**  
 
 ***
+
 
 
 

@@ -1,7 +1,12 @@
 ---
 layout: default
-title: "Research & Publications"
+title: "Research"
 ---
+<style>
+  body {
+    font-size: 0.9rem; /* adjust as needed */
+  }
+</style>
 
 **[Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)](https://link.springer.com/article/10.1007/s00726-025-03448-3)**  
 Performed in-depth metabolomic profiling of colorectal cancer (CRC) through a robust workflow.
@@ -48,6 +53,7 @@ Led a network-based analysis to characterize temporal protein dynamics and funct
 
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 ***
+
 
 
 

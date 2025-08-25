@@ -5,21 +5,19 @@ title: About Me
 
 <div class="post">
   <h1 class="pageTitle">About Me</h1>
-
-  <img src="{{ '' | relative_url }}" alt="Menna Arafat" style="max-width:200px; border-radius:50%; margin-bottom:20px;">
+  
+  <img src="{{ '' | relative_url }}" alt="" style="max-width:200px; border-radius:50%; margin-bottom:20px;">
 
   <p class="intro">
     Hi, I’m <strong>Menna Arafat</strong> — a Physician and Bioinformatician.
-  </p>
-
-  <p>
     My research interests focus on <strong>gene regulatory network inference, multi-omics integration, and dynamical systems modeling</strong>.
   </p>
 
-  <h2>Contributions</h2>
+  <h2 style="font-size:1.2rem;">Contributions</h2>
   <ul>
     <li>
-      Co-author of:  
+      Co-author of: 
+      <br>
       <a href="https://link.springer.com/article/10.1007/s00726-025-03448-3" target="_blank">
         Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)
       </a>  

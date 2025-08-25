@@ -10,10 +10,10 @@ title: About Me
 
   <p class="intro">
     Hi, I’m <strong>Menna Arafat</strong> — a Physician and Bioinformatician.
-    My research interests focus on <strong>gene regulatory network inference, multi-omics integration, and dynamical systems modeling</strong>.
+    My research interests focus on gene regulatory network inference, multi-omics integration, and dynamical systems modeling.
   </p>
 
-  <h2 style="font-size:1.2rem;">Contributions</h2>
+  <h2 style="font-size:1.5rem;">Main Contributions</h2>
   <ul>
     <li>
       Co-author of: 

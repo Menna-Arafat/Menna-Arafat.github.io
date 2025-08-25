@@ -13,7 +13,8 @@ Performed in-depth metabolomic profiling of colorectal cancer (CRC) through a ro
 Data was normalized using Probabilistic Quotient Normalization (PQN) to account for sample dilution effects, followed by differential expression analysis. To uncover systems-level organization, I applied Weighted Gene Co-expression Network Analysis (WGCNA), identifying metabolite modules associated with CRC phenotypes. Module eigengene differentiation was applied to identify modules that significantly distinguish CRC from healthy controls, and Intra-modular connectivity analysis was performed to characterize central drivers within these networks. Dimensionality reduction approaches (PCA, PLS-DA) were further employed to refine discriminative features. This integrative approach highlighted top metabolites distinguishing CRC patients from controls and revealed network-level metabolic dysregulation with potential biomarker and therapeutic implications.
 
 
-**[Source Code](https://bits-and-bites.netlify.app/)**   
+**[Source Code](https://bits-and-bites.netlify.app/)**
+**[Paper Link](https://link.springer.com/article/10.1007/s00726-025-03448-3)**
 
 ***
 
@@ -22,7 +23,7 @@ Applied Weighted Gene Co-expression Network Analysis (WGCNA) across metabolomics
 To pinpoint central molecular drivers, protein–protein interaction networks were constructed by integrating WGCNA hub proteins with differentially expressed proteins, and centrality measures were applied to identify key regulators within each RMS subtype.
 
 **[Source Code](https://github.com/Menna-Arafat/Rhabdomyosarcome_project)** 
-
+**[Paper Link](https://www.mdpi.com/2073-4409/14/14/1115)**
 ***
 
 ### **CrosstalkX: A Mutual Information-Based Framework for Pathway Interaction Inference**  
@@ -60,6 +61,7 @@ Led a network-based analysis to characterize temporal protein dynamics and funct
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 ***
+
 
 
 

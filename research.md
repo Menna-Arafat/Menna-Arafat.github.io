@@ -1,10 +1,6 @@
 
 
-<style>
-  body {
-    font-size: 0.9rem; /* adjust as needed */
-  }
-</style>
+
 
 # Research Projects
 
@@ -647,3 +643,4 @@ Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 </div>
 
 </div>
+

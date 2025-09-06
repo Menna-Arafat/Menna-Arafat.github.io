@@ -20,7 +20,7 @@ paginate: 5
 
 navigation:
     - title: Research
-      url: /research.qmd
+      url: /research.html
     - title: About
       url: /about
     - title: Blogs

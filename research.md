@@ -92,8 +92,7 @@ Enrichment Analysis
 
 ###### Find More
 
-**[Paper
-Link](https://link.springer.com/article/10.1007/s00726-025-03448-3)**  
+**[Paper Link](https://link.springer.com/article/10.1007/s00726-025-03448-3)**  
 **[Source Code](https://bits-and-bites.netlify.app/)**
 
 </div>
@@ -164,8 +163,7 @@ Module Eigengene Barplot
 ###### Find More
 
 **[Paper Link](https://www.mdpi.com/2073-4409/14/14/1115)**  
-**[Source
-Code](https://github.com/Menna-Arafat/Rhabdomyosarcome_project)**
+**[Source Code](https://github.com/Menna-Arafat/Rhabdomyosarcome_project)**
 
 </div>
 
@@ -633,10 +631,10 @@ Enriched Pathways in Blue Module
 
 ###### Find More
 
-**[Source
-Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
+**[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

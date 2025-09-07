@@ -1,8 +1,13 @@
 
 
+<div class="research-header">
 
+<h1>
 
-# Research Projects
+Research Projects
+</h1>
+
+</div>
 
 ### [Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)](https://link.springer.com/article/10.1007/s00726-025-03448-3)
 
@@ -80,9 +85,9 @@ Enrichment Analysis
 
 </div>
 
-###### Find More
-
 <div id="L-box">
+
+###### Find More
 
 **[Paper
 Link](https://link.springer.com/article/10.1007/s00726-025-03448-3)**  
@@ -151,9 +156,9 @@ Module Eigengene Barplot
 
 </div>
 
-###### Find More
-
 <div id="L-box">
+
+###### Find More
 
 **[Paper Link](https://www.mdpi.com/2073-4409/14/14/1115)**  
 **[Source
@@ -240,9 +245,9 @@ TF-target Plot
 
 </div>
 
-###### Find More
-
 <div id="L-box">
+
+###### Find More
 
 **[Source Code](https://github.com/Menna-Arafat/CrosstalkX)**
 
@@ -333,9 +338,9 @@ Heatmap Plot
 
 </div>
 
-###### Find More
-
 <div id="L-box">
+
+###### Find More
 
 **[Source Code](https://github.com/Menna-Arafat/TNBC_project)**
 
@@ -428,9 +433,9 @@ TF-Pathway Crosstalk Plot
 
 </div>
 
-###### Find More
-
 <div id="L-box">
+
+###### Find More
 
 **[Source Code](https://github.com/Menna-Arafat/GMSC_project)**
 
@@ -529,9 +534,9 @@ ROC Curve for BC Subtypes
 
 </div>
 
-###### Find More
-
 <div id="L-box">
+
+###### Find More
 
 **[Source Code](https://github.com/Menna-Arafat/BC_EVs_miRNA)**
 
@@ -621,9 +626,9 @@ Enriched Pathways in Blue Module
 
 </div>
 
-###### Find More
-
 <div id="L-box">
+
+###### Find More
 
 **[Source
 Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
@@ -643,4 +648,3 @@ Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 </div>
 
 </div>
-

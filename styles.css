@@ -3,12 +3,8 @@
   --inferno-gradient: linear-gradient(
     90deg,
     #000004,
-    #210C4A,
-    #56106E,
-    #89226A,
-    #BB3754,
-    #F98C0A,
-    #FCFFA4
+    #808080,
+    #f5f5f5
     
   );
 }
@@ -19,25 +15,41 @@ body {
   background-color: #FFFFFF;
   font-family: "Georgia", serif;
   line-height: 1.7;
+  font-size: 1.2rem;
   color: #222;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
 }
 
+/* Black header bar */
+.research-header {
+  background: #000;
+  color: #fff;
+  padding-top: 8rem;     /* pushes title down */
+  padding-bottom: 3rem;  /* space below title */
+  text-align: center;
+  margin: 0 0 5rem 0;                /* remove side margins */
+  width: 100vw;             /* take full viewport width */
+  position: relative;
+  left: 50%;                /* trick to escape Quarto’s centered container */
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
 
 /* Headings */
 h1 {
-  color: #000000; 
   font-weight: bold;
-  font-family: "Georgia", "Times New Roman", Times, serif;
+  font-family: "Times New Roman", "Cambria", "Georgia", serif;  /* formal serif font */
+  font-size: 3rem;
   line-height: 1;
   margin: 0 0 2em 0;
-  border-bottom: .01px solid #BAA;  
-  
 }
 
  h2, h3 {
-  color: #2B0B57FF; 
+  color: #000000; 
   font-weight: bold;
+  font-size: 2rem;
   font-family: "Georgia", "Times New Roman", Times, serif;
   line-height: 1;
   margin: 1em 0 1em 0;
@@ -54,8 +66,9 @@ h1 {
 
 
  h5, h6 {
-  color: #2B0B57FF; 
+  color: #F17; 
   font-weight: bold;
+   font-size: 1.3rem;
   font-family: "Georgia", "Times New Roman", Times, serif;
   line-height: 1;
   margin: 0 0 0em;
@@ -91,11 +104,19 @@ hr {
  }
 
 
+#T-box {
+  background: #000000;
+  color:#F8F8F8;
+  /* underline style instead of block */
+  padding: 0.1rem 0.3rem;
+  margin: 1rem 0 1rem;
+  font-style: "Georgia", "Times New Roman", Times, serif;
+}
 
 #R-box {
   background: #fdfdfd;
   /* underline style instead of block */
-  border-left: 4px solid #BAA;  
+  border-left: 4px solid #D0D0D0; 
   padding: 0.1rem 0.3rem;
   margin: 1rem 0 1rem;
   font-style: italic;
@@ -104,7 +125,10 @@ hr {
 #L-box {
   margin-bottom: 1.5rem;  
 }
-
+#L-box h6 {
+  color: #4A4A4A;             /* black text */
+  
+}
 #L-box a {
   color: #0000EE !important ; 
  text-decoration: underline;

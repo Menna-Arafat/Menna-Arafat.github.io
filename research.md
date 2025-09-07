@@ -60,7 +60,7 @@ networks and pathways.
 TOM Heatmap
 </h4>
 
-<img src="plots/crc_TOM_plot.png" />
+<img src="/plots/crc_TOM_plot.png" />
 
 </div>
 
@@ -71,7 +71,7 @@ TOM Heatmap
 PLS-DA VIP Features
 </h4>
 
-<img src="plots/crc_vip_plot2.png" />
+<img src="/plots/crc_vip_plot2.png" />
 
 </div>
 
@@ -82,7 +82,7 @@ PLS-DA VIP Features
 Enrichment Analysis
 </h4>
 
-<img src="plots/crc_msea_shared.jpg" />
+<img src="/plots/crc_msea_shared.jpg" />
 
 </div>
 
@@ -142,7 +142,7 @@ central regulators, and mapped key altered pathways.
 Module-phenotype Heatmap
 </h4>
 
-<img src="plots/rhabdo_WGCNA.png" />
+<img src="/plots/rhabdo_WGCNA.png" />
 
 </div>
 
@@ -153,7 +153,7 @@ Module-phenotype Heatmap
 Module Eigengene Barplot
 </h4>
 
-<img src="plots/rhabdo_modules_discrimination.png" />
+<img src="/plots/rhabdo_modules_discrimination.png" />
 
 </div>
 
@@ -220,7 +220,7 @@ critical biological processes.
 Enrichment Plot
 </h4>
 
-<img src="plots/crosstalkx_enrich.jpg" />
+<img src="/plots/crosstalkx_enrich.jpg" />
 
 </div>
 
@@ -231,7 +231,7 @@ Enrichment Plot
 Crosstalk Plot
 </h4>
 
-<img src="plots/crosstalkx_crossTalk.png" />
+<img src="/plots/crosstalkx_crossTalk.png" />
 
 </div>
 
@@ -242,7 +242,7 @@ Crosstalk Plot
 TF-target Plot
 </h4>
 
-<img src="plots/crosstalkx_TF_target.png" />
+<img src="/plots/crosstalkx_TF_target.png" />
 
 </div>
 
@@ -313,7 +313,7 @@ and refined drug combinations aligned with TNBC molecular states.
 Crosstalk Plot
 </h4>
 
-<img src="plots/tnbc_crossTalk_MI.png" />
+<img src="/plots/tnbc_crossTalk_MI.png" />
 
 </div>
 
@@ -324,7 +324,7 @@ Crosstalk Plot
 Chord Plot
 </h4>
 
-<img src="plots/tnbc_chord.png" />
+<img src="/plots/tnbc_chord.png" />
 
 </div>
 
@@ -335,7 +335,7 @@ Chord Plot
 Heatmap Plot
 </h4>
 
-<img src="plots/tnbc_heatmaps_side_by_side.png" />
+<img src="/plots/tnbc_heatmaps_side_by_side.png" />
 
 </div>
 
@@ -397,7 +397,7 @@ efficacy.
 Upset Plot
 </h4>
 
-<img src="plots/gmsc_upsetplot.png" />
+<img src="/plots/gmsc_upsetplot.png" />
 
 </div>
 
@@ -408,7 +408,7 @@ Upset Plot
 Latent Factor1 Plot
 </h4>
 
-<img src="plots/gmsc_MEFISTO_factor1.png" />
+<img src="/plots/gmsc_MEFISTO_factor1.png" />
 
 </div>
 
@@ -419,7 +419,7 @@ Latent Factor1 Plot
 Stacked Barplot for SC Deconvolution
 </h4>
 
-<img src="plots/gmsc_Cibersort.png" />
+<img src="/plots/gmsc_Cibersort.png" />
 
 </div>
 
@@ -430,7 +430,7 @@ Stacked Barplot for SC Deconvolution
 TF-Pathway Crosstalk Plot
 </h4>
 
-<img src="plots/gmsc_crossTalk.png" />
+<img src="/plots/gmsc_crossTalk.png" />
 
 </div>
 
@@ -498,7 +498,7 @@ networks.
 Heatmap for BC vs Ctrl
 </h4>
 
-<img src="plots/mirna_BC_vs_Ctrlheatmap.png" />
+<img src="/plots/mirna_BC_vs_Ctrlheatmap.png" />
 
 </div>
 
@@ -509,7 +509,7 @@ Heatmap for BC vs Ctrl
 ROC Curve for BC vs Ctrl
 </h4>
 
-<img src="plots/mirna_BC_vs_CtrlROC_plot.png" />
+<img src="/plots/mirna_BC_vs_CtrlROC_plot.png" />
 
 </div>
 
@@ -520,7 +520,7 @@ ROC Curve for BC vs Ctrl
 Heatmap for BC Subtypes
 </h4>
 
-<img src="plots/mirna_subtypes_heatmap.png" />
+<img src="/plots/mirna_subtypes_heatmap.png" />
 
 </div>
 
@@ -531,7 +531,7 @@ Heatmap for BC Subtypes
 ROC Curve for BC Subtypes
 </h4>
 
-<img src="plots/mirna_subtypes_ROC_plot.png" />
+<img src="/plots/mirna_subtypes_ROC_plot.png" />
 
 </div>
 
@@ -590,7 +590,7 @@ crosstalk relevant to post-surgical adaptation.
 Module-phenotype Heatmap
 </h4>
 
-<img src="plots/pancreas_heat2_module_trait_WGCNA.png" />
+<img src="/plots/pancreas_heat2_module_trait_WGCNA.png" />
 
 </div>
 
@@ -601,7 +601,7 @@ Module-phenotype Heatmap
 GAM Plot
 </h4>
 
-<img src="plots/pancreas_gam_plot.png" />
+<img src="/plots/pancreas_gam_plot.png" />
 
 </div>
 
@@ -612,7 +612,7 @@ GAM Plot
 PPI network & Louvain Detected Communities
 </h4>
 
-<img src="plots/pancreas_communities_ppi_tf_blue.png" />
+<img src="/plots/pancreas_communities_ppi_tf_blue.png" />
 
 </div>
 
@@ -623,7 +623,7 @@ PPI network & Louvain Detected Communities
 Enriched Pathways in Blue Module
 </h4>
 
-<img src="plots/pancreas_pathway_structural_similarity_blue_last.png" />
+<img src="/plots/pancreas_pathway_structural_similarity_blue_last.png" />
 
 </div>
 
@@ -637,6 +637,7 @@ Enriched Pathways in Blue Module
 Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

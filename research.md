@@ -76,7 +76,7 @@ Enrichment Analysis
 </div>
 
 #### Find More
-<div id="L-box">
+<div id="L-box" markdown="1">
 **[Paper Link](https://link.springer.com/article/10.1007/s00726-025-03448-3)**  
 **[Source Code](https://bits-and-bites.netlify.app/)**
 
@@ -534,6 +534,7 @@ Enriched Pathways in Blue Module
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

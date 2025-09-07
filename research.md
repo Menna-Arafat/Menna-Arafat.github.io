@@ -2,10 +2,9 @@
 ---
 layout: default  
 title: Research  
-css: styles.css  
 ---
 
-<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="styles.css">
 
 <div class="research-header">
 <h1>
@@ -638,6 +637,7 @@ Enriched Pathways in Blue Module
 Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

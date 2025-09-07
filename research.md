@@ -1,4 +1,8 @@
-
+---
+layout: default
+title: Research
+permalink: /research/
+---
 
 <div class="research-header">
 
@@ -648,3 +652,4 @@ Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 </div>
 
 </div>
+

@@ -135,7 +135,7 @@ Module Eigengene Barplot
 </div>
 
 #### Find More
-<div id="L-box">
+<div id="L-box" markdown="1">
 **[Paper Link](https://www.mdpi.com/2073-4409/14/14/1115)**  
 **[Source Code](https://github.com/Menna-Arafat/Rhabdomyosarcome_project)**
 </div>
@@ -207,7 +207,7 @@ TF-target Plot
 </div>
 
 #### Find More
-<div id="L-box">
+<div id="L-box" markdown="1">
 **[Source Code](https://github.com/Menna-Arafat/CrosstalkX)**
 </div>
 
@@ -283,7 +283,7 @@ Heatmap Plot
 </div>
 
 #### Find More
-<div id="L-box">
+<div id="L-box" markdown="1">
 **[Source Code](https://github.com/Menna-Arafat/TNBC_project)**
 </div>
 
@@ -358,7 +358,7 @@ TF-Pathway Crosstalk Plot
 </div>
 
 #### Find More
-<div id="L-box">
+<div id="L-box" markdown="1">
 **[Source Code](https://github.com/Menna-Arafat/GMSC_project)**
 </div>
 
@@ -440,7 +440,7 @@ ROC Curve for BC Subtypes
 </div>
 
 #### Find More
-<div id="L-box">
+<div id="L-box" markdown="1">
 **[Source Code](https://github.com/Menna-Arafat/BC_EVs_miRNA)**
 </div>
 
@@ -530,10 +530,11 @@ Enriched Pathways in Blue Module
 </div>
 
 #### Find More
-<div id="L-box">
+<div id="L-box" markdown="1">
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

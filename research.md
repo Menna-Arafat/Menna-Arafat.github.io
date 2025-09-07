@@ -33,10 +33,9 @@ exploring knowledge-based metabolite–metabolite interactions within
 these modules, it is possible to identify biomarkers and key metabolic
 mediators in CRC.
 
-<div id="R-box">
-
 ##### Framework:
 
+<div id="R-box">
 - Implemented an end-to-end pipeline, including raw data preprocessing,
   PQN normalization, differential expression analysis, WGCNA for module
   discovery, and eigengene differentiation for CRC-specific modules.
@@ -54,44 +53,30 @@ networks and pathways.
 <div class="plot-row">
 
 <div class="plot">
-
 <h4>
-
 TOM Heatmap
 </h4>
-
 <img src="/plots/crc_TOM_plot.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 PLS-DA VIP Features
 </h4>
-
 <img src="/plots/crc_vip_plot2.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Enrichment Analysis
 </h4>
-
 <img src="/plots/crc_msea_shared.jpg" />
-
 </div>
 
 </div>
-
-<div id="L-box">
 
 #### Find More
-
+<div id="L-box">
 **[Paper Link](https://link.springer.com/article/10.1007/s00726-025-03448-3)**  
 **[Source Code](https://bits-and-bites.netlify.app/)**
 
@@ -117,10 +102,9 @@ Rather than focusing on individual genes, identifying altered networks
 and their central regulators provides a more comprehensive understanding
 of subtype-specific etiologies and therapeutic targets.
 
-<div id="R-box">
-
 ##### Framework:
 
+<div id="R-box">
 - Applied WGCNA to identify co-expressed modules and tested eigengene
   differentiation using Wilcoxon statistics.
 - Constructed PPI networks integrating hub and differentially expressed
@@ -135,36 +119,25 @@ central regulators, and mapped key altered pathways.
 <div class="plot-row">
 
 <div class="plot">
-
 <h4>
-
 Module-phenotype Heatmap
 </h4>
-
 <img src="/plots/rhabdo_WGCNA.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Module Eigengene Barplot
 </h4>
-
 <img src="/plots/rhabdo_modules_discrimination.png" />
-
 </div>
 
 </div>
-
-<div id="L-box">
 
 #### Find More
-
+<div id="L-box">
 **[Paper Link](https://www.mdpi.com/2073-4409/14/14/1115)**  
 **[Source Code](https://github.com/Menna-Arafat/Rhabdomyosarcome_project)**
-
 </div>
 
 ------------------------------------------------------------------------
@@ -191,10 +164,9 @@ Mutual information was then inferred at the pathway level, with
 randomization to assess significance. Significant interactions reveal
 functional interplay underlying complex diseases.
 
-<div id="R-box">
-
 ##### Framework:
 
+<div id="R-box">
 - Developed a mutual information–based inference algorithm in R to
   construct pathway–pathway and pathway–TF interaction networks.
 - Core pathways and TFs were prioritized by interaction degree.
@@ -212,46 +184,31 @@ critical biological processes.
 <div class="plot-row">
 
 <div class="plot">
-
 <h4>
-
 Enrichment Plot
 </h4>
-
 <img src="/plots/crosstalkx_enrich.jpg" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Crosstalk Plot
 </h4>
-
 <img src="/plots/crosstalkx_crossTalk.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 TF-target Plot
 </h4>
-
 <img src="/plots/crosstalkx_TF_target.png" />
-
 </div>
 
 </div>
-
-<div id="L-box">
 
 #### Find More
-
+<div id="L-box">
 **[Source Code](https://github.com/Menna-Arafat/CrosstalkX)**
-
 </div>
 
 ------------------------------------------------------------------------
@@ -282,10 +239,9 @@ could reveal core interacting pathways. Finally, Macau-based sensitivity
 analysis links pathway states to drug responsiveness, exposing
 actionable vulnerabilities.
 
-<div id="R-box">
-
 ##### Framework:
 
+<div id="R-box">
 - Retrieved six-layer TCGA data, applied MOFA for latent factor
   inference, and extracted top features.
 - Inferred TF activity with decoupleR, applied centrality analysis, and
@@ -305,46 +261,30 @@ and refined drug combinations aligned with TNBC molecular states.
 <div class="plot-row">
 
 <div class="plot">
-
 <h4>
-
 Crosstalk Plot
 </h4>
-
 <img src="/plots/tnbc_crossTalk_MI.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Chord Plot
 </h4>
-
 <img src="/plots/tnbc_chord.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Heatmap Plot
 </h4>
-
 <img src="/plots/tnbc_heatmaps_side_by_side.png" />
-
 </div>
-
 </div>
-
-<div id="L-box">
 
 #### Find More
-
+<div id="L-box">
 **[Source Code](https://github.com/Menna-Arafat/TNBC_project)**
-
 </div>
 
 ------------------------------------------------------------------------
@@ -369,10 +309,9 @@ that covary across time points and explain differentiation trajectories.
 Understanding these regulatory programs will optimize scaffold- and
 laser-based regenerative therapies.
 
-<div id="R-box">
-
 ##### Framework:
 
+<div id="R-box">
 - Applied MEFISTO for time-resolved integration of protein expression
   data.
 - Inferred TF activity with decoupleR, explored pathway crosstalk.
@@ -389,57 +328,38 @@ efficacy.
 <div class="plot-row">
 
 <div class="plot">
-
 <h4>
-
 Upset Plot
 </h4>
-
 <img src="/plots/gmsc_upsetplot.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Latent Factor1 Plot
 </h4>
-
 <img src="/plots/gmsc_MEFISTO_factor1.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Stacked Barplot for SC Deconvolution
 </h4>
-
 <img src="/plots/gmsc_Cibersort.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 TF-Pathway Crosstalk Plot
 </h4>
-
 <img src="/plots/gmsc_crossTalk.png" />
-
 </div>
 
 </div>
-
-<div id="L-box">
 
 #### Find More
-
+<div id="L-box">
 **[Source Code](https://github.com/Menna-Arafat/GMSC_project)**
-
 </div>
 
 ------------------------------------------------------------------------
@@ -469,10 +389,9 @@ each subtypes by setting the condition that at least 3 mirna targeting
 the same genes should be differentially expressed to infer translational
 molecular alteration.
 
-<div id="R-box">
-
 ##### Framework:
 
+<div id="R-box">
 - Preprocessed and batch-corrected datasets.
 - Applied MINT-sPLS-DA for multivariate integration and subtype
   classification.
@@ -490,57 +409,39 @@ networks.
 <div class="plot-row">
 
 <div class="plot">
-
 <h4>
-
 Heatmap for BC vs Ctrl
 </h4>
-
 <img src="/plots/mirna_BC_vs_Ctrlheatmap.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 ROC Curve for BC vs Ctrl
 </h4>
-
 <img src="/plots/mirna_BC_vs_CtrlROC_plot.png" />
-
 </div>
 
 <div class="plot">
-
 <h4>
-
 Heatmap for BC Subtypes
 </h4>
-
 <img src="/plots/mirna_subtypes_heatmap.png" />
-
 </div>
 
 <div class="plot">
 
 <h4>
-
 ROC Curve for BC Subtypes
 </h4>
-
 <img src="/plots/mirna_subtypes_ROC_plot.png" />
-
 </div>
 
 </div>
-
-<div id="L-box">
 
 #### Find More
-
+<div id="L-box">
 **[Source Code](https://github.com/Menna-Arafat/BC_EVs_miRNA)**
-
 </div>
 
 ------------------------------------------------------------------------
@@ -566,12 +467,13 @@ to stable glycemic control.
 
 ##### Framework:
 
+<div id="R-box">
 Applied WGCNA to detect co-expression modules and correlated eigengenes
 with time metadata. For the module associated with recovery (time point
 3), modeled temporal changes using GAMs with patient-specific
 intercepts. Identified hub proteins (datKME \> 0.85), integrated with
 STRING-based PPI networks, applied Louvain clustering, and performed
-enrichment analysis.
+enrichment analysis. </div>
 
 ##### Outcome:
 
@@ -627,13 +529,12 @@ Enriched Pathways in Blue Module
 
 </div>
 
-<div id="L-box">
-
 #### Find More
-
+<div id="L-box">
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

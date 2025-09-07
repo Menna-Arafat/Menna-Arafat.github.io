@@ -57,7 +57,7 @@ h1 {
 }
 
  h4  {
-  color: #222; 
+  color: #4A4A4A; 
   font-weight: bold;
   font-family: "Georgia", "Times New Roman", Times, serif;
   line-height: 1;
@@ -190,4 +190,5 @@ hr {
   font-size: 1.15em;
   transform: scale(1.02);
 }
+
 

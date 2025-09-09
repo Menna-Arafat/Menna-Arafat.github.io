@@ -23,7 +23,7 @@ navigation:
       url: /research
     - title: About
       url: /about
-    - title: Blogs
+    - title: Posts
       url: /index.html
     - title: Service
       url: /service
@@ -34,7 +34,7 @@ social:
     github: Menna-Arafat
     twitter: Menna Arafat
     facebook: Menna Arafat
-    email: mennaarafat@std.mans.edu.eg
+    email: mennaarafat.md@gmail.com
     linkedin: Menna Arafat
     youtube: Menna Arafat
   

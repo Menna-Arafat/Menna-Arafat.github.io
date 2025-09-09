@@ -23,7 +23,7 @@ body {
 
 /* Black header bar */
 .research-header {
-  padding-bottom: 2rem;  /* space below title */
+  padding-bottom: 1rem;  /* space below title */
   text-align: center;
   margin: 0 0 5rem 0;                /* remove side margins */
   width: 100vw;             /* take full viewport width */
@@ -187,4 +187,5 @@ hr {
   font-size: 1.15em;
   transform: scale(1.02);
 }
+
 

@@ -55,8 +55,19 @@ TYPE SETTINGS
 $sans-serif: "Open Sans", Helvetica, Arial, sans-serif;
 $serif: "PT Serif", Georgia, Times, serif;
 
-#articles {
-  background-color: #FFFFFF; /* white background */
-  color: #000;           /* black text inside */
-  padding: 1rem;         /* optional spacing */
+.home {
+  background-color: #fff; /* white background */
+  color: #000;           /* black text */
+  padding: 1rem;         /* optional: adds spacing inside */
+}
+
+/* Make sure headings and links inside home are black */
+.home h1, 
+.home h2, 
+.home h3, 
+.home h4, 
+.home h5, 
+.home h6,
+.home a {
+  color: #000;
 }

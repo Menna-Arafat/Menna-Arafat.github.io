@@ -54,3 +54,9 @@ TYPE SETTINGS
 
 $sans-serif: "Open Sans", Helvetica, Arial, sans-serif;
 $serif: "PT Serif", Georgia, Times, serif;
+
+#articles {
+  background-color: #FFFFFF; /* white background */
+  color: #000;           /* black text inside */
+  padding: 1rem;         /* optional spacing */
+}

@@ -262,9 +262,9 @@ and refined drug combinations aligned with TNBC molecular states.
 
 <div class="plot">
 <h4>
-Crosstalk Plot
+Enrichment Plot
 </h4>
-<img src="/plots/tnbc_crossTalk_MI.png" />
+<img src="/plots/enrichment_factor1_wo_methyl.png" />
 </div>
 
 <div class="plot">
@@ -534,6 +534,7 @@ Enriched Pathways in Blue Module
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

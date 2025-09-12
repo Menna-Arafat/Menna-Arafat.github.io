@@ -35,13 +35,13 @@ mediators in CRC.
 
 ##### Framework:
 
-<div id="R-box" markdown="1">
+<div id="R-box">
 - Implemented an end-to-end pipeline, including raw data preprocessing,
   PQN normalization, differential expression analysis, WGCNA for module
-  discovery, and eigengene differentiation for CRC-specific modules.
-- Applied intramodular connectivity to identify hub metabolites.
+  discovery, and eigengene differentiation for CRC-specific modules. <br>  
+- Applied intramodular connectivity to identify hub metabolites.  <br>
 - Applied PCA/PLS-DA for dimensionality reduction and feature
-  prioritization.
+  prioritization.  
   </div>
 
 ##### Outcome:
@@ -104,11 +104,11 @@ of subtype-specific etiologies and therapeutic targets.
 
 ##### Framework:
 
-<div id="R-box" markdown="1">
+<div id="R-box">
 - Applied WGCNA to identify co-expressed modules and tested eigengene
-  differentiation using Wilcoxon statistics.
+  differentiation using Wilcoxon statistics. <br>  
 - Constructed PPI networks integrating hub and differentially expressed
-  proteins, then applied centrality analysis to identify key drivers.
+  proteins, then applied centrality analysis to identify key drivers.  
   </div>
 
 ##### Outcome:
@@ -166,9 +166,9 @@ functional interplay underlying complex diseases.
 
 ##### Framework:
 
-<div id="R-box" markdown="1">
+<div id="R-box">
 - Developed a mutual information–based inference algorithm in R to
-  construct pathway–pathway and pathway–TF interaction networks.
+  construct pathway–pathway and pathway–TF interaction networks. <br>
 - Core pathways and TFs were prioritized by interaction degree.
   </div>
 
@@ -241,15 +241,15 @@ actionable vulnerabilities.
 
 ##### Framework:
 
-<div id="R-box" markdown="1" >
+<div id="R-box" >
 - Retrieved six-layer TCGA data, applied MOFA for latent factor
-  inference, and extracted top features.
+  inference, and extracted top features. <br>
 - Inferred TF activity with decoupleR, applied centrality analysis, and
-  introduced mutual information–based crosstalk.
+  introduced mutual information–based crosstalk. <br>
 - Linked central genes and pathways to candidate drugs via CMAP, applied
-  network synergy prediction.
+  network synergy prediction. <br>
 - Validated essential targets with DepMap, and incorporated survival
-  analysis.
+  analysis. <br>
 - Implemented Macau for target sensitivity prediction.
   </div>
 
@@ -311,10 +311,10 @@ laser-based regenerative therapies.
 
 ##### Framework:
 
-<div id="R-box" markdown="1">
+<div id="R-box">
 - Applied MEFISTO for time-resolved integration of protein expression
-  data.
-- Inferred TF activity with decoupleR, explored pathway crosstalk.
+  data. <br>
+- Inferred TF activity with decoupleR, explored pathway crosstalk. <br>
 - Applied CIBERSORT deconvolution against a dental cell atlas to map
   protein changes to cell types.
   </div>
@@ -391,10 +391,10 @@ molecular alteration.
 
 ##### Framework:
 
-<div id="R-box" markdown="1">
-- Preprocessed and batch-corrected datasets.
+<div id="R-box">
+- Preprocessed and batch-corrected datasets. <br>
 - Applied MINT-sPLS-DA for multivariate integration and subtype
-  classification.
+  classification. <br>
 - Constructed miRNA–target networks requiring triply supported
   interactions, and performed enrichment analyses.
   </div>
@@ -467,11 +467,13 @@ to stable glycemic control.
 
 ##### Framework:
 
-<div id="R-box" markdown="1">
-Applied WGCNA to detect co-expression modules and correlated eigengenes
-with time metadata. For the module associated with recovery (time point
+<div id="R-box">
+- Applied WGCNA to detect co-expression modules and correlated eigengenes
+with time metadata. <br>
+- For the module associated with recovery (time point
 3), modeled temporal changes using GAMs with patient-specific
-intercepts. Identified hub proteins (datKME \> 0.85), integrated with
+intercepts. <br>
+- Identified hub proteins (datKME \> 0.85), integrated with
 STRING-based PPI networks, applied Louvain clustering, and performed
 enrichment analysis. </div>
 
@@ -534,6 +536,7 @@ Enriched Pathways in Blue Module
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

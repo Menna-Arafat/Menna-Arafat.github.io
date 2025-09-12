@@ -8,7 +8,7 @@ title: Research
 <div class="research-header">
   
 <h1>
-Research Projects
+RESEARCH PROJECTS
 </h1>
 </div>
 
@@ -35,7 +35,7 @@ mediators in CRC.
 
 ##### Framework:
 
-<div id="R-box">
+<div id="R-box" markdown="1">
 - Implemented an end-to-end pipeline, including raw data preprocessing,
   PQN normalization, differential expression analysis, WGCNA for module
   discovery, and eigengene differentiation for CRC-specific modules.
@@ -104,7 +104,7 @@ of subtype-specific etiologies and therapeutic targets.
 
 ##### Framework:
 
-<div id="R-box">
+<div id="R-box" markdown="1">
 - Applied WGCNA to identify co-expressed modules and tested eigengene
   differentiation using Wilcoxon statistics.
 - Constructed PPI networks integrating hub and differentially expressed
@@ -166,7 +166,7 @@ functional interplay underlying complex diseases.
 
 ##### Framework:
 
-<div id="R-box">
+<div id="R-box" markdown="1">
 - Developed a mutual information–based inference algorithm in R to
   construct pathway–pathway and pathway–TF interaction networks.
 - Core pathways and TFs were prioritized by interaction degree.
@@ -241,7 +241,7 @@ actionable vulnerabilities.
 
 ##### Framework:
 
-<div id="R-box">
+<div id="R-box" markdown="1" >
 - Retrieved six-layer TCGA data, applied MOFA for latent factor
   inference, and extracted top features.
 - Inferred TF activity with decoupleR, applied centrality analysis, and
@@ -271,14 +271,14 @@ Crosstalk Plot
 <h4>
 Chord Plot
 </h4>
-<img src="/plots/tnbc_chord.png" />
+<img src="/plots/chord_drugs_.png" />
 </div>
 
 <div class="plot">
 <h4>
-Heatmap Plot
+Sensitivity Heatmap Plot
 </h4>
-<img src="/plots/tnbc_heatmaps_side_by_side.png" />
+<img src="/plots/heatmap_drug_sensitivity_macau.png" />
 </div>
 </div>
 
@@ -311,7 +311,7 @@ laser-based regenerative therapies.
 
 ##### Framework:
 
-<div id="R-box">
+<div id="R-box" markdown="1">
 - Applied MEFISTO for time-resolved integration of protein expression
   data.
 - Inferred TF activity with decoupleR, explored pathway crosstalk.
@@ -391,7 +391,7 @@ molecular alteration.
 
 ##### Framework:
 
-<div id="R-box">
+<div id="R-box" markdown="1">
 - Preprocessed and batch-corrected datasets.
 - Applied MINT-sPLS-DA for multivariate integration and subtype
   classification.
@@ -467,7 +467,7 @@ to stable glycemic control.
 
 ##### Framework:
 
-<div id="R-box">
+<div id="R-box" markdown="1">
 Applied WGCNA to detect co-expression modules and correlated eigengenes
 with time metadata. For the module associated with recovery (time point
 3), modeled temporal changes using GAMs with patient-specific
@@ -534,6 +534,7 @@ Enriched Pathways in Blue Module
 **[Source Code](https://github.com/Menna-Arafat/Whiple_surgery_project)**
 
 </div>
+
 
 
 

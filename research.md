@@ -11,7 +11,7 @@ title: Research
 </div>
 
 <div class="content-container">
-<h4 style="margin-bottom: 0;" font-size:1.3rem;>
+<h4 style="margin-bottom: 0; font-size: 1.3rem;">
   <a href="https://link.springer.com/article/10.1007/s00726-025-03448-3" target="_blank">
     1. Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)
   </a>
@@ -149,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
 
 
 

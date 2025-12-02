@@ -41,7 +41,7 @@ This framework helped disentangle the high heterogeneity across subtypes, map th
 
 
 <h4 style="margin-bottom: 0;">
-  <strong>3. Integrative Transcriptomic Profiling of Plasma Extracellular Vesicles Reveals miRNA Signatures for Breast Cancer Subtype Classification</strong>
+3. Integrative Transcriptomic Profiling of Plasma Extracellular Vesicles Reveals miRNA Signatures for Breast Cancer Subtype Classification
 </h4>
 
 <div class="expandable">
@@ -149,4 +149,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
 

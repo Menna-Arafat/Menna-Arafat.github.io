@@ -8,10 +8,8 @@ title: What We Offer!
 
   <div class="ServiceContent">
     <p class="intro">
-     Looking for expert bioinformatics analysis? Take a look at our services!
-    </p>
-    <p>
-      Or feel free to <a href="mailto:mennaarafat.info@gmail.com">email me directly</a>.
+     Looking for expert bioinformatics analysis? Take a look at our services! <br>
+	Or feel free to <a href="mailto:mennaarafat.info@gmail.com">email me directly</a>.
     </p>
 	<h2>Main Services:</h2>
 	<ul>
@@ -55,6 +53,6 @@ title: What We Offer!
   }
 
   .button {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
 </style>

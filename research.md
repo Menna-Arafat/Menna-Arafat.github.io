@@ -7,7 +7,7 @@ title: Research
 
 
 <div class="research-header">
-<h1>**RESEARCH PROJECTS**</h1>
+<h1>RESEARCH PROJECTS</h1>
 </div>
 
 #### **[1. Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)]("https://link.springer.com/article/10.1007/s00726-025-03448-3")**
@@ -116,3 +116,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+

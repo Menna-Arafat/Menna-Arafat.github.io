@@ -1,0 +1,78 @@
+<style>
+:root {
+  /* define gradient variable */
+  --inferno-gradient: linear-gradient(
+    90deg,
+    #000004,
+    #808080,
+    #f5f5f5
+    
+  );
+}
+  /* Header */
+  .research-header h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2rem;
+  }
+  
+  .expandable {
+    max-width: 900px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+  }
+  .toggle-link {
+    color: #2D5BE3;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+  .figure-toggle {
+    color: #144dcc;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 10px 0;
+    display: inline-block;
+  }
+  .figures {
+    display: none;
+    margin-top: 15px;
+  }
+.plot-row {
+  display: flex;
+  /* spacing between plots */
+  gap: 1rem;              
+  justify-content: center;
+  /*  make all plots equal height */
+  align-items: stretch;
+  margin: 2rem 0;
+  /* allows wrapping on smaller screens */
+  flex-wrap: wrap;        
+}
+  .plot {
+    width: 30%;
+    min-width: 230px;
+  }
+  .plot img {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+
+
+hr {
+  border: none;
+  height: 4px;
+  width: 30rem;
+  border-radius: 3px;
+  background: var(--inferno-gradient);
+  margin: 0  auto;
+ }
+
+
+</style>
+

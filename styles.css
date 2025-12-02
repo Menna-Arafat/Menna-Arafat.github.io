@@ -9,6 +9,11 @@
     
   );
 }
+.content-container {
+  max-width: 900px;       /* controls how wide the text can go */
+  margin: 0 auto;         /* centers the container */
+  padding: 0 20px;        /* adds left/right inner space */
+}
   /* Header */
   .research-header h1 {
     text-align: center;
@@ -75,5 +80,6 @@ hr {
 
 
 </style>
+
 
 

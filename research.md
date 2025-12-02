@@ -11,7 +11,7 @@ title: Research
 </div>
 
 <div class="content-container">
-<h4>
+<h4 style="margin-bottom: 0;">
   <a href="https://link.springer.com/article/10.1007/s00726-025-03448-3" target="_blank">
     1. Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)
   </a>
@@ -25,7 +25,7 @@ Despite the limitations of metabolite coverage, this integrated approach allowed
 <a href="https://bits-and-bites.netlify.app/" target="_blank"><strong>Source Code</strong></a> </div>  
 
 
-<h4>
+<h4 style="margin-bottom: 0;">
   <a href="https://www.mdpi.com/2073-4409/14/14/1115" target="_blank">
     2. Integrative Multi-Omics Profiling of Rhabdomyosarcoma Subtypes Reveals Distinct Molecular Pathways and Biomarker Signatures
   </a>
@@ -40,7 +40,7 @@ This framework helped disentangle the high heterogeneity across subtypes, map th
 <a href="https://github.com/Menna-Arafat/Rhabdomyosarcome_project" target="_blank"><strong>Source Code</strong></a> </div>
 
 
-<h4>
+<h4 style="margin-bottom: 0;">
   <strong>3. Integrative Transcriptomic Profiling of Plasma Extracellular Vesicles Reveals miRNA Signatures for Breast Cancer Subtype Classification</strong>
 </h4>
 
@@ -53,7 +53,7 @@ I then constructed a network of experimentally supported miRNA–target interact
 <a href="https://github.com/Menna-Arafat/BC_EVs_miRNA" target="_blank"><strong>Source Code</strong></a></div>
 
 
-<h4>
+<h4 style="margin-bottom: 0;">
   <strong>4. CrosstalkX: Mutual Information–Based Pathway Interaction Inference</strong>
 </h4>
 
@@ -63,7 +63,7 @@ Developed CrosstalkX, an R package that uses mutual information to detect nonlin
 <a href="https://github.com/Menna-Arafat/CrosstalkX" target="_blank"><strong>Source Code</strong></a></div>
 
 
-<h4>
+<h4 style="margin-bottom: 0;">
   <strong>5. A Multi-Omics and Mutual Information Framework to Decode Therapeutic Vulnerabilities in TNBC</strong>
 </h4>
 
@@ -75,7 +75,7 @@ To translate these findings into therapeutic hypotheses, I linked central genes 
 <a href="https://github.com/Menna-Arafat/TNBC_project" target="_blank"><strong>Source Code</strong></a></div>
 
 
-<h4>
+<h4 style="margin-bottom: 0;">
   <strong>6. Enhanced Bone Regeneration in Rat Gingival Mesenchymal Stem Cells: A Comparative Study of Inductive Media, Polycaprolactone Nano Scaffold, and Low-Level Laser Therapy</strong>
 </h4>
 
@@ -86,7 +86,7 @@ To connect these molecular shifts to cellular composition, I applied CIBERSORT d
 <a href="https://github.com/Menna-Arafat/GMSC_project" target="_blank"><strong>Source Code</strong></a></div>
 
 
-<h4>
+<h4 style="margin-bottom: 0;">
   <strong>7. Proteomic Profiling of Pancreatic Cancer Patients: Time Series Study Before and After Whipple Surgery</strong>
 </h4>
 
@@ -149,3 +149,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+

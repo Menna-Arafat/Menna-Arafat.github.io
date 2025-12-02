@@ -12,7 +12,7 @@ title: About Me
        style="max-width:200px; border-radius:50%; margin-bottom:20px;">
   </div>
 
-  <p class="intro" style="font-size:2rem;">
+  <p class="intro" style="font-size:1.5rem;">
   I am Menna Arafat, a physician and bioinformatician working on computational modeling of biological systems, with a focus on multi-omics integration and machine learning. Over the past five years, I have contributed to projects across genomics, transcriptomics, epigenomics, proteomics, and metabolomics, using both bulk and single-cell datasets. My main interest is in developing frameworks that characterize the molecular architecture of disease and identify therapeutic vulnerabilities.
 Two recent studies published in <em>Springer Nature</em> and <em>Cells</em> reflect this direction. In 
     <a href="https://link.springer.com/article/10.1007/s00726-025-03448-3" target="_blank">one</a>, I conducted a complete metabolomic analysis of colorectal cancer and used weighted network modeling to identify metabolite modules associated with tumor phenotype. In 
@@ -26,3 +26,4 @@ My goal is to to develop deep learning and diffusion-based representation models
     <a href="{{ '/files/Menna_Arafat_SOP.pdf' | relative_url }}" target="_blank">📝 Statement of Purpose</a>
   </p>
 </div>
+

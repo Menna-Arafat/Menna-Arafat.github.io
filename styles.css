@@ -10,10 +10,10 @@
   );
 }
 .content-container {
-  max-width: 800px;       /* controls how wide the text can go */
+  max-width: 600px;       /* controls how wide the text can go */
   margin: 0 auto;         /* centers the container */
   padding: 0 20px;        /* adds left/right inner space */
-  font-size:1rem;
+  font-size:1.3rem;
 }
   /* Header */
   .research-header h1 {
@@ -81,6 +81,7 @@ hr {
 
 
 </style>
+
 
 
 

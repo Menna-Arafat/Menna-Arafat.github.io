@@ -8,10 +8,7 @@ title: Contact Me
 
   <div class="contactContent">
     <p class="intro">
-      Looking for expert bioinformatics analysis or want to collaborate? Drop me a message below — I’d love to hear from you!
-    </p>
-    <p>
-      Or feel free to <a href="mailto:mennaarafat.info@gmail.com">email me directly</a>.
+      Looking for expert bioinformatics analysis or want to collaborate? Drop me a message below or feel free to <a href="mailto:mennaarafat.info@gmail.com">email me directly</a>. — I’d love to hear from you!
     </p>
   </div>
 
@@ -45,6 +42,6 @@ title: Contact Me
   }
 
   .button {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
 </style>

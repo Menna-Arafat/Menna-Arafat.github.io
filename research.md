@@ -9,7 +9,7 @@ title: Research
 <div class="research-header">
 <h1>RESEARCH PROJECTS</h1>
 </div>
-
+<div class="content-container">
 #### **[1. Metabolomic Analysis of Gut Metabolites in Colorectal Cancer Patients (CRC)]("https://link.springer.com/article/10.1007/s00726-025-03448-3")**
 
 <div class="expandable">
@@ -77,7 +77,7 @@ reveals stress responses, repair mechanisms, and processes correlated with long-
 rather than short-term post-surgical responses.<br>
 <strong>Resources:</strong>
 <a href="https://github.com/Menna-Arafat/Whiple_surgery_project" target="_blank"><strong>Source Code</strong></a></div>
-
+</div>
 
 
 
@@ -130,3 +130,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+

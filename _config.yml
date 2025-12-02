@@ -19,12 +19,12 @@ plugins: [jekyll-paginate]
 paginate: 5
 
 navigation:
+    - title: Posts
+      url: /index.html
     - title: Research
       url: /research
     - title: About
       url: /about
-    - title: Posts
-      url: /index.html
     - title: Service
       url: /service
     - title: Contact

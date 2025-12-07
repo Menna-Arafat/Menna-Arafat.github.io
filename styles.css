@@ -25,7 +25,6 @@
   .expandable {
     max-width: 900px;
     line-height: 1.1;
-    color: #333;
     margin-bottom: 15px;
     position: relative;
     display: inline-block;
@@ -81,6 +80,7 @@ hr {
 
 
 </style>
+
 
 
 

@@ -59,7 +59,7 @@ I then constructed a network of experimentally supported miRNA–target interact
 
 <div class="expandable">
 Developed CrosstalkX, an R package that uses mutual information to detect nonlinear interactions among signaling pathways and prioritize core regulatory components. The method identifies pathway–pathway and pathway–TF interactions using biologically informed constraints and permutation testing for robust inference. It allows to quantify pathway–pathway and pathway–TF dependencies in complex omics data.<br>
-<strong>Resources: [Will be available soon on CRAN]</strong>
+<strong>Resources:</strong>
 <a href="https://github.com/Menna-Arafat/CrosstalkX" target="_blank"><strong>Source Code</strong></a> |
 <a href="https://menna-arafat.github.io/CrosstalkX" target="_blank"><strong>Vignette</strong></a></div>
 
@@ -150,6 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
 
 
 

@@ -6,3 +6,8 @@ node_modules
 .jekyll-cache/
 .jekyll-cache/*
 _vendor
+.Rproj.user
+.Rhistory
+.RData
+.httr-oauth
+.quarto

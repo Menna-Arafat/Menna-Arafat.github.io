@@ -41,7 +41,27 @@ This framework helped disentangle the high heterogeneity across subtypes, map th
 
 
 <h4 style="margin-bottom: 0; font-size: 1.3rem;">
-<strong>3. Integrative Transcriptomic Profiling of Plasma Extracellular Vesicles Reveals miRNA Signatures for Breast Cancer Subtype Classification</strong>
+  <strong>3. CrosstalkX: Mutual Information–Based Pathway Interaction Inference</strong>
+</h4>
+
+<div class="expandable">
+Developed the CrosstalkX R package, which provides a computational framework to infer transcription factor–pathway and pathway–pathway interactions from gene expression data by integrating enrichment-derived gene sets, mutual information–based association measures, and background gene interaction networks. Statistical significance is assessed using permutation-based null models to identify biologically meaningful pathway crosstalk. In addition, CrosstalkX prioritizes genes of interest using differential-expression neighborhood enrichment, retaining genes whose network neighborhoods are significantly enriched for DE genes.<br>
+<strong>Resources:</strong>
+<a href="https://github.com/Menna-Arafat/CrosstalkX" target="_blank"><strong>Source Code</strong></a> |
+<a href="https://menna-arafat.github.io/CrosstalkX" target="_blank"><strong>Vignette</strong></a></div>
+
+<h4 style="margin-bottom: 0; font-size: 1.3rem;">
+<strong>4. Integrated Multi-Study Single-Cell Profiling of Bone Marrow and Peripheral Blood in Aplastic Anemia</strong>
+</h4>
+
+<div class="expandable">
+Single-cell RNA-seq datasets for aplastic anemia (GSE214207, GSE181989, GSE145668, and GSE145531) were retrieved from GEO. Studies in which all samples had received therapeutic intervention were excluded, and treated samples within eligible studies were removed based on metadata. Remaining samples were stratified by tissue of origin (bone marrow vs PBMC) and analyzed separately. Raw expression matrices were processed in R using Seurat with standard quality control (filtering by detected genes, UMI counts, mitochondrial fraction, and low-detection genes), followed by Seurat log-normalization and scaling. Batch effects across studies were corrected using Harmony on PCA embeddings, and the top 50 Harmony components were used for UMAP visualization and graph-based clustering. Cell types were annotated with Azimuth using tissue-matched reference atlases. Hematopoietic progenitors and lymphoid populations (T/NK) were then subsetted and reprocessed for subclustering; marker detection was performed with scran’s findMarkers, lineage identities were assigned using canonical marker enrichment with Fisher’s exact test and multiple-testing correction, and differential expression for identified clusters was assessed with edgeR while controlling for batch effects in the design model. Disease-associated shifts in cell population frequencies were quantified using MiloR differential abundance testing across neighborhood graphs. Cell–cell communication was inferred with CellChat and functionally prioritized using NicheNet ligand–target modeling. In bone marrow, differentiation trajectories were reconstructed with Monocle3 pseudotime (rooted by progenitor markers), and dynamic genes along pseudotime were identified using generalized additive models with FDR control followed by functional enrichment of significant programs. All analyses were performed in R version 4.3.<br> 
+<strong>Resources:</strong>
+<a href="https://github.com/Menna-Arafat/SC_Aplastic_Anemia" target="_blank"><strong>Source Code</strong>[will be available]</a></div>
+
+
+<h4 style="margin-bottom: 0; font-size: 1.3rem;">
+<strong>5. Integrative Transcriptomic Profiling of Plasma Extracellular Vesicles Reveals miRNA Signatures for Breast Cancer Subtype Classification</strong>
 </h4>
 
 <div class="expandable">
@@ -54,18 +74,7 @@ I then constructed a network of experimentally supported miRNA–target interact
 
 
 <h4 style="margin-bottom: 0; font-size: 1.3rem;">
-  <strong>4. CrosstalkX: Mutual Information–Based Pathway Interaction Inference</strong>
-</h4>
-
-<div class="expandable">
-Developed CrosstalkX, an R package that uses mutual information to detect nonlinear interactions among signaling pathways and prioritize core regulatory components. The method identifies pathway–pathway and pathway–TF interactions using biologically informed constraints and permutation testing for robust inference. It allows to quantify pathway–pathway and pathway–TF dependencies in complex omics data.<br>
-<strong>Resources:</strong>
-<a href="https://github.com/Menna-Arafat/CrosstalkX" target="_blank"><strong>Source Code</strong></a> |
-<a href="https://menna-arafat.github.io/CrosstalkX" target="_blank"><strong>Vignette</strong></a></div>
-
-
-<h4 style="margin-bottom: 0; font-size: 1.3rem;">
-  <strong>5. A Multi-Omics and Mutual Information Framework to Decode Therapeutic Vulnerabilities in TNBC</strong>
+  <strong>6. A Multi-Omics and Mutual Information Framework to Decode Therapeutic Vulnerabilities in TNBC</strong>
 </h4>
 
 <div class="expandable">
@@ -77,7 +86,7 @@ To translate these findings into therapeutic hypotheses, I linked central genes 
 
 
 <h4 style="margin-bottom: 0; font-size: 1.3rem;">
-  <strong>6. Enhanced Bone Regeneration in Rat Gingival Mesenchymal Stem Cells: A Comparative Study of Inductive Media, Polycaprolactone Nano Scaffold, and Low-Level Laser Therapy</strong>
+  <strong>7. Enhanced Bone Regeneration in Rat Gingival Mesenchymal Stem Cells: A Comparative Study of Inductive Media, Polycaprolactone Nano Scaffold, and Low-Level Laser Therapy</strong>
 </h4>
 
 <div class="expandable">
@@ -88,7 +97,7 @@ To connect these molecular shifts to cellular composition, I applied CIBERSORT d
 
 
 <h4 style="margin-bottom: 0; font-size: 1.3rem;">
-  <strong>7. Proteomic Profiling of Pancreatic Cancer Patients: Time Series Study Before and After Whipple Surgery</strong>
+  <strong>8. Proteomic Profiling of Pancreatic Cancer Patients: Time Series Study Before and After Whipple Surgery</strong>
 </h4>
 
 <div class="expandable">
@@ -105,8 +114,8 @@ rather than short-term post-surgical responses.<br>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-  /* ===== Automatic Expandable Summaries ===== */
-  const limit = 25;
+  /*  Automatic Expandable Summaries  */
+  const limit = 20;
 
   document.querySelectorAll(".expandable").forEach(function (para) {
     const full = para.innerHTML.trim();
@@ -136,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-  /* ===== Expandable Figures (RELIABLE VERSION) ===== */
+  /*  Expandable Figures  */
   document.querySelectorAll(".figure-toggle").forEach(function (btn) {
     btn.addEventListener("click", function () {
 

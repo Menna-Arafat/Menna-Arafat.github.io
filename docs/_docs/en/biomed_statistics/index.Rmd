@@ -47,4 +47,4 @@ By the end of the course, you should be able to:
 
 The data contains **360 synthetic participants (120 per randomized arm).**
 
-[**Download the biomedical dataset (.xlsx)**](https://raw.githubusercontent.com/Menna-Arafat/Menna-Arafat.github.io/master/docs/_docs/en/biomed_statistics/data/biomedical_data.xlsx)
+Available at: https://raw.githubusercontent.com/Menna-Arafat/Menna-Arafat.github.io/master/docs/_docs/en/biomed_statistics/data/biomedical_data.xlsx

@@ -43,6 +43,8 @@ By the end of the course, you should be able to:
 **Assumptions belong to models, not labels.** For t-tests, ANOVA, and regression, inspect the distribution and structure of the **errors/residuals** and the consequences of departures from assumptions. A significant Shapiro-Wilk test alone is not a reason to replace a mean-based question by a rank-based question.
 :::
 
-::: {.note}
-**Data used in this edition.** The active teaching sheet contains 360 synthetic participants (120 per randomized arm). To download the data visit this link:
-:::
+## Data used in this edition
+
+The data contains **360 synthetic participants (120 per randomized arm).**
+
+[**Download the biomedical dataset (.xlsx)**](https://raw.githubusercontent.com/Menna-Arafat/Menna-Arafat.github.io/master/docs/_docs/en/biomed_statistics/data/biomedical_data.xlsx)

@@ -1,0 +1,23 @@
+book_filename: "biomed_statistics"
+output_dir: "_book"
+delete_merged_file: true
+new_session: false
+language:
+  ui:
+    chapter_name: "Chapter "
+rmd_files:
+  - "index.Rmd"
+  - "01-data-foundations.Rmd"
+  - "02-descriptive-eda.Rmd"
+  - "03-sampling-confidence.Rmd"
+  - "04-resampling-probability.Rmd"
+  - "05-continuous-inference.Rmd"
+  - "06-categorical-resampling.Rmd"
+  - "07-anova-robust.Rmd"
+  - "08-manova-correlation.Rmd"
+  - "09-linear-regression.Rmd"
+  - "10-ancova-continuous.Rmd"
+  - "11-logistic-count.Rmd"
+  - "12-survival-analysis.Rmd"
+  - "13-integrated-analysis.Rmd"
+  - "14-references.Rmd"

@@ -1,0 +1,9 @@
+book_filename: "power"
+output_dir: "_book"
+delete_merged_file: true
+new_session: false
+language:
+  ui:
+    chapter_name: "Chapter "
+rmd_files:
+  - "01-power.Rmd"

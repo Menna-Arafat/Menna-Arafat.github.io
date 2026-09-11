@@ -1,0 +1,233 @@
+# Categorical Inference
+
+Categorical outcomes are analyzed according to whether observations are **independent or paired**.
+
+For independent groups, Pearson's chi-square test or Fisher's exact test assesses association between categorical variables. The choice between them depends mainly on whether the expected cell counts are large enough for the chi-square approximation. For binary outcomes measured twice in the same participants, the observations are paired and **McNemar's test** is used instead.
+
+## Choosing the categorical test
+
+| Data structure | Condition | Test |
+|---|---|---|
+| independent categorical observations | expected counts adequate | **Pearson chi-square test** |
+| independent categorical observations | expected counts sparse | **Fisher's exact test** |
+| paired binary observations | same participants measured twice | **McNemar's test** |
+
+For independent observations, a practical criterion for using the Pearson chi-square approximation is based on the **expected cell counts, not the observed counts**: no expected count should be below 1, and no more than 20% of expected counts below 5.
+If these conditions are not met, Fisher's exact test is preferred.
+
+# Independent categorical outcomes
+
+## Pearson chi-square and Fisher exact tests
+
+Pearson's chi-square test compares the **observed counts**, \(O_{ij}\), with the counts expected if the two categorical variables were independent.
+
+The expected count in cell \(i,j\) is
+
+\[
+E_{ij}=\frac{n_{i}n_{j}}{n},
+\]
+
+and the chi-square statistic is
+
+\[
+\chi^2=\sum_i\sum_j\frac{(O_{ij}-E_{ij})^2}{E_{ij}}.
+\]
+
+A larger discrepancy between observed and expected counts produces a larger chi-square statistic and stronger evidence that the variables are associated.
+
+Fisher's exact test addresses the same general question without relying on the large-sample chi-square approximation, making it useful when expected counts are small.
+
+## Association between Treatment and clinical response
+
+The following table compares treatment assignment with clinical response at 12 weeks.
+
+```{r cat-response-table}
+resp_tab <- table(Treatment=dat$treatment_arm,
+                  Response=dat$clinical_response_12w)
+resp_tab
+```
+
+Under the null hypothesis,
+
+\[
+H_0:\text{clinical response is independent of treatment}.
+\]
+
+Before selecting the test, examine the expected counts.
+
+```{r cat-response-expected}
+resp_chi <- suppressWarnings(chisq.test(resp_tab, correct=FALSE))
+round(resp_chi$expected,2)
+```
+
+Expected counts are calculated under the assumption that treatment and clinical response are unrelated. They determine whether the chi-square approximation is sufficiently reliable.
+
+## Automated chi-square or Fisher selection
+
+The following block checks the expected counts and performs the appropriate test.
+
+```{r cat-response-select}
+expected <- resp_chi$expected
+chi_ok <- all(expected >= 5)
+# OR
+chi_ok <- all(expected>=1) && mean(expected<5)<=.20
+
+if(chi_ok){
+  selected_test <- "Pearson chi-square test"
+  fit <- resp_chi
+} else {
+  selected_test <- "Fisher exact test"
+  fit <- fisher.test(resp_tab)
+}
+
+tibble(
+  test=selected_test,
+  minimum_expected=min(expected),
+  percent_expected_below_5=100*mean(expected<5),
+  p_value=fit$p.value
+) |> kbl(digits=3, caption="Selected test for treatment and clinical response")
+```
+
+The decision is straightforward:
+
+- if expected counts are adequate, use **Pearson's chi-square test**;
+- if expected counts are sparse, use **Fisher's exact test**.
+
+A small p-value indicates evidence that clinical response differs across treatment groups. The global test does not show **which treatment differs from Control** or **how large the difference is**, so effect estimates should also be reported.
+
+## Risk differences and risk ratios
+
+For a binary treatment outcome, risks and their contrasts provide a direct measure of treatment effect.
+
+```{r cat-response-effects}
+resp_effects <- bind_rows(
+  risk_contrast(dat,"clinical_response_12w","Drug_A"),
+  risk_contrast(dat,"clinical_response_12w","Drug_B")
+) |> mutate(across(c(risk_exposed,risk_reference,risk_difference,rd_low,rd_high), ~100*.x))
+
+kbl(resp_effects, digits=2,
+    caption="Clinical-response effects versus Control; risks and risk differences are percentage points")
+```
+
+The **risk difference** measures the absolute difference in response probability:
+
+\[
+RD=P(Y=1\mid\text{treatment})-P(Y=1\mid\text{Control}),
+\]
+
+whereas the **risk ratio** compares the two probabilities proportionally:
+
+\[
+RR=\frac{P(Y=1\mid\text{treatment})}
+         {P(Y=1\mid\text{Control})}.
+\]
+
+The global chi-square or Fisher test provides evidence of association; the risk difference and risk ratio describe the **size of the treatment effect**.
+
+# Fisher’s exact test for sparse contingency tables
+
+Each active treatment is compared separately with Control.
+
+```{r cat-ae-fisher}
+tab_A <- with(droplevels(subset(dat,treatment_arm %in% c("Control","Drug_A"))),
+              table(Treatment=treatment_arm,Adverse_event=adverse_event_12w))
+tab_B <- with(droplevels(subset(dat,treatment_arm %in% c("Control","Drug_B"))),
+              table(Treatment=treatment_arm,Adverse_event=adverse_event_12w))
+
+A <- as.data.frame.matrix(tab_A) |> tibble::rownames_to_column("Treatment")
+B <- as.data.frame.matrix(tab_B) |> tibble::rownames_to_column("Treatment")
+names(A) <- names(B) <- c("Treatment","No","Yes")
+
+knitr::kables(list(
+  kbl(A, caption="Drug_A versus Control"),
+  kbl(B, caption="Drug_B versus Control")
+))
+```
+
+```{r fisher-test}
+ft_A <- fisher.test(tab_A)
+ft_B <- fisher.test(tab_B)
+
+tibble(
+  comparison=c("Drug_A vs Control","Drug_B vs Control"),
+  odds_ratio=c(unname(ft_A$estimate),unname(ft_B$estimate)),
+  p_value=c(ft_A$p.value,ft_B$p.value),
+  p_holm=p.adjust(c(ft_A$p.value,ft_B$p.value),method="holm")
+) |> kbl(digits=3, caption="Fisher exact test results")
+```
+
+Fisher's exact test is performed separately for Drug_A versus Control and Drug_B versus Control. Holm adjustment accounts for the two comparisons.
+
+
+# McNemar's test for paired binary data
+
+Chi-square and Fisher tests assume that observations contributing to the contingency table are independent. That assumption does not hold when the **same participants are measured twice**.
+
+For paired binary data, McNemar's test evaluates whether the probability of changing in one direction differs from the probability of changing in the opposite direction.
+
+## Example: SBP category before and after treatment
+
+Classify SBP as below 130 mmHg or at least 130 mmHg at baseline and week 12.
+
+```{r cat-mcnemar-table}
+mcn_dat <- dat |> drop_na(sbp_baseline_mmHg,sbp_week12_mmHg) |>
+  mutate(
+    Baseline=if_else(sbp_baseline_mmHg<130,"<130",">=130"),
+    Week12=if_else(sbp_week12_mmHg<130,"<130",">=130")
+  )
+
+mcn_tab <- table(Baseline=mcn_dat$Baseline,Week12=mcn_dat$Week12)
+
+kbl(as.data.frame.matrix(mcn_tab), digits=0,
+    caption="Paired SBP category at baseline and week 12")
+```
+
+
+The paired \(2\times2\) table can be written as:
+
+| Baseline SBP | Week 12 < 130 | Week 12 ≥ 130 |
+|---|---:|---:|
+| **Baseline < 130** | \(a\) | \(b\) |
+| **Baseline ≥ 130** | \(c\) | \(d\) |
+
+The diagonal cells contain participants who remained in the same category. The off-diagonal cells contain participants who **changed category**.
+
+- \(b\) is the number changing from the first category to the second: changed from below 130 to at least 130
+- \(c\) is the number changing in the opposite direction: changed from at least 130 to below 130
+
+McNemar's statistic without continuity correction is
+
+\[
+\chi^2=\frac{(b-c)^2}{b+c}.
+\]
+
+Only the discordant pairs, \(b\) and \(c\), contribute to the test.
+
+```{r cat-mcnemar-test}
+mcnemar.test(mcn_tab, correct=FALSE)
+
+b <- mcn_tab[1,2]
+c <- mcn_tab[2,1]
+
+if(b+c>0) binom.test(b,b+c,p=.5)
+```
+
+McNemar's test evaluates
+
+\[
+H_0:P(\text{change in one direction})
+   =P(\text{change in the opposite direction}).
+\]
+
+When the number of discordant pairs is small, the exact binomial calculation provides an exact alternative.
+
+## Selecting the method
+
+The analysis can be summarized by three decisions:
+
+| Question | Choice |
+|---|---|
+| Are the categorical observations independent? | chi-square or Fisher |
+| Are expected counts adequate? | chi-square if yes; Fisher if no |
+| Are binary measurements paired within participants? | McNemar |
+| Are several related hypotheses being tested? | consider multiplicity adjustment |

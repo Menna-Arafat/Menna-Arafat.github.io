@@ -1,0 +1,240 @@
+# ANOVA and robust multi-group comparisons
+
+ANOVA and regression are two expressions of the same linear-model framework. ANOVA is most convenient when explanatory variables are categorical; regression notation becomes more natural when continuous covariates, interactions, and adjustment are central. The key statistical object is the model, not the function name used to fit it.
+
+## One-way ANOVA
+
+For \(k\) independent groups, one-way ANOVA tests whether all group means are equal:
+
+\[
+H_0:\mu_1=\mu_2=\cdots=\mu_k.
+\]
+
+ANOVA separates the total variation into:
+
+- **Between-group variation:** differences among the group means.
+- **Within-group variation:** variation among individuals within each group.
+
+Each source of variation is converted to a **mean square (MS)**:
+
+\[
+MS_{\text{between}}=\frac{SS_{\text{between}}}{df_{\text{between}}},
+\qquad
+MS_{\text{within}}=\frac{SS_{\text{within}}}{df_{\text{within}}}.
+\]
+
+The F statistic is
+
+\[
+F=\frac{MS_{\text{between}}}{MS_{\text{within}}}.
+\]
+
+A large \(F\) means that the group means differ more than would be expected from the variation within the groups.
+
+### Example: SBP change across three treatment arms
+
+Change-score ANOVA is used here because it gives a clean demonstration of the classical one-way model. The preferred treatment-effect analysis for week-12 SBP is baseline-adjusted ANCOVA discussed later.
+
+#### Group summaries for systolic blood pressure
+
+```{r sbp-anova-summary}
+sbp_cc <- dat |> drop_na(sbp_change)
+sbp_cc |> group_by(treatment_arm) |>
+          summarise(n=n(), mean=mean(sbp_change), sd=sd(sbp_change), median=median(sbp_change), .groups="drop") |>
+          kbl(digits=2, caption="SBP change by treatment arm")
+```
+
+#### Distribution of systolic blood pressure by arm
+
+```{r sbp-anova-plot, fig.cap="Distribution of week-12 minus baseline SBP by treatment arm."}
+ggplot(sbp_cc, aes(treatment_arm, sbp_change, fill=treatment_arm)) + 
+  geom_boxplot(width=.6, outlier.alpha=.35) +
+  scale_fill_manual(values=pal, guide="none") + 
+  geom_hline(yintercept=0, linetype=2) +
+  labs(x=NULL, y="SBP change (mmHg)")
+```
+
+### Assumptions and diagnostics
+
+The main assumptions of classical ANOVA are:
+
+- observations are **independent**.
+- residuals are approximately **normal**.
+- variability is similar across groups.
+
+Independence is determined by the study design. Normality and equal variance are assessed using residual plots and comparisons of group spread.
+
+
+#### One-way linear-model specification
+
+```{r sbp-anova-fit}
+sbp_aov <- aov(sbp_change~treatment_arm, data=sbp_cc); 
+summary(sbp_aov); 
+
+car::leveneTest(sbp_change~treatment_arm, sbp_cc, center=median)
+```
+
+#### Residual and variance diagnostics
+
+```{r sbp-anova-diagnostics, fig.height=4.0, fig.cap="Residual diagnostics for the one-way SBP change model."}
+par(mfrow=c(1,2));
+plot(sbp_aov, which=1);
+plot(sbp_aov, which=2)
+```
+
+With balanced groups of roughly 120 participants, the F test is fairly robust to modest non-normality. What would be more concerning is a combination of severe skew/outliers, very unequal variances, and strongly unequal sample sizes.
+
+### Effect size
+
+```{r sbp-anova-effect}
+effectsize::eta_squared(sbp_aov, partial=FALSE)
+```
+
+Eta-squared (\(\eta^2\)) measures the **overall effect size**, while **post hoc tests** identify which treatment groups differ from each other. Treatment-specific mean differences show **how large those differences are**.
+Here, \(\eta^2=0.17\), meaning that about 17% of the variation in SBP change is associated with treatment group.
+
+### Tukey HSD pairwise comparisons
+
+If ANOVA assumptions are met, we use **Tukey’s HSD** for all pairwise group comparisons. It controls the family-wise error rate and reports adjusted p-values with simultaneous 95% confidence intervals.
+
+#### Tukey-adjusted pairwise mean contrasts
+
+```{r sbp-tukey}
+TukeyHSD(sbp_aov)
+```
+
+## Welch ANOVA for unequal variances
+
+### Preserve the mean estimand
+
+A large variance difference does not force the question to change from means to ranks. If the scientific estimand remains the difference in means, Welch ANOVA is designed for unequal group variances.
+
+The biomarker change scores have visibly different spreads across treatment arms.
+
+#### Biomarker-change summaries
+
+```{r biomarker-change-summary}
+bio_change_cc <- dat |> drop_na(biomarker_change)
+
+bio_change_cc |> group_by(treatment_arm) |>
+                 summarise(n=n(), mean=mean(biomarker_change), sd=sd(biomarker_change), median=median(biomarker_change), .groups="drop") |> kbl(digits=2, caption="Biomarker change by treatment arm")
+
+car::leveneTest(biomarker_change~treatment_arm, bio_change_cc, center=median)
+```
+
+#### Welch ANOVA mean comparison
+
+```{r biomarker-welch}
+oneway.test(biomarker_change~treatment_arm, data=bio_change_cc, var.equal=FALSE)
+```
+
+### Games–Howell follow-up
+
+For pairwise follow-up under unequal variances, Games–Howell is more coherent than Tukey HSD because it does not impose a common variance.
+
+#### Games–Howell pairwise comparisons
+
+```{r biomarker-games-howell}
+rstatix::games_howell_test(bio_change_cc, biomarker_change~treatment_arm) |>
+          dplyr::select(group1, group2, estimate, conf.low, conf.high, p.adj) |>
+          kbl(digits=3, caption="Games–Howell pairwise comparisons for biomarker change")
+```
+
+This chapter uses **Welch ANOVA** to compare mean biomarker change across treatment groups.
+Later, a more appropriate model adjusts for **baseline biomarker** and includes a **baseline-by-treatment interaction**, because the treatment effect depends on the baseline biomarker level.
+
+## Kruskal–Wallis test for a rank-based comparison across multiple groups
+
+### A deliberately rank-based question
+
+CRP change is **strongly skewed and not approximately normally distributed**. When the goal is to compare the groups using a rank-based method rather than compare arithmetic means, the **Kruskal–Wallis test** is appropriate.
+
+
+#### CRP summaries for a rank-based question
+
+```{r crp-kw-summary}
+crp_change_cc <- dat |> drop_na(crp_change)
+crp_change_cc |> group_by(treatment_arm) |> 
+                 summarise(n=n(), median=median(crp_change), IQR=IQR(crp_change), mean=mean(crp_change), .groups="drop") |>
+                 kbl(digits=2, caption="CRP change by treatment arm")
+```
+
+#### Kruskal–Wallis test and post hoc comparisons
+
+```{r crp-kruskal}
+kruskal.test(crp_change~treatment_arm, data=crp_change_cc)
+
+# Post Hoc Test
+rstatix::dunn_test(crp_change_cc, crp_change~treatment_arm, p.adjust.method="holm") |>
+        dplyr::select(group1, group2, statistic, p, p.adj) |> 
+        kbl(digits=4, caption="Dunn pairwise comparisons with Holm adjustment")
+```
+
+The Kruskal–Wallis test first assesses whether CRP change differs across the treatment groups using ranks. If the global test is significant, Dunn's test identifies which pairs of groups differ, with Holm adjustment for multiple comparisons.
+
+This rank-based analysis is useful because CRP change is strongly skewed. However, it is not the preferred model for the main CRP treatment effect. Later, CRP will be modeled on the log scale with adjustment for baseline CRP.
+The treatment effect is reported as a ratio of adjusted geometric means by exponentiating the treatment coefficient from the log-scale model.
+
+## Two-factor ANOVA and interactions
+
+With two categorical factors, a factorial model can represent both main effects and their interaction:
+
+\[
+Y=\mu+A_i+B_j+(AB)_{ij}+\varepsilon.
+\]
+
+The interaction asks whether the effect of one factor depends on the level of the other. When an interaction is scientifically or statistically important, marginal main effects should be interpreted cautiously.
+
+### Factorial model with interaction
+
+A factorial model can test whether the **effect of treatment on SBP change differs by sex**:
+
+```{r factorial-anova}
+sbp_factorial <- lm(sbp_change~treatment_arm*sex_at_birth, data=sbp_cc)
+car::linearHypothesis(sbp_factorial, c("treatment_armDrug_A:sex_at_birthMale=0", "treatment_armDrug_B:sex_at_birthMale=0"))
+```
+
+The joint interaction test gives \(F=1.5\) and \(p=0.23\). There is therefore no strong evidence that the effect of treatment on SBP change differs by sex at birth.
+
+#### Interaction visualization
+
+```{r factorial-interaction-plot, fig.cap="Mean SBP change by treatment arm and sex at birth."}
+interaction_means <- sbp_cc |>
+                    group_by(treatment_arm, sex_at_birth) |>
+                    summarise(mean=mean(sbp_change), se=sd(sbp_change)/sqrt(n()), .groups="drop")
+
+ggplot(interaction_means, aes(treatment_arm, mean, colour=sex_at_birth, group=sex_at_birth)) +
+  geom_line(linewidth=.9) +
+  geom_point(size=2.6) +
+  geom_errorbar(aes(ymin=mean-1.96*se, ymax=mean+1.96*se), width=.08) +
+  labs(x=NULL, y="Mean SBP change (mmHg)", colour="Sex at birth")
+```
+
+Parallel lines suggest that treatment has a **similar effect in females and males**. Here, the lines cross, suggesting possible differences by sex, but the interaction test is not significant (\(p=0.23\)). Therefore, there is **no clear evidence that the treatment effect differs by sex**.
+
+### Additive factorial model
+If the interaction is not scientifically important and the data do not support appreciable effect modification, an additive model is easier to interpret.
+
+#### Two-factor models
+The linear-model syntax generalizes directly:
+
+```{r factorial-additive}
+sbp_additive <- lm(sbp_change~treatment_arm+sex_at_birth, data=sbp_cc);
+car::Anova(sbp_additive, type=2)
+```
+
+#### Three-factor model syntax
+
+```{r three-factor-syntax, eval=FALSE}
+lm(outcome ~ treatment_arm * sex_at_birth * baseline_severity, data=dat)
+```
+
+A full three-factor interaction model can consume many degrees of freedom and produce difficult-to-interpret estimates. It should be fitted because a three-way effect-modification question is scientifically motivated, not because three categorical columns happen to be present.
+
+## Unbalanced designs
+
+Missing data can make group sizes unequal. When this happens, **some ANOVA methods can give different results depending on the order** in which treatment, sex, or other model terms are entered.
+
+To avoid relying on term order, start with the scientific question and test that effect directly, such as the overall treatment effect or the treatment-by-sex interaction.
+**Define the hypothesis first, then choose the model that matches it.**
+

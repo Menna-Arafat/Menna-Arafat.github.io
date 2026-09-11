@@ -1,0 +1,134 @@
+# Linear regression and diagnostics
+
+## Linear-model framework
+
+Linear regression provides a common language for simple regression, multiple regression, ANOVA, ANCOVA, and interactions. The word *linear* refers to linearity in the **coefficients**, not necessarily a straight-line relationship in the raw predictor. A model containing \(x^2\), \(\log x\), or a spline basis remains a linear regression model if the coefficients enter linearly.
+
+For observation \(i\), a multiple linear regression model is
+
+\[
+Y_i=\beta_0+\beta_1X_{i1}+\cdots+\beta_qX_{iq}+\varepsilon_i,
+\]
+
+where \(Y_i\) is the outcome, \(X_{i1},\ldots,X_{iq}\) are predictors, the \(\beta\)'s are regression coefficients, and \(\varepsilon_i\) is the unexplained error.
+
+Least squares chooses the coefficients that minimize the **sum of squared errors**:
+
+\[
+\text{SSE}=\sum_i(Y_i-\hat Y_i)^2.
+\]
+
+The total variation in the outcome is
+
+\[
+\text{SST}=\text{SSR}+\text{SSE},
+\]
+
+where:
+
+- **SST** = total variation;
+- **SSR** = variation explained by the model;
+- **SSE** = unexplained variation.
+
+Therefore,
+
+\[
+R^2=\frac{\text{SSR}}{\text{SST}},
+\]
+
+which is the proportion of outcome variation explained by the model.
+Adjusted \(R^2\) also accounts for the number of predictors and therefore discourages adding variables that contribute little.
+
+
+#### Simple linear regression model
+
+```{r simple-sbp-model}
+sbp_simple <- lm(sbp_week12_mmHg~sbp_baseline_mmHg, data=dat)
+
+broom::tidy(sbp_simple, conf.int=TRUE) |>
+       kbl(digits=3, caption="Simple regression of week-12 SBP on baseline SBP")
+
+summary(sbp_simple)$r.squared
+```
+
+### Visualization
+
+```{r simple-sbp-plot, fig.cap="Week-12 SBP versus baseline SBP with the simple regression line."}
+ggplot(dat, aes(sbp_baseline_mmHg, sbp_week12_mmHg)) + 
+  geom_point(alpha=.42, na.rm=TRUE) + 
+  geom_smooth(method="lm", se=TRUE, na.rm=TRUE) +
+  labs(x="Baseline SBP (mmHg)", y="Week-12 SBP (mmHg)")
+```
+
+The slope is the expected difference in week-12 SBP associated with a 1-mmHg higher baseline SBP. In this descriptive model it is not a causal effect of baseline SBP.
+
+## Multiple linear regression
+
+### Prespecified adjustment set
+
+A treatment-adjusted SBP model can include prespecified baseline covariates. The following model uses treatment, age, and BMI in addition to baseline SBP; all are measured before or at randomization.
+
+#### Multiple linear regression specification
+
+```{r multiple-sbp-model}
+sbp_multi_dat <- dat |> drop_na(sbp_week12_mmHg, sbp_baseline_mmHg, treatment_arm, age_years, bmi_kg_m2)
+
+sbp_multi <- lm(sbp_week12_mmHg~sbp_baseline_mmHg+treatment_arm+age_years+bmi_kg_m2, data=sbp_multi_dat)
+
+tibble(R2=summary(sbp_multi)$r.squared, adjusted_R2=summary(sbp_multi)$adj.r.squared) |> kbl(digits=3)
+
+broom::tidy(sbp_multi, conf.int=TRUE) |>
+       kbl(digits=3, caption="Multiple linear regression for week-12 SBP")
+
+```
+
+A treatment coefficient is the **mean difference between treatment groups after accounting for the other variables in the model**.
+
+If the model includes a **treatment interaction**, the treatment effect depends on the interacting variable and should not be interpreted as one overall treatment effect.
+
+
+### Multicollinearity
+
+Variance inflation factor (VIF) measures how much collinearity with other predictors increases the variance of a regression coefficient. Values above 5 may indicate problematic collinearity, while values above 10 are often considered serious. These are guidelines, not absolute cutoffs.
+
+#### Collinearity assessment
+
+```{r multiple-sbp-vif}
+car::vif(sbp_multi)
+```
+
+## Model assumptions and diagnostics
+
+Linear regression assumes that the model describes the outcome appropriately and that the residuals behave reasonably.
+
+The main checks are:
+
+- **Linearity:** residuals should not show a clear curved pattern.
+- **Constant variance:** residual spread should be roughly similar across fitted values.
+- **Normality:** the residual Q–Q plot should not show major departures from normality.
+- **Influential observations:** no single observation should strongly affect the fitted model.
+- **Independence:** observations should not be correlated unless that dependence is modeled.
+
+### Residual diagnostics
+
+```{r multiple-sbp-diagnostics, fig.width=9, fig.height=3.3, fig.cap="Residual-versus-fitted, Q–Q, and Cook's-distance diagnostics for the multiple SBP model."}
+par(mfrow=c(1,3)); plot(sbp_multi,which=c(1,2,4)); par(mfrow=c(1,1))
+```
+
+### Test for unequal residual variance
+
+```{r multiple-sbp-bp}
+lmtest::bptest(sbp_multi)
+```
+
+A small Breusch–Pagan p-value suggests that the residual variance is not constant.
+
+### Robust standard errors
+
+If the mean model is appropriate but the residual variance is unequal, **HC3 robust standard errors** can provide more reliable confidence intervals and p-values.
+
+```{r multiple-sbp-robust}
+robust_lm_tidy(sbp_multi) |> 
+  kbl(digits=3,caption="HC3-robust coefficient inference for the SBP model")
+```
+

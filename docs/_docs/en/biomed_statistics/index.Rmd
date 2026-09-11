@@ -1,0 +1,48 @@
+---
+title: "ALL of Statistics"
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+source("R/setup.R")
+options(width=120)
+```
+
+# Preface {-}
+
+## Course scope
+
+This course covers exploratory data analysis, sampling distributions and resampling, two-group inference, categorical methods, ANOVA/MANOVA, correlation, linear regression, logistic regression, count models, and an integrated biomedical assignment. 
+
+
+## Learning objectives
+
+By the end of the course, you should be able to:
+
+1. distinguish variable types and choose defensible descriptive summaries;
+2. separate a data distribution from a sampling distribution;
+3. explain standard errors, confidence intervals, bootstrap resampling, and permutation tests;
+4. select and interpret independent, paired, parametric, rank-based, and categorical tests;
+5. fit and diagnose one-way and factorial ANOVA models, MANOVA, and correlation analyses;
+6. fit linear, logistic, and count regression models and interpret coefficients on the correct scale;
+7. use baseline-adjusted models appropriately for baseline/follow-up trial outcomes;
+8. report estimates, confidence intervals, assumptions, and limitations without treating a p-value as a verdict.
+
+
+## Analytical principles used throughout
+
+::: {.principle}
+**Estimate first.** State the estimand, report its point estimate and uncertainty, then use a hypothesis test as one component of the evidence rather than as the sole conclusion. Confidence intervals and p-values have precise repeated-sampling meanings and should not be translated into statements about the probability that a null hypothesis is true [@wasserstein2016; @greenland2016].
+:::
+
+::: {.principle}
+**Design determines dependence.** Independent groups, paired observations, clustered observations, repeated measures, and stratified designs require different analyses because the observational units are not interchangeable.
+:::
+
+::: {.principle}
+**Assumptions belong to models, not labels.** For t-tests, ANOVA, and regression, inspect the distribution and structure of the **errors/residuals** and the consequences of departures from assumptions. A significant Shapiro-Wilk test alone is not a reason to replace a mean-based question by a rank-based question.
+:::
+
+::: {.note}
+**Data used in this edition.** The active teaching sheet contains 360 synthetic participants (120 per randomized arm). To download the data visit this link:
+:::

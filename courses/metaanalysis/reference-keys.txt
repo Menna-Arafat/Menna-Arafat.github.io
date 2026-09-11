@@ -1,0 +1,10 @@
+introduction-to-meta-analysis
+effect-sizes
+inverse-variance-weighting
+simple-inverse-variance-example
+fixed-effect-and-random-effects-models
+fixed-effect-model
+random-effects-model
+heterogeneity
+forest-plots
+interpretation

@@ -1,0 +1,285 @@
+# Logistic and count regression
+
+Binary and count outcomes require regression models that match the outcome type. **Logistic regression** is used for binary outcomes, such as response, disease status, or event occurrence, whereas **Poisson or negative binomial regression** is used for count outcomes, such as numbers of adverse events, hospital visits, or infections.
+
+
+| Outcome | Model | Main effect measure |
+|---|---|---|
+| Binary | Logistic regression | Odds ratio |
+| Count | Poisson regression | Count ratio |
+| Overdispersed count | Negative binomial regression | Count ratio |
+
+# Logistic regression for a binary outcome
+
+For a binary outcome, let
+
+\[
+\pi_i=P(Y_i=1)
+\]
+
+be the probability that participant \(i\) experiences the outcome.
+
+Logistic regression uses a linear predictor
+
+\[
+f_i=\beta_0+\beta_1X_{i1}+\beta_2X_{i2}+\cdots+\beta_qX_{iq},
+\]
+
+and converts it to a probability through the logistic function:
+
+\[
+\pi_i=\frac{e^{f_i}}{1+e^{f_i}}.
+\]
+
+Substituting the linear predictor gives the logistic regression model:
+
+\[
+\pi_i=
+\frac{
+\exp(\beta_0+\beta_1X_{i1}+\cdots+\beta_qX_{iq})
+}{
+1+\exp(\beta_0+\beta_1X_{i1}+\cdots+\beta_qX_{iq})
+}.
+\]
+
+This transformation ensures that predicted probabilities remain between 0 and 1.
+
+The same model can be written in terms of the **log odds**:
+
+\[
+\log\left(\frac{\pi_i}{1-\pi_i}\right)
+=
+\beta_0+\beta_1X_{i1}+\cdots+\beta_qX_{iq}.
+\]
+
+For predictor \(X_j\), exponentiating its coefficient gives the **odds ratio**:
+
+\[
+OR=e^{\beta_j}.
+\]
+
+Thus, \(e^{\beta_j}\) is the multiplicative change in the odds associated with a one-unit increase in \(X_j\), holding the other predictors constant.
+
+## Fit the logistic model
+
+Clinical response at 12 weeks is modeled as a function of treatment and prespecified baseline covariates: age, baseline severity, and baseline biomarker. Only variables measured before randomization are included, because post-randomization variables such as adherence may be influenced by treatment and should not be treated as ordinary baseline adjustment variables.
+
+```{r logistic-data}
+logit_dat <- dat |>
+  dplyr::select(clinical_response_12w,treatment_arm,age_years,
+                baseline_severity,biomarker_baseline_ng_mL) |>
+  drop_na() |>
+  mutate(age10=(age_years-mean(age_years))/10,
+         biomarker50=(biomarker_baseline_ng_mL-mean(biomarker_baseline_ng_mL))/50)
+
+logit_linear <- glm(
+  clinical_response_12w~treatment_arm+age10+baseline_severity+biomarker50,
+  family=binomial,data=logit_dat
+)
+```
+
+Age is expressed per **10 years** and baseline biomarker per **50 ng/mL** to make the coefficients easier to interpret.
+
+## Automated check of functional form
+
+Continuous predictors do **not** need to be normally distributed for logistic regression. The relevant question is whether their relationship with the **log odds of the outcome** is adequately represented by a straight line.
+
+The following teaching rule compares the linear model with a more flexible spline model.
+
+```{r logistic-nonlinearity}
+
+logit_linear <- glm(
+  clinical_response_12w~treatment_arm+age10+baseline_severity+biomarker50,
+  family=binomial,data=logit_dat
+)
+
+logit_spline <- glm(
+  clinical_response_12w~treatment_arm+ splines::ns(age_years,3)+baseline_severity+ splines::ns(biomarker_baseline_ng_mL,3),
+  family=binomial,data=logit_dat
+)
+
+# Model comparison
+logit_form <- anova(logit_linear,logit_spline,test="LRT")
+logit_form_p <- logit_form[["Pr(>Chi)"]][2]
+
+if(logit_form_p<.05){
+  logit_fit <- logit_spline
+  logit_spec <- "Spline model"
+} else {
+  logit_fit <- logit_linear
+  logit_spec <- "Linear model"
+}
+
+tibble(
+  functional_form_p=logit_form_p,
+  selected_model=logit_spec
+) |> kbl(digits=4,caption="Automated logistic functional-form selection")
+```
+
+A small likelihood-ratio p-value favors the more flexible spline model in this teaching workflow. In a confirmatory analysis, the functional form should ideally be specified in advance rather than selected from the same data used for inference.
+
+# Model comparison using a likelihood-ratio test
+
+To assess whether treatment adds information to the logistic regression model, compare the full model, which includes treatment, with a reduced model containing the same baseline covariates but excluding treatment.
+
+```{r logistic-lrt}
+logit_no_trt <- update(logit_fit,.~.-treatment_arm)
+anova(logit_no_trt,logit_fit,test="LRT")
+```
+
+The likelihood-ratio test evaluates whether the treatment terms improve model fit.
+
+\[
+H_0:\text{treatment does not improve the model}.
+\]
+
+A small p-value indicates that including treatment provides additional information about clinical response after adjustment for the baseline covariates.
+
+## Logistic regression odds ratios for treatment comparisons
+
+Logistic-regression coefficients are estimated on the **log-odds scale**. Exponentiating the treatment coefficients gives adjusted odds ratios comparing each active treatment with Control while accounting for the other variables in the model.
+
+```{r logistic-or}
+broom::tidy(logit_fit,conf.int=TRUE,exponentiate=TRUE) |>
+      filter(grepl("^treatment_arm",term)) |>
+      kbl(digits=3,caption="Adjusted treatment odds ratios for clinical response")
+```
+
+An odds ratio of **1** indicates equal odds of response. Values above 1 indicate higher odds and values below 1 indicate lower odds. For example, an odds ratio of **2** means twice the odds of response, not twice the probability.
+
+## Regression-standardized response probabilities
+
+Odds ratios are useful for inference, but probabilities are often easier to interpret clinically. The fitted model can therefore also be used to estimate an adjusted response probability for each treatment group.
+
+For each treatment arm, the model predicts every participant's response probability as if that participant received that treatment, while keeping the participant's baseline covariates unchanged. The predicted probabilities are then averaged across all participants.
+
+```{r standardized-risk-function}
+std_risk <- function(model,data,arm){
+  nd <- data
+  nd$treatment_arm <- factor(arm,levels=levels(data$treatment_arm))
+  X <- model.matrix(delete.response(terms(model)),nd)
+  eta <- drop(X%*%coef(model));
+  p <- plogis(eta)
+  grad <- colMeans(X*as.numeric(p*(1-p)))
+  se <- sqrt(drop(t(grad)%*%vcov(model)%*%grad))
+
+  tibble(treatment_arm=arm, probability=mean(p), lower=max(0,mean(p)-qnorm(.975)*se),upper=min(1,mean(p)+qnorm(.975)*se))
+}
+
+std_prob <- bind_rows(
+  lapply(levels(logit_dat$treatment_arm), \(a) std_risk(logit_fit,logit_dat,a))
+)
+
+kbl(std_prob,digits=3,
+    caption="Adjusted clinical-response probabilities")
+```
+
+The resulting value for each treatment arm is the **average predicted probability of response after accounting for the baseline covariates in the model**.
+
+
+```{r standardized-risk-plot, fig.cap="Adjusted clinical-response probabilities with approximate 95% confidence intervals."}
+ggplot(std_prob,aes(treatment_arm,probability,fill=treatment_arm)) +
+  geom_col(width=.6) +
+  geom_errorbar(aes(ymin=lower,ymax=upper),width=.12) +
+  scale_fill_manual(values=pal,guide="none") +
+  scale_y_continuous(labels=scales::percent,
+                     limits=c(0,max(std_prob$upper)*1.08)) +
+  labs(x=NULL,y="Adjusted probability")
+```
+
+The adjusted probabilities express the model results directly on the **probability scale** and complement the odds ratios.
+
+# Poisson and negative binomial regression for count outcomes
+
+Count outcomes record the **number of events** experienced by each participant. Here, the outcome is the number of adverse events during 12 weeks.
+
+## Poisson regression
+
+Poisson regression models the expected event count:
+
+\[
+Y_i\sim\operatorname{Poisson}(\mu_i),
+\]
+
+\[
+\log(\mu_i)
+=
+\beta_0+\beta_1X_{i1}+\cdots+\beta_qX_{iq}.
+\]
+
+Exponentiating a coefficient gives a **count ratio**:
+
+\[
+\text{Count ratio}=e^\beta.
+\]
+
+A ratio of **1** indicates no difference, **1.5** indicates a 50% higher expected count, and **0.80** indicates a 20% lower expected count.
+
+If participants are observed for different lengths of time, the model should account for exposure time using an offset. Here, all participants have the same 12-week observation period, so no offset is required.
+
+## Fit the Poisson model
+
+```{r count-model-fit}
+count_dat <- dat |>
+  dplyr::select(ae_count_12w,treatment_arm,age_years,sex_at_birth,baseline_severity) |>
+  drop_na() |>
+  mutate(age10=(age_years-mean(age_years))/10)
+
+count_formula <- ae_count_12w~treatment_arm+age10+sex_at_birth+baseline_severity
+
+pois_fit <- glm(count_formula,family=poisson,data=count_dat)
+```
+
+## Automated Poisson or negative binomial selection
+
+Poisson regression assumes that the conditional variance is approximately equal to the conditional mean. When the variance is substantially larger, the data are **overdispersed**, and Poisson standard errors may be too small.
+
+The Pearson dispersion statistic is used here to assess overdispersion.
+
+```{r count-selection}
+pearson_chisq <- sum(residuals(pois_fit,type="pearson")^2)
+df <- df.residual(pois_fit)
+dispersion <- pearson_chisq/df
+p_overdispersion <- pchisq(pearson_chisq,df,lower.tail=FALSE)
+
+if(dispersion>1.5 && p_overdispersion<.05){
+  count_fit <- MASS::glm.nb(count_formula,data=count_dat)
+  count_method <- "Negative binomial regression"
+} else {
+  count_fit <- pois_fit
+  count_method <- "Poisson regression"
+}
+
+tibble(
+  dispersion=dispersion,
+  p_overdispersion=p_overdispersion,
+  selected_model=count_method
+) |> kbl(digits=3,caption="Automated count-model selection")
+```
+
+A dispersion value near **1** is consistent with the Poisson model. In this teaching rule, a dispersion value above **1.5** together with \(p<0.05\) selects the negative binomial model. The value 1.5 is a practical teaching threshold, not a universal cutoff.
+
+## Adjusted count ratios
+
+```{r count-ratios}
+broom::tidy(count_fit,conf.int=TRUE,exponentiate=TRUE) |>
+  filter(term!="(Intercept)") |>
+  kbl(digits=3,caption="Adjusted count ratios")
+```
+
+A treatment count ratio of **1.6** means that the treatment group has an estimated **60% higher expected number of adverse events** than Control over the same observation period, after adjustment for the other variables.
+
+This should not be interpreted as 60% more participants experiencing an adverse event. The **number of events** and **whether any event occurred** are different outcomes.
+
+## Key takeaway
+
+| Question | Approach |
+|---|---|
+| Is the outcome binary? | Logistic regression |
+| Is the outcome a count? | Start with Poisson regression |
+| Is the count substantially overdispersed? | Consider negative binomial regression |
+| Are continuous predictors adequately modeled in logistic regression? | Check their functional form |
+| How are effects reported? | Odds ratios for logistic models; count ratios for count models |
+
+The **outcome determines the model**, while diagnostic checks help determine whether the chosen model needs refinement.
+

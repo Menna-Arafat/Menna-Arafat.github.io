@@ -1,0 +1,30 @@
+variable,description,unit_or_type
+patient_id,Unique participant identifier,ID
+treatment_arm,"Randomized treatment group: Control, Drug_A, Drug_B",categorical
+age_years,Age at baseline,years
+sex_at_birth,Sex recorded at baseline,categorical
+smoking_status,"Never, Former, Current",categorical
+baseline_severity,"Baseline disease severity: Mild, Moderate, Severe",ordinal
+region,Recruitment region,categorical
+bmi_kg_m2,Body mass index,kg/m^2
+sbp_baseline_mmHg,Baseline systolic blood pressure,mmHg
+sbp_week12_mmHg,Week-12 systolic blood pressure,mmHg
+dbp_baseline_mmHg,Baseline diastolic blood pressure,mmHg
+hba1c_pct,Baseline HbA1c,%
+ldl_mg_dL,Baseline LDL cholesterol,mg/dL
+hdl_mg_dL,Baseline HDL cholesterol,mg/dL
+creatinine_mg_dL,Baseline serum creatinine,mg/dL
+egfr_mL_min_1_73m2,Baseline estimated GFR,mL/min/1.73m^2
+crp_baseline_mg_L,Baseline C-reactive protein,mg/L
+crp_week12_mg_L,Week-12 C-reactive protein,mg/L
+biomarker_baseline_ng_mL,Baseline study biomarker,ng/mL
+biomarker_week12_ng_mL,Week-12 study biomarker,ng/mL
+qol_baseline_0_100,Baseline quality-of-life score,0-100
+qol_week12_0_100,Week-12 quality-of-life score,0-100
+adherence_pct,Treatment adherence,%
+clinical_response_12w,Clinical response at week 12 (0/1),binary
+adverse_event_12w,Any adverse event by week 12 (0/1),binary
+ae_count_12w,Number of adverse events by week 12,count
+sampling_weight,Illustrative sampling weight,weight
+time_to_event_90d,Observed follow-up time up to 90 days,days
+event_observed_90d,Event observed by 90 days (0/1),binary

@@ -1,0 +1,23 @@
+/* Chapter content uses the site's typography and navigation. */
+.biomed-chapter pre { max-width: 100%; overflow-x: auto; }
+.biomed-chapter pre code { white-space: pre; }
+.biomed-chapter img { max-width: 100%; height: auto; }
+.biomed-table-scroll { max-width: 100%; overflow-x: auto; margin: 1rem 0; }
+.biomed-chapter .note, .biomed-chapter .warning,
+.biomed-chapter .correction, .biomed-chapter .principle,
+.biomed-chapter .solution { padding: 1rem; margin: 1.25rem 0; border-left: 3px solid currentColor; background: rgba(127,127,127,.08); }
+.biomed-chapter .hero { padding: 1.25rem; border: 1px solid rgba(127,127,127,.3); border-radius: 8px; }
+.biomed-chapter .hero-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+.biomed-chapter .caption { font-size: .9em; }
+.biomed-chapter-nav { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1.5rem 0; margin-top: 2rem; border-top: 1px solid rgba(127,127,127,.3); }
+.biomed-chapter-nav a { max-width: 48%; }
+.biomed-chapter-nav a[rel="next"] { margin-left: auto; text-align: right; }
+.biomed-chapter .sourceCode .co { color: #708090; font-style: italic; }
+.biomed-chapter .sourceCode .st { color: #4070a0; }
+.biomed-chapter .sourceCode .dv, .biomed-chapter .sourceCode .fl { color: #408080; }
+.biomed-chapter .sourceCode .fu, .biomed-chapter .sourceCode .kw { color: #795da3; }
+@media (max-width: 600px) {
+  .biomed-chapter .hero-grid { grid-template-columns: 1fr; }
+  .biomed-chapter-nav { flex-direction: column; }
+  .biomed-chapter-nav a { max-width: 100%; }
+}

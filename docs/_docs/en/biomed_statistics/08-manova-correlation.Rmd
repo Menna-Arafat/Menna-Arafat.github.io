@@ -1,0 +1,109 @@
+# MANOVA for multivariate continuous outcomes
+
+## MANOVA: joint treatment effect across multiple outcomes
+
+MANOVA extends ANOVA to several continuous outcomes analyzed together. Here, it tests whether treatment has an overall effect across SBP change, QoL change, and biomarker change.
+
+```{r manova-data}
+man_dat <- dat |> drop_na(sbp_change,qol_change,biomarker_change)
+
+man_fit <- manova(cbind(sbp_change,qol_change,biomarker_change)~treatment_arm,data=man_dat)
+summary(man_fit,test="Pillai")
+```
+
+A significant MANOVA result indicates that treatment groups differ **across the outcomes jointly**, but it does not identify which outcomes differ. Outcome-specific analyses are therefore used as follow-up tests, with attention to multiple testing.
+
+```{r manova-followup}
+summary.aov(man_fit)
+```
+
+**MANOVA does not replace the need to define primary and secondary outcomes.** In confirmatory studies, the outcome hierarchy and multiple-testing strategy should be specified in advance.
+
+
+
+# Correlation analysis
+
+Correlation measures the strength and direction of association between two continuous variables.
+
+| Method | Measures | Useful when |
+|---|---|---|
+| **Pearson** | linear association | the relationship is approximately linear without influential outliers |
+| **Spearman** | monotonic rank association | data are skewed, contain outliers, or the relationship is not strictly linear |
+
+## Pearson correlation
+
+Pearson's correlation coefficient measures the strength and direction of a **linear relationship**:
+
+\[
+r=\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sqrt{\sum_i(x_i-\bar{x})^2\sum_i(y_i-\bar{y})^2}}.
+\]
+
+It ranges from \(-1\) to \(1\). Values closer to \(-1\) or \(1\) indicate stronger linear association.
+
+```{r pearson-biomarker}
+cor.test(~biomarker_baseline_ng_mL+biomarker_week12_ng_mL,
+         data=dat,method="pearson")
+```
+
+A scatterplot should accompany Pearson correlation to assess the form of the relationship and identify influential observations.
+
+```{r pearson-biomarker-plot, fig.cap="Baseline and week-12 biomarker with a linear fit."}
+ggplot(dat,aes(biomarker_baseline_ng_mL,biomarker_week12_ng_mL,colour=treatment_arm)) +
+  geom_point(alpha=.45,na.rm=TRUE) +
+  geom_smooth(method="lm",se=FALSE,na.rm=TRUE) +
+  scale_colour_manual(values=pal) +
+  labs(x="Baseline biomarker (ng/mL)",y="Week-12 biomarker (ng/mL)",colour="Treatment")
+```
+
+## Spearman rank correlation
+
+Spearman correlation uses the **ranks of the observations** rather than their original values. It measures the strength and direction of a **monotonic relationship** and is useful for skewed data.
+
+Because CRP is strongly right-skewed, Spearman correlation is appropriate for describing the association between baseline and week-12 CRP.
+
+```{r spearman-crp}
+cor.test(~crp_baseline_mg_L+crp_week12_mg_L,
+         data=dat,method="spearman",exact=FALSE)
+```
+
+A strong Pearson or Spearman correlation does not imply that two measurements **agree**, nor does it establish **causation**.
+
+## Correlation matrix
+
+A correlation matrix summarizes associations among several continuous variables. Here, Spearman correlations are used because some variables are skewed.
+
+```{r correlation-matrix}
+cor_vars <- dat |> transmute(
+  Age=age_years,BMI=bmi_kg_m2,`Baseline SBP`=sbp_baseline_mmHg,
+  HbA1c=hba1c_pct,LDL=ldl_mg_dL,HDL=hdl_mg_dL,eGFR=egfr_mL_min_1_73m2,
+  `Baseline CRP`=crp_baseline_mg_L,
+  `Baseline biomarker`=biomarker_baseline_ng_mL,
+  `Baseline QoL`=qol_baseline_0_100)
+
+cm <- cor(cor_vars,use="pairwise.complete.obs",method="spearman")
+round(cm,2)
+```
+
+```{r correlation-heatmap, fig.height=6, fig.cap="Spearman correlation matrix for selected baseline variables."}
+cm_long <- as.data.frame(cm) |>
+  tibble::rownames_to_column("x") |>
+  pivot_longer(-x,names_to="y",values_to="rho")
+
+ggplot(cm_long,aes(x,y,fill=rho)) +
+  geom_tile(colour="white",linewidth=.4) +
+  geom_text(aes(label=sprintf("%.2f",rho)),size=3) +
+  scale_fill_gradient2(low="#B45252",mid="white",high="#3F7F8D",limits=c(-1,1)) +
+  coord_equal() +
+  labs(x=NULL,y=NULL,fill="Spearman ρ") +
+  theme(axis.text.x=element_text(angle=45,hjust=1))
+```
+
+## Correlation is not causation
+
+Correlation shows whether two variables move together, but it does not show that one causes the other.
+
+A strong correlation between baseline and follow-up measurements may indicate that baseline is useful to include in a regression model. However, the treatment effect is estimated by the regression model, not by the correlation coefficient.
+
+
+

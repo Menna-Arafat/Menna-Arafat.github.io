@@ -1,0 +1,346 @@
+# Continuous two-group comparison
+
+Continuous outcomes are commonly compared either between **different groups of participants** or between **linked measurements from the same participants**. These designs require different analyses because they contain different sources of variability.
+
+For independent groups, inference concerns a contrast between populations, such as a difference in mean biomarker change between Control and Drug_A. For paired measurements, inference concerns the distribution of the within-person differences, such as the change in systolic blood pressure from baseline to week 12.
+
+The design and estimand should be specified before examining assumptions. Distributional diagnostics then assess whether a mean-based model is reasonable and, for independent groups, whether a common-variance model is credible.
+
+## Decision framework
+
+| Design | Target | Method | Main consideration |
+|---|---|---|---|
+| independent groups | difference in means | Welch two-sample t-test | unequal variances allowed |
+| independent groups | difference in means | pooled Student t-test | requires a common variance |
+| independent groups | rank-based contrast | Wilcoxon–Mann–Whitney test | rank/distributional estimand |
+| paired measurements | mean within-person difference | paired t-test | normality concerns the paired differences |
+| paired measurements | rank-based paired contrast | Wilcoxon signed-rank test | interpretation depends on the distribution of differences |
+
+Welch's test is generally the safer mean-based procedure for independent groups because it does not require equal variances. The pooled Student test remains useful when a common-variance model is justified.
+
+# Independent two-group example: biomarker change
+
+## Define the estimand
+
+For Control and Drug_A, define biomarker change as
+
+\[
+\Delta B=B_{12}-B_0.
+\]
+
+The target is the difference between the groups in **mean biomarker change**.
+
+## Descriptive statistics
+
+```{r independent-biomarker-data}
+ind_bio <- dat |> filter(treatment_arm %in% c("Control","Drug_A"), !is.na(biomarker_change)) |> droplevels()
+
+ind_sum <- ind_bio |> group_by(treatment_arm) |>
+                      summarise(
+                      n=n(),
+                      mean=mean(biomarker_change), sd=sd(biomarker_change),
+                      median=median(biomarker_change), IQR=IQR(biomarker_change), .groups="drop")
+
+kbl(ind_sum, digits=2, caption="Biomarker change in Control and Drug_A")
+```
+
+The mean and SD summarize the outcome on the scale relevant to mean comparisons. The median and IQR provide additional information about asymmetry and spread.
+
+## Distribution and influential observations
+
+```{r independent-biomarker-boxplot, fig.height=4.2, fig.cap="Distribution of biomarker change in Control and Drug_A."}
+ggplot(ind_bio, aes(treatment_arm, biomarker_change)) +
+  geom_boxplot(width=.55, outlier.shape=NA) +
+  geom_jitter(width=.08, alpha=.30, size=1.3) +
+  labs(x="Treatment group", y="Biomarker change")
+```
+
+The plot shows group location, spread, asymmetry, and individual observations. Large differences in spread are relevant to the pooled Student test, while extreme observations may affect any mean-based analysis.
+
+## Normality assessment
+
+Normality is assessed separately within each independent group.
+
+### Q–Q plots
+
+```{r independent-biomarker-qq, fig.height=4.0, fig.cap="Q–Q plots of biomarker change by treatment group."}
+ggplot(ind_bio, aes(sample=biomarker_change)) +
+  stat_qq(alpha=.45) + 
+  stat_qq_line() + 
+  facet_wrap(~treatment_arm) +
+  labs(x="Theoretical normal quantiles", y="Observed quantiles")
+```
+
+Approximate alignment with the reference line supports a normal model. Systematic curvature suggests skewness, while marked tail departures may indicate heavy tails or influential observations.
+
+### Shapiro–Wilk tests
+
+```{r independent-biomarker-shapiro}
+shapiro_bio <- ind_bio |> group_by(treatment_arm) |> group_modify(~{
+  z <- shapiro.test(.x$biomarker_change)
+  tibble(W=unname(z$statistic), p_value=z$p.value)
+})
+
+kbl(shapiro_bio, digits=3, caption="Shapiro–Wilk tests for biomarker change")
+```
+
+The Shapiro–Wilk test evaluates
+
+\[
+H_0:\text{the observations are compatible with a normal distribution}.
+\]
+
+A small Shapiro–Wilk p-value indicates departure from normality, but test choice should not depend on it alone. With a large sample and only mild Q–Q plot deviations, a t-test is usually still appropriate.
+For independent groups, use **Welch's t-test** if variances differ.
+If non-normality is substantial, especially with strong skewness or influential outliers, consider the **Wilcoxon–Mann–Whitney test**. For paired data, assess the **paired differences** and use either a paired t-test or Wilcoxon signed-rank test accordingly.
+
+## Equality of variance
+
+A median-centered Levene test, often called the **Brown–Forsythe test**, assesses whether the group spreads differ.
+
+```{r independent-biomarker-variance}
+lev_bio <- car::leveneTest(biomarker_change~treatment_arm, data=ind_bio, center=median)
+lev_bio
+```
+
+The null hypothesis is
+
+\[
+H_0:\sigma_1^2=\sigma_2^2.
+\]
+
+Evidence of unequal variances argues against the pooled Student test. Welch's test does not require equal population variances.
+
+## Automated test selection
+
+The following block combines the diagnostic results and performs one selected analysis.
+
+```{r independent-test-selection}
+normal_ok <- all(shapiro_bio$p_value>=.05)
+levene_p <- as.numeric(lev_bio[1,"Pr(>F)"])
+equal_var <- levene_p>=.05
+
+if(normal_ok && equal_var){
+  selected_test <- "Pooled Student t-test"
+  fit <- t.test(biomarker_change~treatment_arm, data=ind_bio, var.equal=TRUE)
+  reason <- "Normality acceptable; no evidence of unequal variances."
+} else if(normal_ok){
+  selected_test <- "Welch two-sample t-test"
+  fit <- t.test(biomarker_change~treatment_arm, data=ind_bio, var.equal=FALSE)
+  reason <- "Normality acceptable; variances differ."
+} else {
+  selected_test <- "Wilcoxon–Mann–Whitney rank-sum test"
+  fit <- wilcox.test(biomarker_change~treatment_arm, data=ind_bio, exact=FALSE, conf.int=TRUE)
+  reason <- "Evidence of departure from normality; rank-based analysis selected."
+}
+
+tibble(selected_test, reason) |> kbl(caption="Automated test selection")
+broom::tidy(fit) |> kbl(digits=3, caption="Selected independent-group analysis")
+```
+
+The operational rule is
+
+| Normality | Variance assessment | Selected analysis |
+|---|---|---|
+| acceptable | similar | pooled Student t-test |
+| acceptable | unequal | Welch t-test |
+| substantial departure | either | Wilcoxon–Mann–Whitney test |
+
+This is the general rule, however the threshold \(p=0.05\) should not be interpreted as a universal boundary. Q–Q plots, influential observations, sample size, and the intended estimand remain relevant.
+
+## Mean-based tests
+
+For the pooled Student test,
+
+\[
+t=
+\frac{\bar y_1-\bar y_2}
+{s_p\sqrt{1/n_1+1/n_2}},
+\]
+
+where \(s_p\) is the pooled estimate of the common SD.
+
+Welch's test instead uses
+
+\[
+SE(\bar y_1-\bar y_2)
+=
+\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}},
+\]
+
+and estimates the degrees of freedom using the Welch–Satterthwaite approximation.
+
+Both procedures estimate a **difference in means**. Their distinction concerns how uncertainty is estimated when group variances differ.
+
+## Wilcoxon–Mann–Whitney test
+
+The Wilcoxon rank-sum, or Mann–Whitney, procedure replaces the original measurements by their ranks and evaluates the relative ordering of observations from the two groups.
+
+If \(R_1\) is the rank sum for group 1,
+
+\[
+U_1=R_1-\frac{n_1(n_1+1)}{2}.
+\]
+
+It should not automatically be described as a test of equal medians. A simple median or location-shift interpretation requires additional distributional conditions.
+
+# Paired t-test and Wilcoxon signed-rank test
+
+## Define the paired difference
+
+For Drug_A participants, SBP is measured at baseline and again at week 12 in the **same participant**. The paired difference for participant \(i\) is
+
+\[
+d_i=\text{SBP}_{i,\text{week 12}}-\text{SBP}_{i,\text{baseline}}.
+\]
+
+Thus, \(d_i\) is the participant's SBP change. A negative value indicates a reduction in SBP.
+
+```{r paired-sbp-data}
+pair_sbp <- dat |> filter(treatment_arm=="Drug_A") |>
+                  drop_na(sbp_baseline_mmHg, sbp_week12_mmHg) |>
+                  mutate(sbp_change=sbp_week12_mmHg-sbp_baseline_mmHg)
+
+pair_sbp |> summarise(
+            n=n(),
+            mean_baseline=mean(sbp_baseline_mmHg), mean_week12=mean(sbp_week12_mmHg),
+            mean_change=mean(sbp_change), sd_change=sd(sbp_change), median_change=median(sbp_change)
+          ) |> kbl(digits=2, caption="Drug_A paired SBP summary")
+```
+
+The paired analysis is based on `sbp_change`. The baseline and follow-up measurements are not treated as two independent samples.
+
+## Participant-level changes
+
+```{r paired-sbp-lines, fig.height=4.5, fig.cap="Participant-level SBP from baseline to week 12 in Drug_A."}
+pair_long <- pair_sbp |>
+            dplyr::select(patient_id, sbp_baseline_mmHg, sbp_week12_mmHg) |>
+            tidyr::pivot_longer(-patient_id, names_to="time", values_to="sbp") |>
+            mutate(time=factor(time, levels=c("sbp_baseline_mmHg","sbp_week12_mmHg"),
+                               labels=c("Baseline","Week 12")))
+
+ggplot(pair_long, aes(time, sbp, group=patient_id)) +
+    geom_line(alpha=.18) + 
+    geom_point(alpha=.35, size=1.2) +
+    labs(x=NULL, y="SBP (mmHg)")
+```
+
+The paired-line plot shows both the direction and magnitude of participant-level changes.
+
+## Distribution of paired differences
+
+```{r paired-sbp-boxplot, fig.height=3.8, fig.cap="Distribution of within-participant SBP changes in Drug_A."}
+ggplot(pair_sbp, aes(x="", y=sbp_change)) +
+  geom_boxplot(width=.25, outlier.shape=NA) +
+  geom_jitter(width=.08, alpha=.30, size=1.3) +
+  labs(x=NULL, y="SBP change (mmHg)")
+```
+
+For paired data, analyze the **change within each participant**. Here, `sbp_change` is the difference between week-12 and baseline SBP. The boxplot is therefore used to check whether these individual changes are symmetric and whether any participants have unusually large increases or decreases.
+
+## Normality of paired differences
+
+### Q–Q plot
+
+```{r paired-sbp-qq, fig.height=4.0, fig.cap="Q–Q plot of within-participant SBP changes in Drug_A."}
+ggplot(pair_sbp, aes(sample=sbp_change)) +
+  stat_qq(alpha=.5) +
+  stat_qq_line() +
+  labs(x="Theoretical normal quantiles", y="Observed change quantiles")
+```
+
+### Shapiro–Wilk test
+
+```{r paired-sbp-shapiro}
+shapiro_pair <- shapiro.test(pair_sbp$sbp_change)
+
+tibble(W=unname(shapiro_pair$statistic), p_value=shapiro_pair$p.value) |>
+  kbl(digits=3, caption="Shapiro–Wilk test for paired SBP differences")
+```
+
+The relevant normality assumption concerns the distribution of the **within-participant SBP changes**, \(d_i\).
+Equal baseline and week-12 variances are not required, so Levene's test is not used for the paired t-test.
+
+## Automated paired test selection
+
+```{r paired-test-selection}
+normal_diff <- shapiro_pair$p.value>=.05
+
+if(normal_diff){
+  selected_test <- "Paired t-test"
+  fit <- t.test(pair_sbp$sbp_week12_mmHg, pair_sbp$sbp_baseline_mmHg, paired=TRUE)
+  reason <- "Paired differences are reasonably compatible with normality."
+} else {
+  selected_test <- "Wilcoxon signed-rank test"
+  fit <- wilcox.test(pair_sbp$sbp_week12_mmHg, pair_sbp$sbp_baseline_mmHg,
+                     paired=TRUE, exact=FALSE, conf.int=TRUE)
+  reason <- "Paired differences show evidence of departure from normality."
+}
+
+tibble(selected_test, reason) |> kbl(caption="Automated paired-test selection")
+broom::tidy(fit) |> kbl(digits=3, caption="Selected paired analysis")
+```
+
+The operational rule is
+
+| Distribution of paired differences | Selected analysis |
+|---|---|
+| approximately normal | paired t-test |
+| substantial departure from normality | Wilcoxon signed-rank test |
+
+For the paired t-test,
+
+\[
+t=\frac{\bar d}{s_d/\sqrt n},
+\]
+
+where \(\bar d\) is the mean within-person change and \(s_d\) is the SD of the paired differences. The estimate and confidence interval are expressed directly in mmHg.
+
+The Wilcoxon signed-rank test compares paired differences using their ranks. It is an alternative to the paired t-test when the differences are not well suited to a mean-based analysis.
+
+## Reporting the selected analysis
+
+Report the **effect estimate, 95% confidence interval, and p-value**, together with the descriptive statistics that give the result context.
+
+For independent groups, state the test used and the assumption that determined the choice. For paired data, report the **average within-participant change** and the corresponding paired-test result.
+
+
+# Multiple testing
+
+When several hypotheses are tested, each test creates another opportunity to obtain a small p-value by chance. Multiplicity adjustment accounts for this when the hypotheses belong to the same planned family of comparisons.
+
+The following example compares Drug_A with Control for three continuous outcomes using Welch's two-sample t-test.
+
+```{r cat-multiplicity}
+outcomes <- c(SBP="sbp_change",
+              Biomarker="biomarker_change",
+              QoL="qol_change")
+
+p_raw <- sapply(outcomes,\(v){
+  d <- dat |> filter(treatment_arm %in% c("Control","Drug_A")) |> drop_na(all_of(v))
+  t.test(d[[v]][d$treatment_arm=="Drug_A"],
+         d[[v]][d$treatment_arm=="Control"],
+         var.equal=FALSE)$p.value
+})
+
+tibble(
+  outcome=names(outcomes),
+  p_raw=p_raw,
+  p_Holm=p.adjust(p_raw,method="holm"),
+  p_BH=p.adjust(p_raw,method="BH")
+) |> kbl(digits=4,
+         caption="Raw and multiplicity-adjusted p-values for three outcomes")
+```
+
+## Holm and Benjamini–Hochberg adjustments
+
+**Holm adjustment** controls the **family-wise error rate**, the probability of making at least one false-positive conclusion within the defined family of tests. It is appropriate when strong control of false-positive claims is important.
+
+**Benjamini–Hochberg adjustment** controls the **false discovery rate**, the expected proportion of false positives among the results declared significant. It is commonly used when a larger set of hypotheses is examined.
+
+| Goal | Adjustment |
+|---|---|
+| strongly limit the chance of any false-positive claim | **Holm** |
+| control the proportion of false discoveries among significant results | **Benjamini–Hochberg** |
+
+Multiplicity adjustment changes the p-values used for inference; it does **not** change the observed effect estimates.

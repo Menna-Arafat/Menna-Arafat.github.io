@@ -1,0 +1,285 @@
+---
+layout: article
+title: 23 Poisson and negative binomial regression for count outcomes
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="poisson-and-negative-binomial-regression-for-count-outcomes" class="section level1 hasAnchor" number="23">
+
+<p>Count outcomes record the <strong>number of events</strong> experienced by each participant. Here, the outcome is the number of adverse events during 12 weeks.</p>
+<div class="section level2 hasAnchor" number="23.1">
+<h2 id="poisson-regression">
+<span class="header-section-number">23.1</span> Poisson regression</h2>
+<p>Poisson regression models the expected event count:</p>
+<p><span class="math display">\[
+Y_i\sim\operatorname{Poisson}(\mu_i),
+\]</span></p>
+<p><span class="math display">\[
+\log(\mu_i)
+=
+\beta_0+\beta_1X_{i1}+\cdots+\beta_qX_{iq}.
+\]</span></p>
+<p>Exponentiating a coefficient gives a <strong>count ratio</strong>:</p>
+<p><span class="math display">\[
+\text{Count ratio}=e^\beta.
+\]</span></p>
+<p>A ratio of <strong>1</strong> indicates no difference, <strong>1.5</strong> indicates a 50% higher expected count, and <strong>0.80</strong> indicates a 20% lower expected count.</p>
+<p>If participants are observed for different lengths of time, the model should account for exposure time using an offset. Here, all participants have the same 12-week observation period, so no offset is required.</p>
+</div>
+<div class="section level2 hasAnchor" number="23.2">
+<h2 id="fit-the-poisson-model">
+<span class="header-section-number">23.2</span> Fit the Poisson model</h2>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-1" tabindex="-1"></a>count_dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span></span>
+<span id="cb103-2"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(ae_count_12w,treatment_arm,age_years,sex_at_birth,baseline_severity) <span class="sc">|&gt;</span></span>
+<span id="cb103-3"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-3" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb103-4"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age10=</span>(age_years<span class="sc">-</span><span class="fu">mean</span>(age_years))<span class="sc">/</span><span class="dv">10</span>)</span>
+<span id="cb103-5"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-5" tabindex="-1"></a></span>
+<span id="cb103-6"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-6" tabindex="-1"></a>count_formula <span class="ot">&lt;-</span> ae_count_12w<span class="sc">~</span>treatment_arm<span class="sc">+</span>age10<span class="sc">+</span>sex_at_birth<span class="sc">+</span>baseline_severity</span>
+<span id="cb103-7"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-7" tabindex="-1"></a></span>
+<span id="cb103-8"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb103-8" tabindex="-1"></a>pois_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(count_formula,<span class="at">family=</span>poisson,<span class="at">data=</span>count_dat)</span></code></pre></div>
+</div>
+<div class="section level2 hasAnchor" number="23.3">
+<h2 id="automated-poisson-or-negative-binomial-selection">
+<span class="header-section-number">23.3</span> Automated Poisson or negative binomial selection</h2>
+<p>Poisson regression assumes that the conditional variance is approximately equal to the conditional mean. When the variance is substantially larger, the data are <strong>overdispersed</strong>, and Poisson standard errors may be too small.</p>
+<p>The Pearson dispersion statistic is used here to assess overdispersion.</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-1" tabindex="-1"></a>pearson_chisq <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">residuals</span>(pois_fit,<span class="at">type=</span><span class="st">"pearson"</span>)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb104-2"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">df.residual</span>(pois_fit)</span>
+<span id="cb104-3"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-3" tabindex="-1"></a>dispersion <span class="ot">&lt;-</span> pearson_chisq<span class="sc">/</span>df</span>
+<span id="cb104-4"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-4" tabindex="-1"></a>p_overdispersion <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(pearson_chisq,df,<span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
+<span id="cb104-5"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-5" tabindex="-1"></a></span>
+<span id="cb104-6"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-6" tabindex="-1"></a><span class="cf">if</span>(dispersion<span class="sc">&gt;</span><span class="fl">1.5</span> <span class="sc">&amp;&amp;</span> p_overdispersion<span class="sc">&lt;</span>.<span class="dv">05</span>){</span>
+<span id="cb104-7"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-7" tabindex="-1"></a>  count_fit <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">glm.nb</span>(count_formula,<span class="at">data=</span>count_dat)</span>
+<span id="cb104-8"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-8" tabindex="-1"></a>  count_method <span class="ot">&lt;-</span> <span class="st">"Negative binomial regression"</span></span>
+<span id="cb104-9"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-9" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb104-10"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-10" tabindex="-1"></a>  count_fit <span class="ot">&lt;-</span> pois_fit</span>
+<span id="cb104-11"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-11" tabindex="-1"></a>  count_method <span class="ot">&lt;-</span> <span class="st">"Poisson regression"</span></span>
+<span id="cb104-12"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-12" tabindex="-1"></a>}</span>
+<span id="cb104-13"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-13" tabindex="-1"></a></span>
+<span id="cb104-14"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-14" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb104-15"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-15" tabindex="-1"></a>  <span class="at">dispersion=</span>dispersion,</span>
+<span id="cb104-16"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-16" tabindex="-1"></a>  <span class="at">p_overdispersion=</span>p_overdispersion,</span>
+<span id="cb104-17"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-17" tabindex="-1"></a>  <span class="at">selected_model=</span>count_method</span>
+<span id="cb104-18"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb104-18" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>,<span class="at">caption=</span><span class="st">"Automated count-model selection"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:count-selection">Table 23.1: </span>Automated count-model selection</caption>
+<thead>
+<tr class="header">
+<th align="right">dispersion</th>
+<th align="right">p_overdispersion</th>
+<th align="left">selected_model</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1.089</td>
+<td align="right">0.121</td>
+<td align="left">Poisson regression</td>
+</tr>
+</tbody>
+</table></div>
+<p>A dispersion value near <strong>1</strong> is consistent with the Poisson model. In this teaching rule, a dispersion value above <strong>1.5</strong> together with <span class="math inline">\(p&lt;0.05\)</span> selects the negative binomial model. The value 1.5 is a practical teaching threshold, not a universal cutoff.</p>
+</div>
+<div class="section level2 hasAnchor" number="23.4">
+<h2 id="adjusted-count-ratios">
+<span class="header-section-number">23.4</span> Adjusted count ratios</h2>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb105-1" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(count_fit,<span class="at">conf.int=</span><span class="cn">TRUE</span>,<span class="at">exponentiate=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb105-2"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb105-2" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">!=</span><span class="st">"(Intercept)"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb105-3"><a href="poisson-and-negative-binomial-regression-for-count-outcomes.html#cb105-3" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>,<span class="at">caption=</span><span class="st">"Adjusted count ratios"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:count-ratios">Table 23.2: </span>Adjusted count ratios</caption>
+<colgroup>
+<col width="31%">
+<col width="10%">
+<col width="12%">
+<col width="12%">
+<col width="9%">
+<col width="10%">
+<col width="12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">treatment_armDrug_A</td>
+<td align="right">1.619</td>
+<td align="right">0.263</td>
+<td align="right">1.831</td>
+<td align="right">0.067</td>
+<td align="right">0.974</td>
+<td align="right">2.746</td>
+</tr>
+<tr class="even">
+<td align="left">treatment_armDrug_B</td>
+<td align="right">2.609</td>
+<td align="right">0.243</td>
+<td align="right">3.945</td>
+<td align="right">0.000</td>
+<td align="right">1.643</td>
+<td align="right">4.279</td>
+</tr>
+<tr class="odd">
+<td align="left">age10</td>
+<td align="right">1.014</td>
+<td align="right">0.077</td>
+<td align="right">0.178</td>
+<td align="right">0.859</td>
+<td align="right">0.872</td>
+<td align="right">1.181</td>
+</tr>
+<tr class="even">
+<td align="left">sex_at_birthMale</td>
+<td align="right">0.809</td>
+<td align="right">0.178</td>
+<td align="right">-1.192</td>
+<td align="right">0.233</td>
+<td align="right">0.570</td>
+<td align="right">1.146</td>
+</tr>
+<tr class="odd">
+<td align="left">baseline_severityModerate</td>
+<td align="right">1.397</td>
+<td align="right">0.239</td>
+<td align="right">1.399</td>
+<td align="right">0.162</td>
+<td align="right">0.881</td>
+<td align="right">2.259</td>
+</tr>
+<tr class="even">
+<td align="left">baseline_severitySevere</td>
+<td align="right">1.633</td>
+<td align="right">0.252</td>
+<td align="right">1.946</td>
+<td align="right">0.052</td>
+<td align="right">1.003</td>
+<td align="right">2.706</td>
+</tr>
+</tbody>
+</table></div>
+<p>A treatment count ratio of <strong>1.6</strong> means that the treatment group has an estimated <strong>60% higher expected number of adverse events</strong> than Control over the same observation period, after adjustment for the other variables.</p>
+<p>This should not be interpreted as 60% more participants experiencing an adverse event. The <strong>number of events</strong> and <strong>whether any event occurred</strong> are different outcomes.</p>
+</div>
+<div class="section level2 hasAnchor" number="23.5">
+<h2 id="key-takeaway-1">
+<span class="header-section-number">23.5</span> Key takeaway</h2>
+<div class="course-table-scroll"><table>
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Question</th>
+<th>Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Is the outcome binary?</td>
+<td>Logistic regression</td>
+</tr>
+<tr class="even">
+<td>Is the outcome a count?</td>
+<td>Start with Poisson regression</td>
+</tr>
+<tr class="odd">
+<td>Is the count substantially overdispersed?</td>
+<td>Consider negative binomial regression</td>
+</tr>
+<tr class="even">
+<td>Are continuous predictors adequately modeled in logistic regression?</td>
+<td>Check their functional form</td>
+</tr>
+<tr class="odd">
+<td>How are effects reported?</td>
+<td>Odds ratios for logistic models; count ratios for count models</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>outcome determines the model</strong>, while diagnostic checks help determine whether the chosen model needs refinement.</p>
+
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

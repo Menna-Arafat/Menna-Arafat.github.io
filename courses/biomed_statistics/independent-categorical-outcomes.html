@@ -1,0 +1,252 @@
+---
+layout: article
+title: 10 Independent categorical outcomes
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="independent-categorical-outcomes" class="section level1 hasAnchor" number="10">
+
+<div class="section level2 hasAnchor" number="10.1">
+<h2 id="pearson-chi-square-and-fisher-exact-tests">
+<span class="header-section-number">10.1</span> Pearson chi-square and Fisher exact tests</h2>
+<p>Pearson’s chi-square test compares the <strong>observed counts</strong>, <span class="math inline">\(O_{ij}\)</span>, with the counts expected if the two categorical variables were independent.</p>
+<p>The expected count in cell <span class="math inline">\(i,j\)</span> is</p>
+<p><span class="math display">\[
+E_{ij}=\frac{n_{i}n_{j}}{n},
+\]</span></p>
+<p>and the chi-square statistic is</p>
+<p><span class="math display">\[
+\chi^2=\sum_i\sum_j\frac{(O_{ij}-E_{ij})^2}{E_{ij}}.
+\]</span></p>
+<p>A larger discrepancy between observed and expected counts produces a larger chi-square statistic and stronger evidence that the variables are associated.</p>
+<p>Fisher’s exact test addresses the same general question without relying on the large-sample chi-square approximation, making it useful when expected counts are small.</p>
+</div>
+<div class="section level2 hasAnchor" number="10.2">
+<h2 id="association-between-treatment-and-clinical-response">
+<span class="header-section-number">10.2</span> Association between Treatment and clinical response</h2>
+<p>The following table compares treatment assignment with clinical response at 12 weeks.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="independent-categorical-outcomes.html#cb49-1" tabindex="-1"></a>resp_tab <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Treatment=</span>dat<span class="sc">$</span>treatment_arm,</span>
+<span id="cb49-2"><a href="independent-categorical-outcomes.html#cb49-2" tabindex="-1"></a>                  <span class="at">Response=</span>dat<span class="sc">$</span>clinical_response_12w)</span>
+<span id="cb49-3"><a href="independent-categorical-outcomes.html#cb49-3" tabindex="-1"></a>resp_tab</span>
+<span id="cb49-4"><a href="independent-categorical-outcomes.html#cb49-4" tabindex="-1"></a><span class="co">#&gt;          Response</span></span>
+<span id="cb49-5"><a href="independent-categorical-outcomes.html#cb49-5" tabindex="-1"></a><span class="co">#&gt; Treatment  0  1</span></span>
+<span id="cb49-6"><a href="independent-categorical-outcomes.html#cb49-6" tabindex="-1"></a><span class="co">#&gt;   Control 88 32</span></span>
+<span id="cb49-7"><a href="independent-categorical-outcomes.html#cb49-7" tabindex="-1"></a><span class="co">#&gt;   Drug_A  68 52</span></span>
+<span id="cb49-8"><a href="independent-categorical-outcomes.html#cb49-8" tabindex="-1"></a><span class="co">#&gt;   Drug_B  50 70</span></span></code></pre></div>
+<p>Under the null hypothesis,</p>
+<p><span class="math display">\[
+H_0:\text{clinical response is independent of treatment}.
+\]</span></p>
+<p>Before selecting the test, examine the expected counts.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="independent-categorical-outcomes.html#cb50-1" tabindex="-1"></a>resp_chi <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(<span class="fu">chisq.test</span>(resp_tab, <span class="at">correct=</span><span class="cn">FALSE</span>))</span>
+<span id="cb50-2"><a href="independent-categorical-outcomes.html#cb50-2" tabindex="-1"></a><span class="fu">round</span>(resp_chi<span class="sc">$</span>expected,<span class="dv">2</span>)</span>
+<span id="cb50-3"><a href="independent-categorical-outcomes.html#cb50-3" tabindex="-1"></a><span class="co">#&gt;          Response</span></span>
+<span id="cb50-4"><a href="independent-categorical-outcomes.html#cb50-4" tabindex="-1"></a><span class="co">#&gt; Treatment     0     1</span></span>
+<span id="cb50-5"><a href="independent-categorical-outcomes.html#cb50-5" tabindex="-1"></a><span class="co">#&gt;   Control 68.67 51.33</span></span>
+<span id="cb50-6"><a href="independent-categorical-outcomes.html#cb50-6" tabindex="-1"></a><span class="co">#&gt;   Drug_A  68.67 51.33</span></span>
+<span id="cb50-7"><a href="independent-categorical-outcomes.html#cb50-7" tabindex="-1"></a><span class="co">#&gt;   Drug_B  68.67 51.33</span></span></code></pre></div>
+<p>Expected counts are calculated under the assumption that treatment and clinical response are unrelated. They determine whether the chi-square approximation is sufficiently reliable.</p>
+</div>
+<div class="section level2 hasAnchor" number="10.3">
+<h2 id="automated-chi-square-or-fisher-selection">
+<span class="header-section-number">10.3</span> Automated chi-square or Fisher selection</h2>
+<p>The following block checks the expected counts and performs the appropriate test.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="independent-categorical-outcomes.html#cb51-1" tabindex="-1"></a>expected <span class="ot">&lt;-</span> resp_chi<span class="sc">$</span>expected</span>
+<span id="cb51-2"><a href="independent-categorical-outcomes.html#cb51-2" tabindex="-1"></a>chi_ok <span class="ot">&lt;-</span> <span class="fu">all</span>(expected <span class="sc">&gt;=</span> <span class="dv">5</span>)</span>
+<span id="cb51-3"><a href="independent-categorical-outcomes.html#cb51-3" tabindex="-1"></a><span class="co"># OR</span></span>
+<span id="cb51-4"><a href="independent-categorical-outcomes.html#cb51-4" tabindex="-1"></a>chi_ok <span class="ot">&lt;-</span> <span class="fu">all</span>(expected<span class="sc">&gt;=</span><span class="dv">1</span>) <span class="sc">&amp;&amp;</span> <span class="fu">mean</span>(expected<span class="sc">&lt;</span><span class="dv">5</span>)<span class="sc">&lt;=</span>.<span class="dv">20</span></span>
+<span id="cb51-5"><a href="independent-categorical-outcomes.html#cb51-5" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="independent-categorical-outcomes.html#cb51-6" tabindex="-1"></a><span class="cf">if</span>(chi_ok){</span>
+<span id="cb51-7"><a href="independent-categorical-outcomes.html#cb51-7" tabindex="-1"></a>  selected_test <span class="ot">&lt;-</span> <span class="st">"Pearson chi-square test"</span></span>
+<span id="cb51-8"><a href="independent-categorical-outcomes.html#cb51-8" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> resp_chi</span>
+<span id="cb51-9"><a href="independent-categorical-outcomes.html#cb51-9" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb51-10"><a href="independent-categorical-outcomes.html#cb51-10" tabindex="-1"></a>  selected_test <span class="ot">&lt;-</span> <span class="st">"Fisher exact test"</span></span>
+<span id="cb51-11"><a href="independent-categorical-outcomes.html#cb51-11" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">fisher.test</span>(resp_tab)</span>
+<span id="cb51-12"><a href="independent-categorical-outcomes.html#cb51-12" tabindex="-1"></a>}</span>
+<span id="cb51-13"><a href="independent-categorical-outcomes.html#cb51-13" tabindex="-1"></a></span>
+<span id="cb51-14"><a href="independent-categorical-outcomes.html#cb51-14" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb51-15"><a href="independent-categorical-outcomes.html#cb51-15" tabindex="-1"></a>  <span class="at">test=</span>selected_test,</span>
+<span id="cb51-16"><a href="independent-categorical-outcomes.html#cb51-16" tabindex="-1"></a>  <span class="at">minimum_expected=</span><span class="fu">min</span>(expected),</span>
+<span id="cb51-17"><a href="independent-categorical-outcomes.html#cb51-17" tabindex="-1"></a>  <span class="at">percent_expected_below_5=</span><span class="dv">100</span><span class="sc">*</span><span class="fu">mean</span>(expected<span class="sc">&lt;</span><span class="dv">5</span>),</span>
+<span id="cb51-18"><a href="independent-categorical-outcomes.html#cb51-18" tabindex="-1"></a>  <span class="at">p_value=</span>fit<span class="sc">$</span>p.value</span>
+<span id="cb51-19"><a href="independent-categorical-outcomes.html#cb51-19" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>, <span class="at">caption=</span><span class="st">"Selected test for treatment and clinical response"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:cat-response-select">Table 10.1: </span>Selected test for treatment and clinical response</caption>
+<colgroup>
+<col width="32%">
+<col width="22%">
+<col width="33%">
+<col width="10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">test</th>
+<th align="right">minimum_expected</th>
+<th align="right">percent_expected_below_5</th>
+<th align="right">p_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Pearson chi-square test</td>
+<td align="right">51.33</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table></div>
+<p>The decision is straightforward:</p>
+<ul>
+<li>if expected counts are adequate, use <strong>Pearson’s chi-square test</strong>;</li>
+<li>if expected counts are sparse, use <strong>Fisher’s exact test</strong>.</li>
+</ul>
+<p>A small p-value indicates evidence that clinical response differs across treatment groups. The global test does not show <strong>which treatment differs from Control</strong> or <strong>how large the difference is</strong>, so effect estimates should also be reported.</p>
+</div>
+<div class="section level2 hasAnchor" number="10.4">
+<h2 id="risk-differences-and-risk-ratios">
+<span class="header-section-number">10.4</span> Risk differences and risk ratios</h2>
+<p>For a binary treatment outcome, risks and their contrasts provide a direct measure of treatment effect.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="independent-categorical-outcomes.html#cb52-1" tabindex="-1"></a>resp_effects <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb52-2"><a href="independent-categorical-outcomes.html#cb52-2" tabindex="-1"></a>  <span class="fu">risk_contrast</span>(dat,<span class="st">"clinical_response_12w"</span>,<span class="st">"Drug_A"</span>),</span>
+<span id="cb52-3"><a href="independent-categorical-outcomes.html#cb52-3" tabindex="-1"></a>  <span class="fu">risk_contrast</span>(dat,<span class="st">"clinical_response_12w"</span>,<span class="st">"Drug_B"</span>)</span>
+<span id="cb52-4"><a href="independent-categorical-outcomes.html#cb52-4" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(risk_exposed,risk_reference,risk_difference,rd_low,rd_high), <span class="sc">~</span><span class="dv">100</span><span class="sc">*</span>.x))</span>
+<span id="cb52-5"><a href="independent-categorical-outcomes.html#cb52-5" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="independent-categorical-outcomes.html#cb52-6" tabindex="-1"></a><span class="fu">kbl</span>(resp_effects, <span class="at">digits=</span><span class="dv">2</span>,</span>
+<span id="cb52-7"><a href="independent-categorical-outcomes.html#cb52-7" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">"Clinical-response effects versus Control; risks and risk differences are percentage points"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table style="width:100%;">
+<caption>
+<span id="tab:cat-response-effects">Table 10.2: </span>Clinical-response effects versus Control; risks and risk differences are percentage points</caption>
+<colgroup>
+<col width="17%">
+<col width="12%">
+<col width="14%">
+<col width="15%">
+<col width="6%">
+<col width="7%">
+<col width="10%">
+<col width="6%">
+<col width="7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">comparison</th>
+<th align="right">risk_exposed</th>
+<th align="right">risk_reference</th>
+<th align="right">risk_difference</th>
+<th align="right">rd_low</th>
+<th align="right">rd_high</th>
+<th align="right">risk_ratio</th>
+<th align="right">rr_low</th>
+<th align="right">rr_high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Drug_A vs Control</td>
+<td align="right">43.33</td>
+<td align="right">26.67</td>
+<td align="right">16.67</td>
+<td align="right">4.78</td>
+<td align="right">28.55</td>
+<td align="right">1.62</td>
+<td align="right">1.13</td>
+<td align="right">2.33</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_B vs Control</td>
+<td align="right">58.33</td>
+<td align="right">26.67</td>
+<td align="right">31.67</td>
+<td align="right">19.82</td>
+<td align="right">43.52</td>
+<td align="right">2.19</td>
+<td align="right">1.57</td>
+<td align="right">3.05</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>risk difference</strong> measures the absolute difference in response probability:</p>
+<p><span class="math display">\[
+RD=P(Y=1\mid\text{treatment})-P(Y=1\mid\text{Control}),
+\]</span></p>
+<p>whereas the <strong>risk ratio</strong> compares the two probabilities proportionally:</p>
+<p><span class="math display">\[
+RR=\frac{P(Y=1\mid\text{treatment})}
+         {P(Y=1\mid\text{Control})}.
+\]</span></p>
+<p>The global chi-square or Fisher test provides evidence of association; the risk difference and risk ratio describe the <strong>size of the treatment effect</strong>.</p>
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

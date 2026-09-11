@@ -1,0 +1,739 @@
+---
+layout: article
+title: 1 Data foundations and R essentials
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="data-foundations-and-r-essentials" class="section level1 hasAnchor" number="1">
+
+<p>Exploratory data analysis (EDA) is the point at which the statistical problem becomes concrete. Before testing hypotheses, the analyst should know what each row represents, how variables are coded, where missing values occur, whether units are plausible, and how distributions differ across clinically relevant groups. EDA is therefore not a preliminary formality; it is part of model specification.</p>
+<div class="section level2 hasAnchor" number="1.1">
+<h2 id="r-essentials-for-a-biomedical-dataset">
+<span class="header-section-number">1.1</span> R essentials for a biomedical dataset</h2>
+<p>R is object-oriented in the practical sense that data, models, tables, and plots are stored as named objects and passed to functions. A compact working vocabulary is enough for most analyses:</p>
+<div class="course-table-scroll"><table>
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>Core R tools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>inspect an object</td>
+<td>
+<code>class()</code>, <code>str()</code>, <code>dplyr::glimpse()</code>
+</td>
+</tr>
+<tr class="even">
+<td>view dimensions</td>
+<td>
+<code>nrow()</code>, <code>ncol()</code>, <code>dim()</code>
+</td>
+</tr>
+<tr class="odd">
+<td>select variables</td>
+<td><code>dplyr::select()</code></td>
+</tr>
+<tr class="even">
+<td>filter observations</td>
+<td><code>dplyr::filter()</code></td>
+</tr>
+<tr class="odd">
+<td>create variables</td>
+<td><code>dplyr::mutate()</code></td>
+</tr>
+<tr class="even">
+<td>grouped summaries</td>
+<td>
+<code>group_by()</code> + <code>summarise()</code>
+</td>
+</tr>
+<tr class="odd">
+<td>reshape data</td>
+<td>
+<code>pivot_longer()</code>, <code>pivot_wider()</code>
+</td>
+</tr>
+<tr class="even">
+<td>missingness</td>
+<td>
+<code>is.na()</code>, <code>complete.cases()</code>, <code>drop_na()</code>
+</td>
+</tr>
+<tr class="odd">
+<td>fit a model</td>
+<td>
+<code>lm()</code>, <code>glm()</code>, <code>aov()</code>, <code>survival::coxph()</code>
+</td>
+</tr>
+<tr class="even">
+<td>inspect model output</td>
+<td>
+<code>summary()</code>, <code>broom::tidy()</code>, <code>confint()</code>
+</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section level3 hasAnchor" number="1.1.1">
+<h3 id="first-look-at-the-data">
+<span class="header-section-number">1.1.1</span> First look at the data</h3>
+<p>A few direct checks establish the data structure.</p>
+<div class="section level4 hasAnchor" number="1.1.1.1">
+<h4 id="dataset-dimensions-and-variable-names">
+<span class="header-section-number">1.1.1.1</span> Dataset dimensions and variable names</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="data-foundations-and-r-essentials.html#cb1-1" tabindex="-1"></a><span class="fu">dim</span>(dat);</span>
+<span id="cb1-2"><a href="data-foundations-and-r-essentials.html#cb1-2" tabindex="-1"></a><span class="co">#&gt; [1] 360  43</span></span>
+<span id="cb1-3"><a href="data-foundations-and-r-essentials.html#cb1-3" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(dat[, <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>]);</span>
+<span id="cb1-4"><a href="data-foundations-and-r-essentials.html#cb1-4" tabindex="-1"></a><span class="co">#&gt; Rows: 360</span></span>
+<span id="cb1-5"><a href="data-foundations-and-r-essentials.html#cb1-5" tabindex="-1"></a><span class="co">#&gt; Columns: 12</span></span>
+<span id="cb1-6"><a href="data-foundations-and-r-essentials.html#cb1-6" tabindex="-1"></a><span class="co">#&gt; $ patient_id        &lt;chr&gt; "P0003", "P0007", "P0008", "P0009", "P0010", "P0013", "P0015", "P0017", "P0018", "P0020", "P…</span></span>
+<span id="cb1-7"><a href="data-foundations-and-r-essentials.html#cb1-7" tabindex="-1"></a><span class="co">#&gt; $ enrollment_date   &lt;dttm&gt; 2025-12-07, 2025-10-22, 2026-01-01, 2025-01-15, 2025-08-30, 2026-04-13, 2026-06-13, 2025-08…</span></span>
+<span id="cb1-8"><a href="data-foundations-and-r-essentials.html#cb1-8" tabindex="-1"></a><span class="co">#&gt; $ site              &lt;fct&gt; Site_07, Site_02, Site_08, Site_04, Site_06, Site_03, Site_01, Site_08, Site_05, Site_07, Si…</span></span>
+<span id="cb1-9"><a href="data-foundations-and-r-essentials.html#cb1-9" tabindex="-1"></a><span class="co">#&gt; $ region            &lt;fct&gt; West, North, West, South, East, South, North, West, East, West, North, West, North, North, W…</span></span>
+<span id="cb1-10"><a href="data-foundations-and-r-essentials.html#cb1-10" tabindex="-1"></a><span class="co">#&gt; $ treatment_arm     &lt;fct&gt; Drug_B, Drug_A, Drug_A, Drug_A, Drug_A, Drug_B, Drug_A, Drug_A, Control, Control, Drug_B, Dr…</span></span>
+<span id="cb1-11"><a href="data-foundations-and-r-essentials.html#cb1-11" tabindex="-1"></a><span class="co">#&gt; $ age_years         &lt;dbl&gt; 37, 39, 56, 65, 63, 49, 50, 52, 53, 59, 48, 59, 54, 41, 76, 60, 45, 51, 70, 57, 48, 67, 77, …</span></span>
+<span id="cb1-12"><a href="data-foundations-and-r-essentials.html#cb1-12" tabindex="-1"></a><span class="co">#&gt; $ sex_at_birth      &lt;fct&gt; Female, Male, Male, Male, Male, Female, Female, Male, Male, Female, Male, Female, Male, Fema…</span></span>
+<span id="cb1-13"><a href="data-foundations-and-r-essentials.html#cb1-13" tabindex="-1"></a><span class="co">#&gt; $ smoking_status    &lt;fct&gt; Former, Former, Current, Never, Current, Former, Former, Never, Never, Never, Never, Current…</span></span>
+<span id="cb1-14"><a href="data-foundations-and-r-essentials.html#cb1-14" tabindex="-1"></a><span class="co">#&gt; $ baseline_severity &lt;fct&gt; Moderate, Moderate, Mild, Severe, Moderate, Moderate, Mild, Mild, Mild, Severe, Mild, Modera…</span></span>
+<span id="cb1-15"><a href="data-foundations-and-r-essentials.html#cb1-15" tabindex="-1"></a><span class="co">#&gt; $ bmi_kg_m2         &lt;dbl&gt; 27.2, 30.7, 18.3, 31.8, 31.3, 34.7, 23.2, 18.0, 24.8, 28.5, 25.2, 27.2, 37.6, 29.3, 33.4, 33…</span></span>
+<span id="cb1-16"><a href="data-foundations-and-r-essentials.html#cb1-16" tabindex="-1"></a><span class="co">#&gt; $ sbp_baseline_mmHg &lt;dbl&gt; 128.6, 111.0, 123.5, 134.0, 124.3, 144.4, 126.8, 124.2, 111.5, 143.9, 125.0, 138.2, 125.0, 1…</span></span>
+<span id="cb1-17"><a href="data-foundations-and-r-essentials.html#cb1-17" tabindex="-1"></a><span class="co">#&gt; $ sbp_week12_mmHg   &lt;dbl&gt; 109.7, 109.2, 114.1, 126.8, 115.4, 142.3, 118.0, 119.0, 98.3, 147.6, 115.9, 122.6, 118.2, 11…</span></span>
+<span id="cb1-18"><a href="data-foundations-and-r-essentials.html#cb1-18" tabindex="-1"></a><span class="fu">head</span>(dat[, <span class="fu">c</span>(<span class="st">"patient_id"</span>,<span class="st">"treatment_arm"</span>,<span class="st">"age_years"</span>,<span class="st">"baseline_severity"</span>)], <span class="dv">4</span>)</span>
+<span id="cb1-19"><a href="data-foundations-and-r-essentials.html#cb1-19" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 4</span></span>
+<span id="cb1-20"><a href="data-foundations-and-r-essentials.html#cb1-20" tabindex="-1"></a><span class="co">#&gt;   patient_id treatment_arm age_years baseline_severity</span></span>
+<span id="cb1-21"><a href="data-foundations-and-r-essentials.html#cb1-21" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt;             &lt;dbl&gt; &lt;fct&gt;            </span></span>
+<span id="cb1-22"><a href="data-foundations-and-r-essentials.html#cb1-22" tabindex="-1"></a><span class="co">#&gt; 1 P0003      Drug_B               37 Moderate         </span></span>
+<span id="cb1-23"><a href="data-foundations-and-r-essentials.html#cb1-23" tabindex="-1"></a><span class="co">#&gt; 2 P0007      Drug_A               39 Moderate         </span></span>
+<span id="cb1-24"><a href="data-foundations-and-r-essentials.html#cb1-24" tabindex="-1"></a><span class="co">#&gt; 3 P0008      Drug_A               56 Mild             </span></span>
+<span id="cb1-25"><a href="data-foundations-and-r-essentials.html#cb1-25" tabindex="-1"></a><span class="co">#&gt; 4 P0009      Drug_A               65 Severe</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="1.1.2">
+<h3 id="dataset-audit">
+<span class="header-section-number">1.1.2</span> Dataset audit</h3>
+<p>The current workbook contains one row per participant. Patient IDs should therefore be unique.</p>
+<div class="section level4 hasAnchor" number="1.1.2.1">
+<h4 id="structural-integrity-checks">
+<span class="header-section-number">1.1.2.1</span> Structural integrity checks</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="data-foundations-and-r-essentials.html#cb2-1" tabindex="-1"></a>audit <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">metric=</span><span class="fu">c</span>(<span class="st">"Participants"</span>,<span class="st">"Variables"</span>,<span class="st">"Unique patient IDs"</span>,<span class="st">"Duplicate patient IDs"</span>,<span class="st">"Missing cells"</span>),</span>
+<span id="cb2-2"><a href="data-foundations-and-r-essentials.html#cb2-2" tabindex="-1"></a>               <span class="at">value=</span><span class="fu">c</span>(<span class="fu">nrow</span>(dat), <span class="fu">ncol</span>(dat_raw), dplyr<span class="sc">::</span><span class="fu">n_distinct</span>(dat<span class="sc">$</span>patient_id), <span class="fu">sum</span>(<span class="fu">duplicated</span>(dat<span class="sc">$</span>patient_id)), <span class="fu">sum</span>(<span class="fu">is.na</span>(dat_raw))))</span>
+<span id="cb2-3"><a href="data-foundations-and-r-essentials.html#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="data-foundations-and-r-essentials.html#cb2-4" tabindex="-1"></a><span class="fu">kbl</span>(audit, <span class="at">digits=</span><span class="dv">0</span>, <span class="at">caption=</span><span class="st">"Dataset audit"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:data-audit">Table 1.1: </span>Dataset audit</caption>
+<thead>
+<tr class="header">
+<th align="left">metric</th>
+<th align="right">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Participants</td>
+<td align="right">360</td>
+</tr>
+<tr class="even">
+<td align="left">Variables</td>
+<td align="right">35</td>
+</tr>
+<tr class="odd">
+<td align="left">Unique patient IDs</td>
+<td align="right">360</td>
+</tr>
+<tr class="even">
+<td align="left">Duplicate patient IDs</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Missing cells</td>
+<td align="right">64</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="1.2">
+<h2 id="variable-types-and-analytical-consequences">
+<span class="header-section-number">1.2</span> Variable types and analytical consequences</h2>
+<p>The distinction between continuous, discrete, categorical, binary, and ordinal data determines what summaries and models are meaningful.</p>
+<div class="course-table-scroll"><table>
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data type</th>
+<th>Definition</th>
+<th>Examples in this workbook</th>
+<th>Typical analytical consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Continuous</td>
+<td>values on a quantitative scale where arithmetic differences are meaningful</td>
+<td>age, BMI, SBP, CRP, biomarker, QoL</td>
+<td>means/SDs or robust summaries; linear models when appropriate</td>
+</tr>
+<tr class="even">
+<td>Discrete/count</td>
+<td>integer-valued event or counts</td>
+<td>
+<code>ae_count_12w</code>, <code>hospital_days_90</code>
+</td>
+<td>count summaries; Poisson/negative-binomial models may be appropriate</td>
+</tr>
+<tr class="odd">
+<td>Categorical</td>
+<td>membership in one of a fixed set of nominal groups</td>
+<td>treatment, site, region, smoking</td>
+<td>frequencies/proportions; contingency tables or factor terms in models</td>
+</tr>
+<tr class="even">
+<td>Binary</td>
+<td>categorical variable with two levels</td>
+<td>response, adverse event, event observed</td>
+<td>risks/proportions; binomial models; paired binary data need special methods</td>
+</tr>
+<tr class="odd">
+<td>Ordinal</td>
+<td>categories with a meaningful order</td>
+<td>mild/moderate/severe baseline severity</td>
+<td>preserve ordering; do not assume equal numeric spacing without justification</td>
+</tr>
+</tbody>
+</table></div>
+<p>The supplied data dictionary can be read directly from the workbook.</p>
+<div class="section level4 hasAnchor" number="1.2.0.1">
+<h4 id="variable-roles-and-measurement-scales">
+<span class="header-section-number">1.2.0.1</span> Variable roles and measurement scales</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="data-foundations-and-r-essentials.html#cb3-1" tabindex="-1"></a><span class="fu">kbl</span>(dict, <span class="at">digits=</span><span class="dv">2</span>, <span class="at">caption=</span><span class="st">"Workbook data dictionary"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:data-dictionary">Table 1.2: </span>Workbook data dictionary</caption>
+<colgroup>
+<col width="13%">
+<col width="13%">
+<col width="20%">
+<col width="11%">
+<col width="27%">
+<col width="12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="left">Class</th>
+<th align="left">Role</th>
+<th align="left">Unit / Coding</th>
+<th align="left">Description</th>
+<th align="left">Intentional Missingness</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">patient_id</td>
+<td align="left">character</td>
+<td align="left">Identifier</td>
+<td align="left">P0001…</td>
+<td align="left">Synthetic patient identifier</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">enrollment_date</td>
+<td align="left">date</td>
+<td align="left">Time</td>
+<td align="left">YYYY-MM-DD</td>
+<td align="left">Enrollment date</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">site</td>
+<td align="left">categorical</td>
+<td align="left">Design</td>
+<td align="left">Site_01…Site_08</td>
+<td align="left">Recruiting center</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">region</td>
+<td align="left">categorical</td>
+<td align="left">Design</td>
+<td align="left">North/South/East/West</td>
+<td align="left">Region of site</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">treatment_arm</td>
+<td align="left">categorical</td>
+<td align="left">Exposure</td>
+<td align="left">Control/Drug_A/Drug_B</td>
+<td align="left">Randomized treatment group</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">age_years</td>
+<td align="left">continuous</td>
+<td align="left">Covariate</td>
+<td align="left">years</td>
+<td align="left">Age at baseline</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">sex_at_birth</td>
+<td align="left">binary categorical</td>
+<td align="left">Covariate</td>
+<td align="left">Female/Male</td>
+<td align="left">Sex recorded at baseline</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">smoking_status</td>
+<td align="left">categorical</td>
+<td align="left">Covariate</td>
+<td align="left">Never/Former/Current</td>
+<td align="left">Smoking status</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">baseline_severity</td>
+<td align="left">ordinal</td>
+<td align="left">Covariate</td>
+<td align="left">Mild&lt;Moderate&lt;Severe</td>
+<td align="left">Baseline disease severity</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">bmi_kg_m2</td>
+<td align="left">continuous</td>
+<td align="left">Covariate</td>
+<td align="left">kg/m^2</td>
+<td align="left">Body mass index</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">sbp_baseline_mmHg</td>
+<td align="left">continuous</td>
+<td align="left">Baseline outcome</td>
+<td align="left">mmHg</td>
+<td align="left">Baseline systolic blood pressure</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">sbp_week12_mmHg</td>
+<td align="left">continuous</td>
+<td align="left">Follow-up outcome</td>
+<td align="left">mmHg</td>
+<td align="left">Week-12 systolic blood pressure</td>
+<td align="left">~2.5%</td>
+</tr>
+<tr class="odd">
+<td align="left">dbp_baseline_mmHg</td>
+<td align="left">continuous</td>
+<td align="left">Covariate</td>
+<td align="left">mmHg</td>
+<td align="left">Baseline diastolic blood pressure</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">heart_rate_bpm</td>
+<td align="left">continuous</td>
+<td align="left">Covariate</td>
+<td align="left">beats/min</td>
+<td align="left">Baseline heart rate</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">hba1c_pct</td>
+<td align="left">continuous</td>
+<td align="left">Biomarker</td>
+<td align="left">%</td>
+<td align="left">Glycated hemoglobin</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">ldl_mg_dL</td>
+<td align="left">continuous</td>
+<td align="left">Biomarker</td>
+<td align="left">mg/dL</td>
+<td align="left">LDL cholesterol</td>
+<td align="left">~2.5%</td>
+</tr>
+<tr class="odd">
+<td align="left">hdl_mg_dL</td>
+<td align="left">continuous</td>
+<td align="left">Biomarker</td>
+<td align="left">mg/dL</td>
+<td align="left">HDL cholesterol</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">creatinine_mg_dL</td>
+<td align="left">continuous</td>
+<td align="left">Biomarker</td>
+<td align="left">mg/dL</td>
+<td align="left">Serum creatinine</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">egfr_mL_min_1_73m2</td>
+<td align="left">continuous</td>
+<td align="left">Biomarker</td>
+<td align="left">mL/min/1.73m^2</td>
+<td align="left">Estimated glomerular filtration rate</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">wbc_10e9_L</td>
+<td align="left">continuous</td>
+<td align="left">Biomarker</td>
+<td align="left">10^9/L</td>
+<td align="left">White blood cell count</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">crp_baseline_mg_L</td>
+<td align="left">continuous, skewed</td>
+<td align="left">Biomarker</td>
+<td align="left">mg/L</td>
+<td align="left">Baseline C-reactive protein</td>
+<td align="left">~1.8%</td>
+</tr>
+<tr class="even">
+<td align="left">crp_week12_mg_L</td>
+<td align="left">continuous, skewed</td>
+<td align="left">Follow-up biomarker</td>
+<td align="left">mg/L</td>
+<td align="left">Week-12 C-reactive protein</td>
+<td align="left">~4.5%</td>
+</tr>
+<tr class="odd">
+<td align="left">biomarker_baseline_ng_mL</td>
+<td align="left">continuous</td>
+<td align="left">Primary continuous endpoint baseline</td>
+<td align="left">ng/mL</td>
+<td align="left">Synthetic inflammatory biomarker at baseline</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">biomarker_week12_ng_mL</td>
+<td align="left">continuous</td>
+<td align="left">Primary continuous endpoint follow-up</td>
+<td align="left">ng/mL</td>
+<td align="left">Synthetic inflammatory biomarker at week 12</td>
+<td align="left">~4%</td>
+</tr>
+<tr class="odd">
+<td align="left">adherence_pct</td>
+<td align="left">continuous</td>
+<td align="left">Process</td>
+<td align="left">0-100%</td>
+<td align="left">Treatment adherence</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">qol_baseline_0_100</td>
+<td align="left">continuous</td>
+<td align="left">Patient-reported outcome</td>
+<td align="left">0-100</td>
+<td align="left">Baseline quality-of-life score</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">qol_week12_0_100</td>
+<td align="left">continuous</td>
+<td align="left">Patient-reported outcome</td>
+<td align="left">0-100</td>
+<td align="left">Week-12 quality-of-life score</td>
+<td align="left">~3.5%</td>
+</tr>
+<tr class="even">
+<td align="left">clinical_response_12w</td>
+<td align="left">binary</td>
+<td align="left">Primary binary endpoint</td>
+<td align="left">0=No, 1=Yes</td>
+<td align="left">Clinical response at week 12</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">adverse_event_12w</td>
+<td align="left">binary</td>
+<td align="left">Safety endpoint</td>
+<td align="left">0=No, 1=Yes</td>
+<td align="left">Any adverse event by week 12</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">ae_count_12w</td>
+<td align="left">discrete count</td>
+<td align="left">Safety endpoint</td>
+<td align="left">0-6 events</td>
+<td align="left">Number of adverse events by week 12</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">hospital_days_90</td>
+<td align="left">discrete count</td>
+<td align="left">Utilization endpoint</td>
+<td align="left">days</td>
+<td align="left">Hospital days in first 90 days</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">followup_days</td>
+<td align="left">discrete</td>
+<td align="left">Time</td>
+<td align="left">days</td>
+<td align="left">Observed follow-up time</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">time_to_event_days</td>
+<td align="left">continuous/discrete time</td>
+<td align="left">Time-to-event</td>
+<td align="left">days</td>
+<td align="left">Time to clinical event or censoring</td>
+<td align="left">No</td>
+</tr>
+<tr class="even">
+<td align="left">event_observed_90d</td>
+<td align="left">binary</td>
+<td align="left">Time-to-event endpoint</td>
+<td align="left">0=Censored,1=Event</td>
+<td align="left">Clinical event observed within follow-up</td>
+<td align="left">No</td>
+</tr>
+<tr class="odd">
+<td align="left">sampling_weight</td>
+<td align="left">continuous</td>
+<td align="left">Sampling</td>
+<td align="left">relative weight</td>
+<td align="left">Educational sampling weight for weighted estimates</td>
+<td align="left">No</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="section level3 hasAnchor" number="1.2.1">
+<h3 id="storage-class-versus-scientific-role">
+<span class="header-section-number">1.2.1</span> Storage class versus scientific role</h3>
+<p>A variable’s storage class is not always identical to its scientific type. For example, a 0/1 endpoint can be stored as numeric yet remain binary for analysis. Likewise, disease severity can be stored as a factor with ordered labels; treating it as 1, 2, 3 in a regression imposes an equal-spacing assumption that may not be scientifically defensible. In this book it is generally modeled as a factor unless a proportional ordinal trend is explicitly intended.</p>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="1.3">
+<h2 id="missing-data">
+<span class="header-section-number">1.3</span> Missing data</h2>
+<p>Missingness should be quantified <strong>before</strong> derived analyses are run. <code>na.rm=TRUE</code> is useful for descriptive statistics, but silently dropping different observations in different models can make results difficult to compare.</p>
+<div class="section level3 hasAnchor" number="1.3.1">
+<h3 id="quantify-missingness">
+<span class="header-section-number">1.3.1</span> Quantify missingness</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="data-foundations-and-r-essentials.html#cb4-1" tabindex="-1"></a>missing <span class="ot">&lt;-</span> dat_raw <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.x)))) <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="data-foundations-and-r-essentials.html#cb4-2" tabindex="-1"></a>                      <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to=</span><span class="st">"variable"</span>, <span class="at">values_to=</span><span class="st">"n_missing"</span>)</span>
+<span id="cb4-3"><a href="data-foundations-and-r-essentials.html#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="data-foundations-and-r-essentials.html#cb4-4" tabindex="-1"></a>missing <span class="ot">&lt;-</span> missing <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">percent=</span><span class="dv">100</span><span class="sc">*</span>n_missing<span class="sc">/</span><span class="fu">nrow</span>(dat_raw)) <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="data-foundations-and-r-essentials.html#cb4-5" tabindex="-1"></a>                      <span class="fu">filter</span>(n_missing<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(percent))</span>
+<span id="cb4-6"><a href="data-foundations-and-r-essentials.html#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="data-foundations-and-r-essentials.html#cb4-7" tabindex="-1"></a><span class="fu">kbl</span>(missing, <span class="at">digits=</span><span class="dv">2</span>, <span class="at">caption=</span><span class="st">"Variables with missing values"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:missingness-table">Table 1.3: </span>Variables with missing values</caption>
+<thead>
+<tr class="header">
+<th align="left">variable</th>
+<th align="right">n_missing</th>
+<th align="right">percent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">crp_week12_mg_L</td>
+<td align="right">18</td>
+<td align="right">5.00</td>
+</tr>
+<tr class="even">
+<td align="left">qol_week12_0_100</td>
+<td align="right">13</td>
+<td align="right">3.61</td>
+</tr>
+<tr class="odd">
+<td align="left">biomarker_week12_ng_mL</td>
+<td align="right">11</td>
+<td align="right">3.06</td>
+</tr>
+<tr class="even">
+<td align="left">ldl_mg_dL</td>
+<td align="right">9</td>
+<td align="right">2.50</td>
+</tr>
+<tr class="odd">
+<td align="left">sbp_week12_mmHg</td>
+<td align="right">7</td>
+<td align="right">1.94</td>
+</tr>
+<tr class="even">
+<td align="left">crp_baseline_mg_L</td>
+<td align="right">6</td>
+<td align="right">1.67</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section level4 hasAnchor" number="1.3.1.1">
+<h4 id="visual-pattern-of-missingness">
+<span class="header-section-number">1.3.1.1</span> Visual pattern of missingness</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="data-foundations-and-r-essentials.html#cb5-1" tabindex="-1"></a><span class="fu">ggplot</span>(missing, <span class="fu">aes</span>(percent, <span class="fu">reorder</span>(variable, percent))) <span class="sc">+</span> </span>
+<span id="cb5-2"><a href="data-foundations-and-r-essentials.html#cb5-2" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width=</span>.<span class="dv">65</span>, <span class="at">fill=</span><span class="st">"#547D8E"</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="data-foundations-and-r-essentials.html#cb5-3" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span><span class="fu">sprintf</span>(<span class="st">"%.1f%%"</span>, percent)), <span class="at">hjust=</span><span class="sc">-</span>.<span class="dv">12</span>, <span class="at">size=</span><span class="fl">3.2</span>) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="data-foundations-and-r-essentials.html#cb5-4" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand=</span><span class="fu">expansion</span>(<span class="at">mult=</span><span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">18</span>))) <span class="sc">+</span> </span>
+<span id="cb5-5"><a href="data-foundations-and-r-essentials.html#cb5-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Missing observations (%)"</span>, <span class="at">y=</span><span class="cn">NULL</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:missingness-plot"></span>
+<img src="biomed_statistics_files/figure-html/missingness-plot-1.png" alt="Percentage missing by variable." width="100%">
+<p class="caption">
+Figure 1.1: Percentage missing by variable.
+</p>
+</div>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="1.3.2">
+<h3 id="interpret-the-missingness-mechanism">
+<span class="header-section-number">1.3.2</span> Interpret the missingness mechanism</h3>
+<p>The missing percentages are small, but their mechanism is not specified. This distinction matters. A low percentage of missing values does not by itself prove that complete-case analysis is unbiased. In a real study, the analysis plan should consider why values are missing, whether missingness depends on observed or unobserved variables, and whether multiple imputation or other sensitivity analyses are required.</p>
+<div class="section level4 hasAnchor" number="1.3.2.1">
+<h4 id="filtering-selecting-and-recoding">
+<span class="header-section-number">1.3.2.1</span> Filtering, selecting, and recoding</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="data-foundations-and-r-essentials.html#cb6-1" tabindex="-1"></a>older <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(age_years<span class="sc">&gt;=</span><span class="dv">65</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="data-foundations-and-r-essentials.html#cb6-2" tabindex="-1"></a>         dplyr<span class="sc">::</span><span class="fu">select</span>(patient_id, treatment_arm, age_years, sbp_baseline_mmHg)</span>
+<span id="cb6-3"><a href="data-foundations-and-r-essentials.html#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="data-foundations-and-r-essentials.html#cb6-4" tabindex="-1"></a>control_a <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment_arm <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Drug_A"</span>)) <span class="sc">|&gt;</span> <span class="fu">droplevels</span>()</span>
+<span id="cb6-5"><a href="data-foundations-and-r-essentials.html#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="data-foundations-and-r-essentials.html#cb6-6" tabindex="-1"></a>highest_crp <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(crp_baseline_mg_L)) <span class="sc">|&gt;</span></span>
+<span id="cb6-7"><a href="data-foundations-and-r-essentials.html#cb6-7" tabindex="-1"></a>               dplyr<span class="sc">::</span><span class="fu">select</span>(patient_id, treatment_arm, crp_baseline_mg_L) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">6</span>)</span>
+<span id="cb6-8"><a href="data-foundations-and-r-essentials.html#cb6-8" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="data-foundations-and-r-essentials.html#cb6-9" tabindex="-1"></a>older; highest_crp</span>
+<span id="cb6-10"><a href="data-foundations-and-r-essentials.html#cb6-10" tabindex="-1"></a><span class="co">#&gt; # A tibble: 81 × 4</span></span>
+<span id="cb6-11"><a href="data-foundations-and-r-essentials.html#cb6-11" tabindex="-1"></a><span class="co">#&gt;    patient_id treatment_arm age_years sbp_baseline_mmHg</span></span>
+<span id="cb6-12"><a href="data-foundations-and-r-essentials.html#cb6-12" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;      &lt;fct&gt;             &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb6-13"><a href="data-foundations-and-r-essentials.html#cb6-13" tabindex="-1"></a><span class="co">#&gt;  1 P0009      Drug_A               65              134 </span></span>
+<span id="cb6-14"><a href="data-foundations-and-r-essentials.html#cb6-14" tabindex="-1"></a><span class="co">#&gt;  2 P0029      Control              76              147.</span></span>
+<span id="cb6-15"><a href="data-foundations-and-r-essentials.html#cb6-15" tabindex="-1"></a><span class="co">#&gt;  3 P0040      Control              70              129.</span></span>
+<span id="cb6-16"><a href="data-foundations-and-r-essentials.html#cb6-16" tabindex="-1"></a><span class="co">#&gt;  4 P0045      Control              67              137.</span></span>
+<span id="cb6-17"><a href="data-foundations-and-r-essentials.html#cb6-17" tabindex="-1"></a><span class="co">#&gt;  5 P0046      Drug_A               77              144.</span></span>
+<span id="cb6-18"><a href="data-foundations-and-r-essentials.html#cb6-18" tabindex="-1"></a><span class="co">#&gt;  6 P0069      Drug_A               72              142.</span></span>
+<span id="cb6-19"><a href="data-foundations-and-r-essentials.html#cb6-19" tabindex="-1"></a><span class="co">#&gt;  7 P0071      Drug_A               65              145 </span></span>
+<span id="cb6-20"><a href="data-foundations-and-r-essentials.html#cb6-20" tabindex="-1"></a><span class="co">#&gt;  8 P0083      Drug_B               66              140.</span></span>
+<span id="cb6-21"><a href="data-foundations-and-r-essentials.html#cb6-21" tabindex="-1"></a><span class="co">#&gt;  9 P0091      Control              70              115.</span></span>
+<span id="cb6-22"><a href="data-foundations-and-r-essentials.html#cb6-22" tabindex="-1"></a><span class="co">#&gt; 10 P0097      Drug_B               71              129.</span></span>
+<span id="cb6-23"><a href="data-foundations-and-r-essentials.html#cb6-23" tabindex="-1"></a><span class="co">#&gt; # ℹ 71 more rows</span></span>
+<span id="cb6-24"><a href="data-foundations-and-r-essentials.html#cb6-24" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 3</span></span>
+<span id="cb6-25"><a href="data-foundations-and-r-essentials.html#cb6-25" tabindex="-1"></a><span class="co">#&gt;   patient_id treatment_arm crp_baseline_mg_L</span></span>
+<span id="cb6-26"><a href="data-foundations-and-r-essentials.html#cb6-26" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;fct&gt;                     &lt;dbl&gt;</span></span>
+<span id="cb6-27"><a href="data-foundations-and-r-essentials.html#cb6-27" tabindex="-1"></a><span class="co">#&gt; 1 P0363      Control                    36.1</span></span>
+<span id="cb6-28"><a href="data-foundations-and-r-essentials.html#cb6-28" tabindex="-1"></a><span class="co">#&gt; 2 P0465      Control                    23.0</span></span>
+<span id="cb6-29"><a href="data-foundations-and-r-essentials.html#cb6-29" tabindex="-1"></a><span class="co">#&gt; 3 P0713      Drug_B                     20.4</span></span>
+<span id="cb6-30"><a href="data-foundations-and-r-essentials.html#cb6-30" tabindex="-1"></a><span class="co">#&gt; 4 P0009      Drug_A                     17.5</span></span>
+<span id="cb6-31"><a href="data-foundations-and-r-essentials.html#cb6-31" tabindex="-1"></a><span class="co">#&gt; 5 P0827      Control                    17.3</span></span>
+<span id="cb6-32"><a href="data-foundations-and-r-essentials.html#cb6-32" tabindex="-1"></a><span class="co">#&gt; 6 P0708      Drug_B                     16.9</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="1.3.3">
+<h3 id="derived-change-scores">
+<span class="header-section-number">1.3.3</span> Derived change scores</h3>
+<p>The change variables represent the difference between the measurement at 12 weeks and the baseline measurement.
+A negative SBP change therefore indicates a decrease in blood pressure, whereas a positive SBP change indicates an increase.</p>
+<p><span class="math display">\[
+\Delta Y_i = Y_{i,12\text{wk}}-Y_{i,0}.
+\]</span></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="data-foundations-and-r-essentials.html#cb7-1" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="data-foundations-and-r-essentials.html#cb7-2" tabindex="-1"></a>       <span class="fu">mutate</span>( <span class="at">sbp_change =</span> sbp_week12_mmHg <span class="sc">-</span> sbp_baseline_mmHg)</span>
+<span id="cb7-3"><a href="data-foundations-and-r-essentials.html#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="data-foundations-and-r-essentials.html#cb7-4" tabindex="-1"></a><span class="fu">head</span>(dat <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(patient_id, sbp_change))</span>
+<span id="cb7-5"><a href="data-foundations-and-r-essentials.html#cb7-5" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 2</span></span>
+<span id="cb7-6"><a href="data-foundations-and-r-essentials.html#cb7-6" tabindex="-1"></a><span class="co">#&gt;   patient_id sbp_change</span></span>
+<span id="cb7-7"><a href="data-foundations-and-r-essentials.html#cb7-7" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;           &lt;dbl&gt;</span></span>
+<span id="cb7-8"><a href="data-foundations-and-r-essentials.html#cb7-8" tabindex="-1"></a><span class="co">#&gt; 1 P0003          -18.9 </span></span>
+<span id="cb7-9"><a href="data-foundations-and-r-essentials.html#cb7-9" tabindex="-1"></a><span class="co">#&gt; 2 P0007           -1.80</span></span>
+<span id="cb7-10"><a href="data-foundations-and-r-essentials.html#cb7-10" tabindex="-1"></a><span class="co">#&gt; 3 P0008           -9.4 </span></span>
+<span id="cb7-11"><a href="data-foundations-and-r-essentials.html#cb7-11" tabindex="-1"></a><span class="co">#&gt; 4 P0009           -7.2 </span></span>
+<span id="cb7-12"><a href="data-foundations-and-r-essentials.html#cb7-12" tabindex="-1"></a><span class="co">#&gt; 5 P0010           -8.90</span></span>
+<span id="cb7-13"><a href="data-foundations-and-r-essentials.html#cb7-13" tabindex="-1"></a><span class="co">#&gt; 6 P0013           -2.10</span></span></code></pre></div>
+
+</div>
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

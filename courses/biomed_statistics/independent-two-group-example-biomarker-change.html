@@ -1,0 +1,374 @@
+---
+layout: article
+title: '6 Independent two-group example: biomarker change'
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="independent-two-group-example-biomarker-change" class="section level1 hasAnchor" number="6">
+
+<div class="section level2 hasAnchor" number="6.1">
+<h2 id="define-the-estimand">
+<span class="header-section-number">6.1</span> Define the estimand</h2>
+<p>For Control and Drug_A, define biomarker change as</p>
+<p><span class="math display">\[
+\Delta B=B_{12}-B_0.
+\]</span></p>
+<p>The target is the difference between the groups in <strong>mean biomarker change</strong>.</p>
+</div>
+<div class="section level2 hasAnchor" number="6.2">
+<h2 id="descriptive-statistics">
+<span class="header-section-number">6.2</span> Descriptive statistics</h2>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="independent-two-group-example-biomarker-change.html#cb34-1" tabindex="-1"></a>ind_bio <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(treatment_arm <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Drug_A"</span>), <span class="sc">!</span><span class="fu">is.na</span>(biomarker_change)) <span class="sc">|&gt;</span> <span class="fu">droplevels</span>()</span>
+<span id="cb34-2"><a href="independent-two-group-example-biomarker-change.html#cb34-2" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="independent-two-group-example-biomarker-change.html#cb34-3" tabindex="-1"></a>ind_sum <span class="ot">&lt;-</span> ind_bio <span class="sc">|&gt;</span> <span class="fu">group_by</span>(treatment_arm) <span class="sc">|&gt;</span></span>
+<span id="cb34-4"><a href="independent-two-group-example-biomarker-change.html#cb34-4" tabindex="-1"></a>                      <span class="fu">summarise</span>(</span>
+<span id="cb34-5"><a href="independent-two-group-example-biomarker-change.html#cb34-5" tabindex="-1"></a>                      <span class="at">n=</span><span class="fu">n</span>(),</span>
+<span id="cb34-6"><a href="independent-two-group-example-biomarker-change.html#cb34-6" tabindex="-1"></a>                      <span class="at">mean=</span><span class="fu">mean</span>(biomarker_change), <span class="at">sd=</span><span class="fu">sd</span>(biomarker_change),</span>
+<span id="cb34-7"><a href="independent-two-group-example-biomarker-change.html#cb34-7" tabindex="-1"></a>                      <span class="at">median=</span><span class="fu">median</span>(biomarker_change), <span class="at">IQR=</span><span class="fu">IQR</span>(biomarker_change), <span class="at">.groups=</span><span class="st">"drop"</span>)</span>
+<span id="cb34-8"><a href="independent-two-group-example-biomarker-change.html#cb34-8" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="independent-two-group-example-biomarker-change.html#cb34-9" tabindex="-1"></a><span class="fu">kbl</span>(ind_sum, <span class="at">digits=</span><span class="dv">2</span>, <span class="at">caption=</span><span class="st">"Biomarker change in Control and Drug_A"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:independent-biomarker-data">Table 6.1: </span>Biomarker change in Control and Drug_A</caption>
+<thead>
+<tr class="header">
+<th align="left">treatment_arm</th>
+<th align="right">n</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">median</th>
+<th align="right">IQR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Control</td>
+<td align="right">118</td>
+<td align="right">-2.71</td>
+<td align="right">9.68</td>
+<td align="right">-4.25</td>
+<td align="right">12.75</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_A</td>
+<td align="right">116</td>
+<td align="right">-14.94</td>
+<td align="right">11.93</td>
+<td align="right">-14.25</td>
+<td align="right">16.03</td>
+</tr>
+</tbody>
+</table></div>
+<p>The mean and SD summarize the outcome on the scale relevant to mean comparisons. The median and IQR provide additional information about asymmetry and spread.</p>
+</div>
+<div class="section level2 hasAnchor" number="6.3">
+<h2 id="distribution-and-influential-observations">
+<span class="header-section-number">6.3</span> Distribution and influential observations</h2>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="independent-two-group-example-biomarker-change.html#cb35-1" tabindex="-1"></a><span class="fu">ggplot</span>(ind_bio, <span class="fu">aes</span>(treatment_arm, biomarker_change)) <span class="sc">+</span></span>
+<span id="cb35-2"><a href="independent-two-group-example-biomarker-change.html#cb35-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width=</span>.<span class="dv">55</span>, <span class="at">outlier.shape=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb35-3"><a href="independent-two-group-example-biomarker-change.html#cb35-3" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width=</span>.<span class="dv">08</span>, <span class="at">alpha=</span>.<span class="dv">30</span>, <span class="at">size=</span><span class="fl">1.3</span>) <span class="sc">+</span></span>
+<span id="cb35-4"><a href="independent-two-group-example-biomarker-change.html#cb35-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Treatment group"</span>, <span class="at">y=</span><span class="st">"Biomarker change"</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:independent-biomarker-boxplot"></span>
+<img src="biomed_statistics_files/figure-html/independent-biomarker-boxplot-1.png" alt="Distribution of biomarker change in Control and Drug_A." width="100%">
+<p class="caption">
+Figure 6.1: Distribution of biomarker change in Control and Drug_A.
+</p>
+</div>
+<p>The plot shows group location, spread, asymmetry, and individual observations. Large differences in spread are relevant to the pooled Student test, while extreme observations may affect any mean-based analysis.</p>
+</div>
+<div class="section level2 hasAnchor" number="6.4">
+<h2 id="normality-assessment">
+<span class="header-section-number">6.4</span> Normality assessment</h2>
+<p>Normality is assessed separately within each independent group.</p>
+<div class="section level3 hasAnchor" number="6.4.1">
+<h3 id="qq-plots">
+<span class="header-section-number">6.4.1</span> Q–Q plots</h3>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="independent-two-group-example-biomarker-change.html#cb36-1" tabindex="-1"></a><span class="fu">ggplot</span>(ind_bio, <span class="fu">aes</span>(<span class="at">sample=</span>biomarker_change)) <span class="sc">+</span></span>
+<span id="cb36-2"><a href="independent-two-group-example-biomarker-change.html#cb36-2" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">alpha=</span>.<span class="dv">45</span>) <span class="sc">+</span> </span>
+<span id="cb36-3"><a href="independent-two-group-example-biomarker-change.html#cb36-3" tabindex="-1"></a>  <span class="fu">stat_qq_line</span>() <span class="sc">+</span> </span>
+<span id="cb36-4"><a href="independent-two-group-example-biomarker-change.html#cb36-4" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>treatment_arm) <span class="sc">+</span></span>
+<span id="cb36-5"><a href="independent-two-group-example-biomarker-change.html#cb36-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Theoretical normal quantiles"</span>, <span class="at">y=</span><span class="st">"Observed quantiles"</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:independent-biomarker-qq"></span>
+<img src="biomed_statistics_files/figure-html/independent-biomarker-qq-1.png" alt="Q–Q plots of biomarker change by treatment group." width="100%">
+<p class="caption">
+Figure 6.2: Q–Q plots of biomarker change by treatment group.
+</p>
+</div>
+<p>Approximate alignment with the reference line supports a normal model. Systematic curvature suggests skewness, while marked tail departures may indicate heavy tails or influential observations.</p>
+</div>
+<div class="section level3 hasAnchor" number="6.4.2">
+<h3 id="shapirowilk-tests">
+<span class="header-section-number">6.4.2</span> Shapiro–Wilk tests</h3>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="independent-two-group-example-biomarker-change.html#cb37-1" tabindex="-1"></a>shapiro_bio <span class="ot">&lt;-</span> ind_bio <span class="sc">|&gt;</span> <span class="fu">group_by</span>(treatment_arm) <span class="sc">|&gt;</span> <span class="fu">group_modify</span>(<span class="sc">~</span>{</span>
+<span id="cb37-2"><a href="independent-two-group-example-biomarker-change.html#cb37-2" tabindex="-1"></a>  z <span class="ot">&lt;-</span> <span class="fu">shapiro.test</span>(.x<span class="sc">$</span>biomarker_change)</span>
+<span id="cb37-3"><a href="independent-two-group-example-biomarker-change.html#cb37-3" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">W=</span><span class="fu">unname</span>(z<span class="sc">$</span>statistic), <span class="at">p_value=</span>z<span class="sc">$</span>p.value)</span>
+<span id="cb37-4"><a href="independent-two-group-example-biomarker-change.html#cb37-4" tabindex="-1"></a>})</span>
+<span id="cb37-5"><a href="independent-two-group-example-biomarker-change.html#cb37-5" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="independent-two-group-example-biomarker-change.html#cb37-6" tabindex="-1"></a><span class="fu">kbl</span>(shapiro_bio, <span class="at">digits=</span><span class="dv">3</span>, <span class="at">caption=</span><span class="st">"Shapiro–Wilk tests for biomarker change"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:independent-biomarker-shapiro">Table 6.2: </span>Shapiro–Wilk tests for biomarker change</caption>
+<thead>
+<tr class="header">
+<th align="left">treatment_arm</th>
+<th align="right">W</th>
+<th align="right">p_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Control</td>
+<td align="right">0.986</td>
+<td align="right">0.256</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_A</td>
+<td align="right">0.992</td>
+<td align="right">0.757</td>
+</tr>
+</tbody>
+</table></div>
+<p>The Shapiro–Wilk test evaluates</p>
+<p><span class="math display">\[
+H_0:\text{the observations are compatible with a normal distribution}.
+\]</span></p>
+<p>A small Shapiro–Wilk p-value indicates departure from normality, but test choice should not depend on it alone. With a large sample and only mild Q–Q plot deviations, a t-test is usually still appropriate.
+For independent groups, use <strong>Welch’s t-test</strong> if variances differ.
+If non-normality is substantial, especially with strong skewness or influential outliers, consider the <strong>Wilcoxon–Mann–Whitney test</strong>. For paired data, assess the <strong>paired differences</strong> and use either a paired t-test or Wilcoxon signed-rank test accordingly.</p>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="6.5">
+<h2 id="equality-of-variance">
+<span class="header-section-number">6.5</span> Equality of variance</h2>
+<p>A median-centered Levene test, often called the <strong>Brown–Forsythe test</strong>, assesses whether the group spreads differ.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="independent-two-group-example-biomarker-change.html#cb38-1" tabindex="-1"></a>lev_bio <span class="ot">&lt;-</span> car<span class="sc">::</span><span class="fu">leveneTest</span>(biomarker_change<span class="sc">~</span>treatment_arm, <span class="at">data=</span>ind_bio, <span class="at">center=</span>median)</span>
+<span id="cb38-2"><a href="independent-two-group-example-biomarker-change.html#cb38-2" tabindex="-1"></a>lev_bio</span>
+<span id="cb38-3"><a href="independent-two-group-example-biomarker-change.html#cb38-3" tabindex="-1"></a><span class="co">#&gt; Levene's Test for Homogeneity of Variance (center = median)</span></span>
+<span id="cb38-4"><a href="independent-two-group-example-biomarker-change.html#cb38-4" tabindex="-1"></a><span class="co">#&gt;        Df F value Pr(&gt;F)  </span></span>
+<span id="cb38-5"><a href="independent-two-group-example-biomarker-change.html#cb38-5" tabindex="-1"></a><span class="co">#&gt; group   1    5.52   0.02 *</span></span>
+<span id="cb38-6"><a href="independent-two-group-example-biomarker-change.html#cb38-6" tabindex="-1"></a><span class="co">#&gt;       232                 </span></span>
+<span id="cb38-7"><a href="independent-two-group-example-biomarker-change.html#cb38-7" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb38-8"><a href="independent-two-group-example-biomarker-change.html#cb38-8" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
+<p>The null hypothesis is</p>
+<p><span class="math display">\[
+H_0:\sigma_1^2=\sigma_2^2.
+\]</span></p>
+<p>Evidence of unequal variances argues against the pooled Student test. Welch’s test does not require equal population variances.</p>
+</div>
+<div class="section level2 hasAnchor" number="6.6">
+<h2 id="automated-test-selection">
+<span class="header-section-number">6.6</span> Automated test selection</h2>
+<p>The following block combines the diagnostic results and performs one selected analysis.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="independent-two-group-example-biomarker-change.html#cb39-1" tabindex="-1"></a>normal_ok <span class="ot">&lt;-</span> <span class="fu">all</span>(shapiro_bio<span class="sc">$</span>p_value<span class="sc">&gt;=</span>.<span class="dv">05</span>)</span>
+<span id="cb39-2"><a href="independent-two-group-example-biomarker-change.html#cb39-2" tabindex="-1"></a>levene_p <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(lev_bio[<span class="dv">1</span>,<span class="st">"Pr(&gt;F)"</span>])</span>
+<span id="cb39-3"><a href="independent-two-group-example-biomarker-change.html#cb39-3" tabindex="-1"></a>equal_var <span class="ot">&lt;-</span> levene_p<span class="sc">&gt;=</span>.<span class="dv">05</span></span>
+<span id="cb39-4"><a href="independent-two-group-example-biomarker-change.html#cb39-4" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="independent-two-group-example-biomarker-change.html#cb39-5" tabindex="-1"></a><span class="cf">if</span>(normal_ok <span class="sc">&amp;&amp;</span> equal_var){</span>
+<span id="cb39-6"><a href="independent-two-group-example-biomarker-change.html#cb39-6" tabindex="-1"></a>  selected_test <span class="ot">&lt;-</span> <span class="st">"Pooled Student t-test"</span></span>
+<span id="cb39-7"><a href="independent-two-group-example-biomarker-change.html#cb39-7" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">t.test</span>(biomarker_change<span class="sc">~</span>treatment_arm, <span class="at">data=</span>ind_bio, <span class="at">var.equal=</span><span class="cn">TRUE</span>)</span>
+<span id="cb39-8"><a href="independent-two-group-example-biomarker-change.html#cb39-8" tabindex="-1"></a>  reason <span class="ot">&lt;-</span> <span class="st">"Normality acceptable; no evidence of unequal variances."</span></span>
+<span id="cb39-9"><a href="independent-two-group-example-biomarker-change.html#cb39-9" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(normal_ok){</span>
+<span id="cb39-10"><a href="independent-two-group-example-biomarker-change.html#cb39-10" tabindex="-1"></a>  selected_test <span class="ot">&lt;-</span> <span class="st">"Welch two-sample t-test"</span></span>
+<span id="cb39-11"><a href="independent-two-group-example-biomarker-change.html#cb39-11" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">t.test</span>(biomarker_change<span class="sc">~</span>treatment_arm, <span class="at">data=</span>ind_bio, <span class="at">var.equal=</span><span class="cn">FALSE</span>)</span>
+<span id="cb39-12"><a href="independent-two-group-example-biomarker-change.html#cb39-12" tabindex="-1"></a>  reason <span class="ot">&lt;-</span> <span class="st">"Normality acceptable; variances differ."</span></span>
+<span id="cb39-13"><a href="independent-two-group-example-biomarker-change.html#cb39-13" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb39-14"><a href="independent-two-group-example-biomarker-change.html#cb39-14" tabindex="-1"></a>  selected_test <span class="ot">&lt;-</span> <span class="st">"Wilcoxon–Mann–Whitney rank-sum test"</span></span>
+<span id="cb39-15"><a href="independent-two-group-example-biomarker-change.html#cb39-15" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">wilcox.test</span>(biomarker_change<span class="sc">~</span>treatment_arm, <span class="at">data=</span>ind_bio, <span class="at">exact=</span><span class="cn">FALSE</span>, <span class="at">conf.int=</span><span class="cn">TRUE</span>)</span>
+<span id="cb39-16"><a href="independent-two-group-example-biomarker-change.html#cb39-16" tabindex="-1"></a>  reason <span class="ot">&lt;-</span> <span class="st">"Evidence of departure from normality; rank-based analysis selected."</span></span>
+<span id="cb39-17"><a href="independent-two-group-example-biomarker-change.html#cb39-17" tabindex="-1"></a>}</span>
+<span id="cb39-18"><a href="independent-two-group-example-biomarker-change.html#cb39-18" tabindex="-1"></a></span>
+<span id="cb39-19"><a href="independent-two-group-example-biomarker-change.html#cb39-19" tabindex="-1"></a><span class="fu">tibble</span>(selected_test, reason) <span class="sc">|&gt;</span> <span class="fu">kbl</span>(<span class="at">caption=</span><span class="st">"Automated test selection"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:independent-test-selection">Table 6.3: </span>Automated test selection</caption>
+<thead>
+<tr class="header">
+<th align="left">selected_test</th>
+<th align="left">reason</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Welch two-sample t-test</td>
+<td align="left">Normality acceptable; variances differ.</td>
+</tr>
+</tbody>
+</table></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="independent-two-group-example-biomarker-change.html#cb40-1" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(fit) <span class="sc">|&gt;</span> <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>, <span class="at">caption=</span><span class="st">"Selected independent-group analysis"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table style="width:100%;">
+<caption>
+<span id="tab:independent-test-selection">Table 6.3: </span>Selected independent-group analysis</caption>
+<colgroup>
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="7%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="21%">
+<col width="10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">estimate</th>
+<th align="right">estimate1</th>
+<th align="right">estimate2</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">parameter</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+<th align="left">method</th>
+<th align="left">alternative</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">12.23</td>
+<td align="right">-2.712</td>
+<td align="right">-14.94</td>
+<td align="right">8.6</td>
+<td align="right">0</td>
+<td align="right">221</td>
+<td align="right">9.426</td>
+<td align="right">15.03</td>
+<td align="left">Welch Two Sample t-test</td>
+<td align="left">two.sided</td>
+</tr>
+</tbody>
+</table></div>
+<p>The operational rule is</p>
+<div class="course-table-scroll"><table>
+<thead>
+<tr class="header">
+<th>Normality</th>
+<th>Variance assessment</th>
+<th>Selected analysis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>acceptable</td>
+<td>similar</td>
+<td>pooled Student t-test</td>
+</tr>
+<tr class="even">
+<td>acceptable</td>
+<td>unequal</td>
+<td>Welch t-test</td>
+</tr>
+<tr class="odd">
+<td>substantial departure</td>
+<td>either</td>
+<td>Wilcoxon–Mann–Whitney test</td>
+</tr>
+</tbody>
+</table></div>
+<p>This is the general rule, however the threshold <span class="math inline">\(p=0.05\)</span> should not be interpreted as a universal boundary. Q–Q plots, influential observations, sample size, and the intended estimand remain relevant.</p>
+</div>
+<div class="section level2 hasAnchor" number="6.7">
+<h2 id="mean-based-tests">
+<span class="header-section-number">6.7</span> Mean-based tests</h2>
+<p>For the pooled Student test,</p>
+<p><span class="math display">\[
+t=
+\frac{\bar y_1-\bar y_2}
+{s_p\sqrt{1/n_1+1/n_2}},
+\]</span></p>
+<p>where <span class="math inline">\(s_p\)</span> is the pooled estimate of the common SD.</p>
+<p>Welch’s test instead uses</p>
+<p><span class="math display">\[
+SE(\bar y_1-\bar y_2)
+=
+\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}},
+\]</span></p>
+<p>and estimates the degrees of freedom using the Welch–Satterthwaite approximation.</p>
+<p>Both procedures estimate a <strong>difference in means</strong>. Their distinction concerns how uncertainty is estimated when group variances differ.</p>
+</div>
+<div class="section level2 hasAnchor" number="6.8">
+<h2 id="wilcoxonmannwhitney-test">
+<span class="header-section-number">6.8</span> Wilcoxon–Mann–Whitney test</h2>
+<p>The Wilcoxon rank-sum, or Mann–Whitney, procedure replaces the original measurements by their ranks and evaluates the relative ordering of observations from the two groups.</p>
+<p>If <span class="math inline">\(R_1\)</span> is the rank sum for group 1,</p>
+<p><span class="math display">\[
+U_1=R_1-\frac{n_1(n_1+1)}{2}.
+\]</span></p>
+<p>It should not automatically be described as a test of equal medians. A simple median or location-shift interpretation requires additional distributional conditions.</p>
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

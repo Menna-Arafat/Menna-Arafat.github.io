@@ -1,0 +1,729 @@
+/* start custom scss snippet */
+
+.home-intro-section {
+  margin: map-get($spacers, 4) 0 map-get($spacers, 4);
+  padding-top: 0;
+}
+
+.home-posts-section {
+  margin: map-get($spacers, 3) 0 map-get($spacers, 5);
+}
+
+.home-intro {
+  align-items: start;
+  display: grid;
+  gap: map-get($spacers, 5);
+  grid-template-columns: minmax(0, 1.55fr) minmax(9.5rem, .45fr);
+  margin: 0 auto;
+  max-width: 58rem;
+  padding-bottom: map-get($spacers, 3);
+  text-align: left;
+}
+
+.home-intro__copy {
+  border-left: 1px solid rgba($text-color, .16);
+  padding: map-get($spacers, 2) 0 map-get($spacers, 2) map-get($spacers, 5);
+  position: relative;
+}
+
+.home-intro__copy::before {
+  background: $text-color;
+  border-radius: 999px;
+  content: "";
+  height: 2.15rem;
+  left: -.095rem;
+  opacity: .58;
+  position: absolute;
+  top: map-get($spacers, 2);
+  width: .18rem;
+}
+
+.home-intro__actions {
+  position: relative;
+  z-index: 1;
+}
+
+.home-intro__lead {
+  color: $text-color;
+  font-family: "Bodoni 72", Didot, Baskerville, "Iowan Old Style", Georgia, serif;
+  font-size: map-get($base, font-size-lg);
+  font-weight: 400;
+  isolation: isolate;
+  line-height: 1.62;
+  margin: 0 0 map-get($spacers, 3);
+  max-width: 43rem;
+  overflow: visible;
+  padding: map-get($spacers, 2) map-get($spacers, 2) map-get($spacers, 2) map-get($spacers, 4);
+  position: relative;
+}
+
+.home-intro__lead::before {
+  background-image: var(--home-intro-logo);
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  bottom: -.35rem;
+  content: "";
+  left: -3.25rem;
+  opacity: .16;
+  position: absolute;
+  top: -.35rem;
+  width: 14rem;
+  z-index: -1;
+}
+
+.home-intro__actions {
+  gap: .85rem 1.35rem;
+  justify-content: flex-start;
+  margin-top: map-get($spacers, 3);
+}
+
+.home-intro__action {
+  align-items: center;
+  background: transparent;
+  color: $text-color-d;
+  display: inline-flex;
+  font-size: map-get($base, font-size-sm);
+  font-weight: map-get($base, font-weight-bold);
+  gap: .5rem;
+  line-height: 1;
+  min-height: 2.4rem;
+  padding: 0;
+  text-decoration: none;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.home-intro__action i {
+  align-items: center;
+  background: $background-color;
+  border: 1px solid $border-color-l;
+  border-radius: 50%;
+  color: $text-color-d;
+  display: inline-flex;
+  font-size: .9rem;
+  height: 2.15rem;
+  justify-content: center;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+  width: 2.15rem;
+}
+
+.home-intro__action:hover {
+  color: $text-color;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.home-intro__action:hover i {
+  background: $background-color;
+  border-color: $border-color;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .08);
+  color: $text-color;
+}
+
+.home-intro__media {
+  align-self: start;
+  background: $background-color;
+  border: 1px solid rgba($text-color, .12);
+  border-radius: 50%;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .075);
+  height: 12.5rem;
+  justify-self: end;
+  margin: 0;
+  overflow: hidden;
+  padding: .35rem;
+  transform: translateY(-1.5rem);
+  width: 12.5rem;
+}
+
+.home-intro__photo {
+  border-radius: 50%;
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.05);
+  width: 100%;
+}
+
+.home-posts__title {
+  color: $text-color;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: map-get($base, font-size-h4);
+  font-weight: 400;
+  margin-top: map-get($spacers, 2);
+  padding-top: map-get($spacers, 2);
+  text-align: center;
+}
+
+.home-posts-section > header {
+  border-top: 1px solid $border-color-l;
+  margin: 0 auto map-get($spacers, 4);
+  max-width: 15rem;
+}
+
+.home-latest-posts-section .article-list {
+  display: grid;
+  gap: map-get($spacers, 3);
+}
+
+.home-latest-posts-section .article-list > .item {
+  border: 1px solid $border-color-l;
+  border-radius: 8px;
+  padding: map-get($spacers, 3);
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.home-latest-posts-section .article-list > .item:not(:first-child) {
+  padding-top: map-get($spacers, 3);
+}
+
+.home-latest-posts-section .article-list > .item:not(:last-child) {
+  padding-bottom: map-get($spacers, 3);
+}
+
+.home-latest-posts-section .article-list > .item:hover {
+  border-color: $border-color;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .07);
+  transform: translateY(-2px);
+}
+
+.home-latest-posts-section .item__content {
+  padding: 0;
+}
+
+.home-latest-posts-section .item__header {
+  color: $text-color;
+  font-size: map-get($base, font-size-h4);
+  line-height: 1.35;
+  margin-top: 0;
+}
+
+.home-latest-posts-section .item__description {
+  color: $text-color-d;
+}
+
+.home-latest-posts-section .item__description p a {
+  border-bottom: 1px solid $border-color-l;
+  color: $text-color;
+  font-weight: map-get($base, font-weight-bold);
+  text-decoration: none;
+}
+
+.home-latest-posts-section .item__description p a:hover {
+  border-color: $border-color;
+  text-decoration: none;
+}
+
+.home-latest-posts-section .button--secondary {
+  background: transparent;
+  border-color: $border-color-l;
+  color: $text-color-d;
+}
+
+.services-page {
+  margin-bottom: map-get($spacers, 5);
+}
+
+.services-hero {
+  align-items: center;
+  border-bottom: 1px solid $border-color-l;
+  display: grid;
+  gap: map-get($spacers, 4);
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+  margin-bottom: map-get($spacers, 5);
+  padding: map-get($spacers, 2) 0 map-get($spacers, 5);
+}
+
+.services-hero__eyebrow,
+.services-section__eyebrow {
+  color: $text-color-l;
+  font-size: map-get($base, font-size-sm);
+  font-weight: map-get($base, font-weight-bold);
+  margin-bottom: map-get($spacers, 2);
+}
+
+.services-hero h2,
+.services-section h2,
+.services-cta h2 {
+  color: $text-color;
+  font-family: "Bodoni 72", Didot, Baskerville, "Iowan Old Style", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.services-hero h2 {
+  font-size: map-get($base, font-size-h2-lg);
+  line-height: 1.18;
+  margin: 0 0 map-get($spacers, 3);
+}
+
+.services-hero p:last-child {
+  color: $text-color-d;
+  font-size: map-get($base, font-size-lg);
+  line-height: 1.72;
+  margin: 0;
+  max-width: 42rem;
+}
+
+.services-hero__mark {
+  align-items: center;
+  aspect-ratio: 1;
+  background: $background-color;
+  border: 1px solid $border-color-l;
+  border-radius: 50%;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .08);
+  display: flex;
+  flex-direction: column;
+  gap: map-get($spacers, 2);
+  justify-content: center;
+  justify-self: end;
+  min-width: 12rem;
+  padding: map-get($spacers, 3);
+  text-align: center;
+}
+
+.services-hero__mark i {
+  color: $text-color;
+  font-size: 2rem;
+}
+
+.services-hero__mark span {
+  color: $text-color-l;
+  font-size: map-get($base, font-size-sm);
+  font-weight: map-get($base, font-weight-bold);
+}
+
+.services-section {
+  margin: 0 0 map-get($spacers, 5);
+}
+
+.services-section > header {
+  margin-bottom: map-get($spacers, 3);
+  max-width: 42rem;
+}
+
+.services-section h2,
+.services-cta h2 {
+  font-size: map-get($base, font-size-h3);
+  line-height: 1.28;
+  margin: 0;
+}
+
+.services-grid {
+  display: grid;
+  gap: map-get($spacers, 3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.service-card {
+  border: 1px solid $border-color-l;
+  border-radius: 8px;
+  padding: map-get($spacers, 3);
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.service-card:hover {
+  border-color: $border-color;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, .06);
+  transform: translateY(-2px);
+}
+
+.service-card i {
+  align-items: center;
+  background: $text-background-color;
+  border: 1px solid $border-color-l;
+  border-radius: 50%;
+  color: $text-color-d;
+  display: inline-flex;
+  font-size: 1rem;
+  height: 2.5rem;
+  justify-content: center;
+  margin-bottom: map-get($spacers, 3);
+  width: 2.5rem;
+}
+
+.service-card h3,
+.services-steps h3 {
+  color: $text-color;
+  font-size: map-get($base, font-size-h5);
+  margin: 0 0 map-get($spacers, 2);
+}
+
+.service-card p,
+.services-steps p,
+.services-cta p {
+  color: $text-color-d;
+  line-height: 1.68;
+  margin: 0;
+}
+
+.services-deliverables {
+  border-bottom: 1px solid $border-color-l;
+  border-top: 1px solid $border-color-l;
+  padding: map-get($spacers, 4) 0;
+}
+
+.services-deliverables ul {
+  display: grid;
+  gap: map-get($spacers, 2);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.services-deliverables li {
+  align-items: center;
+  color: $text-color-d;
+  display: flex;
+  gap: map-get($spacers, 2);
+  margin: 0;
+}
+
+.services-deliverables li i {
+  color: $text-color;
+  font-size: .85rem;
+}
+
+.services-steps {
+  display: grid;
+  gap: map-get($spacers, 3);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.services-steps > div {
+  border-left: 1px solid $border-color-l;
+  padding-left: map-get($spacers, 3);
+}
+
+.services-steps span {
+  color: $text-color-l;
+  display: block;
+  font-family: map-get($base, font-family-code);
+  font-size: map-get($base, font-size-sm);
+  margin-bottom: map-get($spacers, 2);
+}
+
+.services-cta {
+  align-items: center;
+  border: 1px solid $border-color-l;
+  border-radius: 8px;
+  display: flex;
+  gap: map-get($spacers, 3);
+  justify-content: space-between;
+  padding: map-get($spacers, 4);
+}
+
+.services-cta p {
+  margin-top: map-get($spacers, 2);
+}
+
+.services-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: map-get($spacers, 2);
+}
+
+.services-cta__actions a {
+  align-items: center;
+  border: 1px solid $border-color-l;
+  border-radius: 6px;
+  color: $text-color;
+  display: inline-flex;
+  font-weight: map-get($base, font-weight-bold);
+  gap: .5rem;
+  min-height: 2.6rem;
+  padding: .65rem .9rem;
+  text-decoration: none;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.services-cta__actions a:hover {
+  border-color: $border-color;
+  box-shadow: 0 9px 20px rgba(0, 0, 0, .06);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.services-cta__actions i {
+  color: $text-color-d;
+  width: 1rem;
+}
+
+.about-profile {
+  align-items: start;
+  display: grid;
+  gap: map-get($spacers, 4);
+  grid-template-columns: minmax(0, 1fr) 12rem;
+  margin: map-get($spacers, 3) 0 map-get($spacers, 5);
+}
+
+.about-profile__copy {
+  grid-column: 1;
+  grid-row: 1;
+  color: $text-color-d;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: map-get($base, font-size-lg);
+  font-weight: 400;
+  line-height: 1.72;
+  max-width: 44rem;
+}
+
+.about-profile__copy p {
+  margin-bottom: map-get($spacers, 3);
+}
+
+.about-profile__media {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  margin-top: -6.5rem;
+  transform: translateX(1.5rem);
+  width: 12rem;
+}
+
+.about-profile__photo-frame {
+  background: rgba($main-color-1, .07);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .12);
+  height: 12rem;
+  overflow: hidden;
+  padding: .5rem;
+  width: 12rem;
+}
+
+.about-profile__photo {
+  border-radius: 50%;
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.05);
+  width: 100%;
+}
+
+.about-profile__links {
+  border-bottom: 0;
+  margin: 0 0 map-get($spacers, 3);
+  padding-bottom: map-get($spacers, 2);
+}
+
+.about-profile__links h2 {
+  border-bottom: 0;
+  color: $text-color-l;
+  font-size: map-get($base, font-size-sm);
+  font-weight: map-get($base, font-weight-bold);
+  letter-spacing: 0;
+  margin: 0 0 map-get($spacers, 1);
+}
+
+.about-profile__links ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem 1.1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.about-profile__links li {
+  margin: 0;
+}
+
+.about-profile__links a {
+  align-items: center;
+  border-bottom: 0;
+  color: $text-color;
+  display: inline-flex;
+  font-size: map-get($base, font-size);
+  gap: .4rem;
+  line-height: 1.4;
+  padding: .15rem 0;
+  text-decoration: none;
+  transition: border-color .2s ease, color .2s ease;
+}
+
+.about-profile__links a:hover {
+  border-color: $main-color-1;
+  color: $main-color-1;
+  text-decoration: none;
+}
+
+.about-profile__links i {
+  color: $main-color-1;
+  font-size: .85rem;
+  text-align: center;
+}
+
+.about-profile__links span {
+  font-weight: map-get($base, font-weight-normal);
+}
+
+@media (max-width: map-get($responsive, md)) {
+  .home-intro {
+    gap: map-get($spacers, 3);
+    grid-template-columns: 1fr;
+    padding-bottom: 0;
+  }
+
+  .home-intro__copy {
+    border-left: 0;
+    padding: map-get($spacers, 2) 0;
+  }
+
+  .home-intro__copy::before {
+    display: none;
+  }
+
+  .home-intro__lead {
+    font-size: map-get($base, font-size);
+    padding: map-get($spacers, 3) map-get($spacers, 2);
+  }
+
+  .home-intro__lead::before {
+    opacity: .24;
+    width: 12rem;
+  }
+
+  .home-intro__media {
+    height: 10.5rem;
+    justify-self: center;
+    order: -1;
+    transform: translateY(-.5rem);
+    width: 10.5rem;
+  }
+
+  .home-intro__photo {
+    width: 100%;
+  }
+
+  .services-hero,
+  .services-grid,
+  .services-deliverables ul,
+  .services-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .services-hero__mark {
+    justify-self: start;
+    min-width: 10rem;
+  }
+
+  .services-cta {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: map-get($spacers, 3);
+  }
+
+  .about-profile {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .about-profile__media {
+    float: none;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    margin: -6.25rem 0 .75rem;
+    transform: translateX(.35rem);
+    width: 9rem;
+  }
+
+  .about-profile__copy {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .about-profile__photo-frame {
+    height: 9rem;
+    width: 9rem;
+  }
+
+  .about-profile__photo {
+    width: 100%;
+  }
+}
+
+
+
+/* Equalize Home project grids with a clean, transparent project treatment. */
+.home-projects-section .layout--articles > section {
+  margin-bottom: map-get($spacers, 5);
+}
+
+.home-projects-section .layout--articles > section > header {
+  margin-bottom: map-get($spacers, 3);
+}
+
+.home-projects-section .layout--articles > section > header h2 {
+  color: $main-color-1;
+  font-family: "Bodoni 72", Didot, Baskerville, "Iowan Old Style", Georgia, serif;
+  font-size: map-get($base, font-size-h2);
+  font-weight: 600;
+  line-height: 1.18;
+  margin: 0;
+  max-width: 38rem;
+}
+
+.home-projects-section .article-list.grid {
+  align-items: stretch;
+  row-gap: map-get($spacers, 4);
+}
+
+.home-projects-section .article-list.grid > .cell {
+  display: flex;
+}
+
+.home-projects-section .card {
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.home-projects-section .card__image {
+  aspect-ratio: 16 / 10;
+  background: transparent;
+  border: 1px solid rgba($text-color, .1);
+  border-radius: 6px;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+.home-projects-section .card__image > img,
+.home-projects-section .card__image img.image {
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  width: 100%;
+}
+
+.home-projects-section .card__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: map-get($spacers, 2) 0 0;
+}
+
+.home-projects-section .card__header {
+  color: $text-color;
+  font-size: map-get($base, font-size);
+  line-height: 1.35;
+  margin-bottom: 0;
+  min-height: 3.2rem;
+}
+
+.home-projects-section .card a:hover {
+  text-decoration: none;
+}
+
+.home-projects-section .card:hover .card__header {
+  color: $main-color-1;
+}
+
+/* end custom scss snippet */

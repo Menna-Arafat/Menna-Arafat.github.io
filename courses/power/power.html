@@ -1,0 +1,154 @@
+---
+layout: article
+title: Power & Sample Size
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.6!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.65rem 0 .9rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.75rem 4.8rem .75rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<!--bookdown:title:end-->
+<!--bookdown:title:start-->
+<div id="power-and-sample-size" class="section level2 hasAnchor" number="1">
+<h2>
+<span class="header-section-number">1</span> Power and sample size</h2>
+<p>Power calculations are mainly used <strong>before a study begins</strong> to decide how many participants are needed.</p>
+<p><strong>Power</strong> is the probability of detecting a real effect of a specified size. For example, 90% power means that if the true effect is the one assumed in the calculation, the study has about a 90% chance of producing a statistically significant result at the chosen significance level.</p>
+<p>Sample size depends on several assumptions:</p>
+<ul>
+<li>the smallest clinically important effect;</li>
+<li>expected variability for continuous outcomes;</li>
+<li>expected event or response rates for binary outcomes;</li>
+<li>significance level, usually <span class="math inline">\(\alpha=0.05\)</span>;</li>
+<li>desired power, commonly 80% or 90%;</li>
+<li>allocation ratio between groups;</li>
+<li>expected dropout or missing data.</li>
+</ul>
+<p>Larger samples are usually required when the expected treatment effect is small, variability is high, or higher power is required.</p>
+<div id="continuous-outcome-planning-example" class="section level3 hasAnchor" number="1.1">
+<h3>
+<span class="header-section-number">1.1</span> Continuous-outcome planning example</h3>
+<p>Suppose a two-arm trial is designed to detect a <strong>5-mmHg difference in mean SBP</strong>, with an expected SD of <strong>12 mmHg</strong>, a two-sided significance level of 0.05, and 90% power.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">power.t.test</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="at">delta=</span><span class="dv">5</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">sd=</span><span class="dv">12</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">sig.level=</span>.<span class="dv">05</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">power=</span>.<span class="dv">90</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">type=</span><span class="st">"two.sample"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="at">alternative=</span><span class="st">"two.sided"</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## 
+##      Two-sample t test power calculation 
+## 
+##               n = 122.0139
+##           delta = 5
+##              sd = 12
+##       sig.level = 0.05
+##           power = 0.9
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>Here:</p>
+<ul>
+<li>
+<code>delta=5</code> is the mean difference we want to detect;</li>
+<li>
+<code>sd=12</code> is the expected within-group standard deviation;</li>
+<li>
+<code>sig.level=.05</code> is the Type I error rate;</li>
+<li>
+<code>power=.90</code> requests 90% power.</li>
+</ul>
+<p>The function returns the approximate <strong>sample size required per group</strong>.</p>
+</div>
+<div id="binary-outcome-planning-example" class="section level3 hasAnchor" number="1.2">
+<h3>
+<span class="header-section-number">1.2</span> Binary-outcome planning example</h3>
+<p>Suppose the expected clinical response rate is <strong>30% in the control group</strong> and <strong>45% in the treatment group</strong>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">power.prop.test</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">p1=</span>.<span class="dv">30</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">p2=</span>.<span class="dv">45</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">sig.level=</span>.<span class="dv">05</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">power=</span>.<span class="dv">90</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">alternative=</span><span class="st">"two.sided"</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## 
+##      Two-sample comparison of proportions power calculation 
+## 
+##               n = 216.8199
+##              p1 = 0.3
+##              p2 = 0.45
+##       sig.level = 0.05
+##           power = 0.9
+##     alternative = two.sided
+## 
+## NOTE: n is number in *each* group</code></pre>
+<p>Here, the effect of interest is the difference between response rates:</p>
+<p><span class="math display">\[
+0.45-0.30=0.15.
+\]</span></p>
+<p>The calculation estimates how many participants are needed to detect this <strong>15-percentage-point difference</strong> with 90% power.</p>
+<p>These calculations are for <strong>planning</strong>. After the study is completed, the estimated treatment effect and its confidence interval are more informative than calculating “observed power” from the observed result.</p>
+</div>
+</div>
+<div id="standard-deviation-standard-error-and-confidence-intervals" class="section level2 hasAnchor" number="2">
+<h2>
+<span class="header-section-number">2</span> Standard deviation, standard error, and confidence intervals</h2>
+<p>These quantities describe different things.</p>
+<p><strong>Standard deviation (SD)</strong> describes how much individual observations vary.</p>
+<p>For example, if mean SBP is 130 mmHg with SD 12 mmHg, the SD describes the spread of individual SBP measurements around the mean.</p>
+<p><strong>Standard error (SE)</strong> describes the uncertainty in an estimated statistic, such as the sample mean.</p>
+<p>For a sample mean,</p>
+<p><span class="math display">\[
+SE(\bar{x})=\frac{s}{\sqrt{n}}.
+\]</span></p>
+<p>For example, if <span class="math inline">\(s=12\)</span> and <span class="math inline">\(n=100\)</span>,</p>
+<p><span class="math display">\[
+SE=\frac{12}{\sqrt{100}}=1.2.
+\]</span></p>
+<p>Thus, individual SBP values may vary considerably (<span class="math inline">\(SD=12\)</span>), while the estimated mean can still be relatively precise (<span class="math inline">\(SE=1.2\)</span>).</p>
+<p>A <strong>confidence interval (CI)</strong> gives a range of plausible values for the population parameter. An approximate 95% CI for a mean is</p>
+<p><span class="math display">\[
+\bar{x}\pm1.96\,SE.
+\]</span></p>
+<p>If the estimated mean is 130 and <span class="math inline">\(SE=1.2\)</span>,</p>
+<p><span class="math display">\[
+130\pm1.96(1.2)\approx(127.6,\;132.4).
+\]</span></p>
+<p>In short:</p>
+<p><strong>SD = variability between individuals</strong></p>
+<p><strong>SE = uncertainty in the estimate</strong></p>
+<p><strong>CI = plausible range for the population parameter</strong></p>
+<p>Increasing sample size usually decreases the SE and narrows the confidence interval, but a large sample cannot correct bias caused by poor study design, measurement error, or inappropriate analysis.</p>
+
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+{% endraw %}

@@ -1,0 +1,516 @@
+---
+layout: article
+title: 2 Descriptive statistics and exploratory data analysis
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="descriptive-statistics-and-exploratory-data-analysis" class="section level1 hasAnchor" number="2">
+
+<div class="section level2 hasAnchor" number="2.1">
+<h2 id="measures-of-location">
+<span class="header-section-number">2.1</span> Measures of location</h2>
+<div class="section level3 hasAnchor" number="2.1.1">
+<h3 id="mean-median-and-trimmed-mean">
+<span class="header-section-number">2.1.1</span> Mean, median, and trimmed mean</h3>
+<p>For observations <span class="math inline">\(x_1,\ldots,x_n\)</span>, the arithmetic mean is</p>
+<p><span class="math display">\[
+\bar{x}=\frac{1}{n}\sum_{i=1}^{n}x_i.
+\]</span></p>
+<p>It uses every observation and is efficient for many regular distributions, but it can be strongly influenced by a long tail or extreme values. The median is the middle ordered value and is more resistant to outliers. A trimmed mean compromises between the two by removing a fixed proportion from each tail before averaging.</p>
+<div class="section level4 hasAnchor" number="2.1.1.1">
+<h4 id="arithmetic-and-robust-location-summaries">
+<span class="header-section-number">2.1.1.1</span> Arithmetic and robust location summaries</h4>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb8-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> dat<span class="sc">$</span>crp_baseline_mg_L</span>
+<span id="cb8-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb8-2" tabindex="-1"></a>location <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">mean=</span><span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb8-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb8-3" tabindex="-1"></a>                   <span class="at">median=</span><span class="fu">median</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb8-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb8-4" tabindex="-1"></a>                   <span class="at">trimmed_mean_10pct=</span><span class="fu">mean</span>(x, <span class="at">trim=</span>.<span class="dv">10</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb8-5"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb8-5" tabindex="-1"></a>                   <span class="at">q25=</span><span class="fu">quantile</span>(x,.<span class="dv">25</span>,<span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">q75=</span><span class="fu">quantile</span>(x,.<span class="dv">75</span>,<span class="at">na.rm=</span><span class="cn">TRUE</span>));</span>
+<span id="cb8-6"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb8-6" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb8-7" tabindex="-1"></a><span class="fu">kbl</span>(location, <span class="at">digits=</span><span class="dv">2</span>, <span class="at">caption=</span><span class="st">"Location summaries for baseline CRP"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:location-examples">Table 2.1: </span>Location summaries for baseline CRP</caption>
+<thead>
+<tr class="header">
+<th align="right">mean</th>
+<th align="right">median</th>
+<th align="right">trimmed_mean_10pct</th>
+<th align="right">q25</th>
+<th align="right">q75</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">4.86</td>
+<td align="right">3.48</td>
+<td align="right">4.18</td>
+<td align="right">2.35</td>
+<td align="right">6.01</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="2.1.2">
+<h3 id="weighted-means">
+<span class="header-section-number">2.1.2</span> Weighted means</h3>
+<p>When observations carry legitimate representation or precision weights, the weighted mean is</p>
+<p><span class="math display">\[
+\bar{x}_w=\frac{\sum_i w_i x_i}{\sum_i w_i}.
+\]</span></p>
+<p>The workbook contains <code>sampling_weight</code> specifically for sampling demonstrations.However, the trial’s primary treatment comparisons are <strong>not</strong> weighted by this educational variable.</p>
+<div class="section level4 hasAnchor" number="2.1.2.1">
+<h4 id="weighted-mean-for-systolic-blood-pressure">
+<span class="header-section-number">2.1.2.1</span> Weighted mean for systolic blood pressure</h4>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb9-1" tabindex="-1"></a>ok <span class="ot">&lt;-</span> <span class="fu">complete.cases</span>(dat<span class="sc">$</span>sbp_baseline_mmHg, dat<span class="sc">$</span>sampling_weight)</span>
+<span id="cb9-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb9-2" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb9-3" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">unweighted=</span><span class="fu">mean</span>(dat<span class="sc">$</span>sbp_baseline_mmHg[ok]),</span>
+<span id="cb9-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb9-4" tabindex="-1"></a>       <span class="at">weighted=</span><span class="fu">weighted.mean</span>(dat<span class="sc">$</span>sbp_baseline_mmHg[ok], dat<span class="sc">$</span>sampling_weight[ok])) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb9-5" tabindex="-1"></a><span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">2</span>, <span class="at">caption=</span><span class="st">"Unweighted and weighted baseline SBP"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:weighted-mean">Table 2.2: </span>Unweighted and weighted baseline SBP</caption>
+<thead>
+<tr class="header">
+<th align="right">unweighted</th>
+<th align="right">weighted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">130.1</td>
+<td align="right">130.2</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="2.2">
+<h2 id="measures-of-variability">
+<span class="header-section-number">2.2</span> Measures of variability</h2>
+<div class="section level3 hasAnchor" number="2.2.1">
+<h3 id="sd-iqr-and-mad">
+<span class="header-section-number">2.2.1</span> SD, IQR, and MAD</h3>
+<p>The sample variance measures the average squared spread of observations around the sample mean.</p>
+<p><span class="math display">\[
+s^2=\frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n-1},
+\]</span></p>
+<p>and the sample standard deviation is</p>
+<p><span class="math display">\[
+s=\sqrt{s^2},
+\]</span></p>
+<p>which returns dispersion to the original measurement scale.</p>
+<p>The interquartile range is</p>
+<p><span class="math display">\[
+IQR=Q_3-Q_1,
+\]</span></p>
+<p>the width of the middle 50% of observations.</p>
+<p>The median absolute deviation (MAD) measures the typical distance of observations from the median.</p>
+<p><span class="math display">\[
+MAD=\operatorname{median}_{i}\left|x_i-\tilde{x}\right|,
+\]</span></p>
+<p>where <span class="math inline">\(\tilde{x}\)</span> is the sample median. MAD is a robust measure of dispersion because it is based on absolute deviations from the median and is less sensitive to extreme observations than the standard deviation.</p>
+<div class="section level4 hasAnchor" number="2.2.1.1">
+<h4 id="measures-of-spread-and-dispersion">
+<span class="header-section-number">2.2.1.1</span> Measures of spread and dispersion</h4>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-1" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb10-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-2" tabindex="-1"></a>  <span class="at">variable =</span> <span class="fu">c</span>(<span class="st">"Baseline SBP"</span>, <span class="st">"Baseline CRP"</span>),</span>
+<span id="cb10-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-3" tabindex="-1"></a>  <span class="at">SD =</span> <span class="fu">c</span>(</span>
+<span id="cb10-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-4" tabindex="-1"></a>    <span class="fu">sd</span>(dat<span class="sc">$</span>sbp_baseline_mmHg, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb10-5"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-5" tabindex="-1"></a>    <span class="fu">sd</span>(dat<span class="sc">$</span>crp_baseline_mg_L, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb10-6"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-6" tabindex="-1"></a>  ),</span>
+<span id="cb10-7"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-7" tabindex="-1"></a>  <span class="at">IQR =</span> <span class="fu">c</span>(</span>
+<span id="cb10-8"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-8" tabindex="-1"></a>    <span class="fu">IQR</span>(dat<span class="sc">$</span>sbp_baseline_mmHg, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb10-9"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-9" tabindex="-1"></a>    <span class="fu">IQR</span>(dat<span class="sc">$</span>crp_baseline_mg_L, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb10-10"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-10" tabindex="-1"></a>  ),</span>
+<span id="cb10-11"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-11" tabindex="-1"></a>  <span class="at">MAD_scaled =</span> <span class="fu">c</span>(</span>
+<span id="cb10-12"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-12" tabindex="-1"></a>    <span class="fu">mad</span>(dat<span class="sc">$</span>sbp_baseline_mmHg, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb10-13"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-13" tabindex="-1"></a>    <span class="fu">mad</span>(dat<span class="sc">$</span>crp_baseline_mg_L, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb10-14"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-14" tabindex="-1"></a>  ),</span>
+<span id="cb10-15"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-15" tabindex="-1"></a>  <span class="at">MAD_raw =</span> <span class="fu">c</span>(</span>
+<span id="cb10-16"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-16" tabindex="-1"></a>    <span class="fu">mad</span>(dat<span class="sc">$</span>sbp_baseline_mmHg, <span class="at">constant=</span><span class="dv">1</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb10-17"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-17" tabindex="-1"></a>    <span class="fu">mad</span>(dat<span class="sc">$</span>crp_baseline_mg_L, <span class="at">constant=</span><span class="dv">1</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb10-18"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-18" tabindex="-1"></a>  )</span>
+<span id="cb10-19"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-19" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb10-20"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb10-20" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">2</span>, <span class="at">caption=</span><span class="st">"Classical and robust measures of spread"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:variability-examples">Table 2.3: </span>Classical and robust measures of spread</caption>
+<thead>
+<tr class="header">
+<th align="left">variable</th>
+<th align="right">SD</th>
+<th align="right">IQR</th>
+<th align="right">MAD_scaled</th>
+<th align="right">MAD_raw</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Baseline SBP</td>
+<td align="right">13.44</td>
+<td align="right">16.42</td>
+<td align="right">12.53</td>
+<td align="right">8.45</td>
+</tr>
+<tr class="even">
+<td align="left">Baseline CRP</td>
+<td align="right">4.06</td>
+<td align="right">3.66</td>
+<td align="right">2.31</td>
+<td align="right">1.56</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="2.2.2">
+<h3 id="raw-versus-scaled-mad">
+<span class="header-section-number">2.2.2</span> Raw versus scaled MAD</h3>
+<p>The distinction is important. The lecture formula is the <strong>raw</strong> median absolute deviation. R’s <code>mad()</code> multiplies that quantity by a consistency constant by default; <code>mad(x, constant=1)</code> reproduces the raw formula.</p>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="2.3">
+<h2 id="percentiles-and-distributional-summaries">
+<span class="header-section-number">2.3</span> Percentiles and distributional summaries</h2>
+<p>A percentile is a cut point in the ordered data: the <span class="math inline">\(p\)</span>th quantile is a value at or below which approximately <span class="math inline">\(100p\%\)</span> of observations fall. Percentiles are especially useful for skewed biomarkers and for identifying clinically relevant distribution tails.</p>
+<div class="section level3 hasAnchor" number="2.3.1">
+<h3 id="quantiles-in-r">
+<span class="header-section-number">2.3.1</span> Quantiles in R</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb11-1" tabindex="-1"></a><span class="fu">quantile</span>(dat<span class="sc">$</span>crp_baseline_mg_L, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">05</span>,.<span class="dv">10</span>,.<span class="dv">25</span>,.<span class="dv">50</span>,.<span class="dv">75</span>,.<span class="dv">90</span>,.<span class="dv">95</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb11-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb11-2" tabindex="-1"></a><span class="co">#&gt;     5%    10%    25%    50%    75%    90%    95% </span></span>
+<span id="cb11-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb11-3" tabindex="-1"></a><span class="co">#&gt;  1.133  1.526  2.350  3.475  6.005 10.120 12.737</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="2.4">
+<h2 id="grouped-descriptive-statistics">
+<span class="header-section-number">2.4</span> Grouped descriptive statistics</h2>
+<p>A good descriptive table reports the number of non-missing observations and summaries appropriate to the distribution. SBP is reasonably summarized by mean and SD; CRP is long-tailed, so median and IQR are more informative.</p>
+<div class="section level3 hasAnchor" number="2.4.1">
+<h3 id="summary-by-randomized-arm">
+<span class="header-section-number">2.4.1</span> Summary by randomized arm</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-1" tabindex="-1"></a>grouped <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-2" tabindex="-1"></a>  <span class="fu">group_by</span>(treatment_arm) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb12-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-4" tabindex="-1"></a>    <span class="at">n=</span><span class="fu">n</span>(),</span>
+<span id="cb12-5"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-5" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(age_years, sbp_baseline_mmHg),</span>
+<span id="cb12-6"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-6" tabindex="-1"></a>           <span class="fu">list</span>(<span class="at">mean=</span><span class="sc">~</span><span class="fu">mean</span>(.x,<span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">sd=</span><span class="sc">~</span><span class="fu">sd</span>(.x,<span class="at">na.rm=</span><span class="cn">TRUE</span>)),</span>
+<span id="cb12-7"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-7" tabindex="-1"></a>           <span class="at">.names=</span><span class="st">"{.fn}_{.col}"</span>),</span>
+<span id="cb12-8"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-8" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(crp_baseline_mg_L, biomarker_baseline_ng_mL),</span>
+<span id="cb12-9"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-9" tabindex="-1"></a>           <span class="fu">list</span>(<span class="at">median=</span><span class="sc">~</span><span class="fu">median</span>(.x,<span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">IQR=</span><span class="sc">~</span><span class="fu">IQR</span>(.x,<span class="at">na.rm=</span><span class="cn">TRUE</span>)),</span>
+<span id="cb12-10"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-10" tabindex="-1"></a>           <span class="at">.names=</span><span class="st">"{.fn}_{.col}"</span>),</span>
+<span id="cb12-11"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-11" tabindex="-1"></a>    <span class="at">.groups=</span><span class="st">"drop"</span></span>
+<span id="cb12-12"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-12" tabindex="-1"></a>  )</span>
+<span id="cb12-13"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-13" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb12-14" tabindex="-1"></a><span class="fu">kbl</span>(grouped, <span class="at">digits=</span><span class="dv">2</span>, <span class="at">caption=</span><span class="st">"Selected baseline summaries by randomized arm"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table style="width:100%;">
+<caption>
+<span id="tab:grouped-summary">Table 2.4: </span>Selected baseline summaries by randomized arm</caption>
+<colgroup>
+<col width="7%">
+<col width="2%">
+<col width="7%">
+<col width="6%">
+<col width="11%">
+<col width="10%">
+<col width="12%">
+<col width="11%">
+<col width="16%">
+<col width="14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">treatment_arm</th>
+<th align="right">n</th>
+<th align="right">mean_age_years</th>
+<th align="right">sd_age_years</th>
+<th align="right">mean_sbp_baseline_mmHg</th>
+<th align="right">sd_sbp_baseline_mmHg</th>
+<th align="right">median_crp_baseline_mg_L</th>
+<th align="right">IQR_crp_baseline_mg_L</th>
+<th align="right">median_biomarker_baseline_ng_mL</th>
+<th align="right">IQR_biomarker_baseline_ng_mL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Control</td>
+<td align="right">120</td>
+<td align="right">52.42</td>
+<td align="right">13.45</td>
+<td align="right">129.5</td>
+<td align="right">13.74</td>
+<td align="right">3.40</td>
+<td align="right">3.85</td>
+<td align="right">95.3</td>
+<td align="right">56.62</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_A</td>
+<td align="right">120</td>
+<td align="right">55.88</td>
+<td align="right">12.50</td>
+<td align="right">129.1</td>
+<td align="right">13.48</td>
+<td align="right">3.71</td>
+<td align="right">3.55</td>
+<td align="right">96.3</td>
+<td align="right">54.93</td>
+</tr>
+<tr class="odd">
+<td align="left">Drug_B</td>
+<td align="right">120</td>
+<td align="right">56.79</td>
+<td align="right">11.50</td>
+<td align="right">131.6</td>
+<td align="right">13.09</td>
+<td align="right">3.44</td>
+<td align="right">3.41</td>
+<td align="right">101.8</td>
+<td align="right">59.15</td>
+</tr>
+</tbody>
+</table></div>
+<p>In a randomized trial, baseline tables <strong>describe the sample</strong>. Routine p-values are usually unnecessary because baseline differences arise by chance from randomization.</p>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="2.5">
+<h2 id="categorical-data">
+<span class="header-section-number">2.5</span> Categorical data</h2>
+<p>For categorical variables, frequencies and proportions are the natural summaries.</p>
+<div class="section level3 hasAnchor" number="2.5.1">
+<h3 id="frequencies-and-proportions">
+<span class="header-section-number">2.5.1</span> Frequencies and proportions</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb13-1" tabindex="-1"></a>severity <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">count</span>(treatment_arm, baseline_severity, <span class="at">name=</span><span class="st">"n"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb13-2" tabindex="-1"></a>                  <span class="fu">group_by</span>(treatment_arm) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb13-3" tabindex="-1"></a>                  <span class="fu">mutate</span>(<span class="at">percent=</span><span class="dv">100</span><span class="sc">*</span>n<span class="sc">/</span><span class="fu">sum</span>(n)) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span>
+<span id="cb13-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb13-5" tabindex="-1"></a><span class="fu">kbl</span>(severity, <span class="at">digits=</span><span class="dv">1</span>, <span class="at">caption=</span><span class="st">"Baseline severity by treatment arm"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:categorical-summary">Table 2.5: </span>Baseline severity by treatment arm</caption>
+<thead>
+<tr class="header">
+<th align="left">treatment_arm</th>
+<th align="left">baseline_severity</th>
+<th align="right">n</th>
+<th align="right">percent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Control</td>
+<td align="left">Mild</td>
+<td align="right">45</td>
+<td align="right">37.5</td>
+</tr>
+<tr class="even">
+<td align="left">Control</td>
+<td align="left">Moderate</td>
+<td align="right">33</td>
+<td align="right">27.5</td>
+</tr>
+<tr class="odd">
+<td align="left">Control</td>
+<td align="left">Severe</td>
+<td align="right">42</td>
+<td align="right">35.0</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_A</td>
+<td align="left">Mild</td>
+<td align="right">32</td>
+<td align="right">26.7</td>
+</tr>
+<tr class="odd">
+<td align="left">Drug_A</td>
+<td align="left">Moderate</td>
+<td align="right">56</td>
+<td align="right">46.7</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_A</td>
+<td align="left">Severe</td>
+<td align="right">32</td>
+<td align="right">26.7</td>
+</tr>
+<tr class="odd">
+<td align="left">Drug_B</td>
+<td align="left">Mild</td>
+<td align="right">34</td>
+<td align="right">28.3</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_B</td>
+<td align="left">Moderate</td>
+<td align="right">48</td>
+<td align="right">40.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Drug_B</td>
+<td align="left">Severe</td>
+<td align="right">38</td>
+<td align="right">31.7</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section level4 hasAnchor" number="2.5.1.1">
+<h4 id="clinical-response-proportions">
+<span class="header-section-number">2.5.1.1</span> Clinical-response proportions</h4>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-1" tabindex="-1"></a>response_tab <span class="ot">&lt;-</span> <span class="fu">table</span>(dat<span class="sc">$</span>treatment_arm, dat<span class="sc">$</span>response);</span>
+<span id="cb14-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-2" tabindex="-1"></a>response_tab;</span>
+<span id="cb14-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-3" tabindex="-1"></a><span class="co">#&gt;          </span></span>
+<span id="cb14-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-4" tabindex="-1"></a><span class="co">#&gt;           No Yes</span></span>
+<span id="cb14-5"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-5" tabindex="-1"></a><span class="co">#&gt;   Control 88  32</span></span>
+<span id="cb14-6"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-6" tabindex="-1"></a><span class="co">#&gt;   Drug_A  68  52</span></span>
+<span id="cb14-7"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-7" tabindex="-1"></a><span class="co">#&gt;   Drug_B  50  70</span></span>
+<span id="cb14-8"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-8" tabindex="-1"></a><span class="fu">prop.table</span>(response_tab, <span class="at">margin=</span><span class="dv">1</span>)</span>
+<span id="cb14-9"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-9" tabindex="-1"></a><span class="co">#&gt;          </span></span>
+<span id="cb14-10"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-10" tabindex="-1"></a><span class="co">#&gt;               No    Yes</span></span>
+<span id="cb14-11"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-11" tabindex="-1"></a><span class="co">#&gt;   Control 0.7333 0.2667</span></span>
+<span id="cb14-12"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-12" tabindex="-1"></a><span class="co">#&gt;   Drug_A  0.5667 0.4333</span></span>
+<span id="cb14-13"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb14-13" tabindex="-1"></a><span class="co">#&gt;   Drug_B  0.4167 0.5833</span></span></code></pre></div>
+<p>Row proportions provide an initial indication of <strong>association between two categorical variables</strong>: differences across treatment arms may suggest an association between treatment type and clinical response.<br>
+The corresponding inferential analysis is developed in Chapters 3 and 6.</p>
+</div>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="2.6">
+<h2 id="histograms-density-plots-and-boxplots">
+<span class="header-section-number">2.6</span> Histograms, density plots, and boxplots</h2>
+<p>A histogram is a visual <strong>frequency</strong> table; its appearance depends on bin width.<br>
+A kernel density plot smooths the empirical distribution and uses <strong>density</strong>, not raw count or a direct category proportion, on the vertical axis. Its scale is defined so that the total area under the density curve is 1.<br>
+A boxplot compactly displays the median, quartiles, and points beyond the conventional whiskers.</p>
+<div class="section level3 hasAnchor" number="2.6.1">
+<h3 id="distribution-shape">
+<span class="header-section-number">2.6.1</span> Distribution shape</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-1" tabindex="-1"></a>base_long <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-2" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(treatment_arm, sbp_baseline_mmHg, crp_baseline_mg_L, biomarker_baseline_ng_mL, qol_baseline_0_100) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-3" tabindex="-1"></a>        <span class="fu">pivot_longer</span>(<span class="sc">-</span>treatment_arm, <span class="at">names_to=</span><span class="st">"measure"</span>, <span class="at">values_to=</span><span class="st">"value"</span>)</span>
+<span id="cb15-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-4" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-5" tabindex="-1"></a><span class="fu">ggplot</span>(base_long, <span class="fu">aes</span>(value, <span class="at">fill=</span>treatment_arm)) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-6" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">28</span>, <span class="at">alpha=</span>.<span class="dv">55</span>, <span class="at">position=</span><span class="st">"identity"</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-7" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>measure, <span class="at">scales=</span><span class="st">"free"</span>, <span class="at">ncol=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-8" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>pal) <span class="sc">+</span></span>
+<span id="cb15-9"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb15-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">fill=</span><span class="st">"Treatment"</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:baseline-distributions"></span>
+<img src="biomed_statistics_files/figure-html/baseline-distributions-1.png" alt="selected baseline distributions by randomized treatment arm." width="100%">
+<p class="caption">
+Figure 2.1: selected baseline distributions by randomized treatment arm.
+</p>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="2.6.2">
+<h3 id="groupwise-boxplot">
+<span class="header-section-number">2.6.2</span> Groupwise boxplot</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb16-1" tabindex="-1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(treatment_arm, crp_baseline_mg_L, <span class="at">fill=</span>treatment_arm)) <span class="sc">+</span></span>
+<span id="cb16-2"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb16-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width=</span>.<span class="dv">6</span>, <span class="at">outlier.alpha=</span>.<span class="dv">45</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb16-3"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb16-3" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>pal, <span class="at">guide=</span><span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb16-4"><a href="descriptive-statistics-and-exploratory-data-analysis.html#cb16-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="st">"Baseline CRP (mg/L)"</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:crp-boxplot"></span>
+<img src="biomed_statistics_files/figure-html/crp-boxplot-1.png" alt="Baseline CRP by treatment arm." width="100%">
+<p class="caption">
+Figure 2.2: Baseline CRP by treatment arm.
+</p>
+</div>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="2.7">
+<h2 id="outliers-observations-to-understand-not-delete-automatically">
+<span class="header-section-number">2.7</span> Outliers: observations to understand, not delete automatically</h2>
+<p>A boxplot point beyond 1.5 IQR is not automatically an erroneous observation/ outlier. Before exclusion, ask whether the value is impossible, caused by a measurement or entry error, inconsistent with source data, or simply a legitimate extreme value.<br>
+Deleting a genuine observation because it weakens significance is unacceptable.<br>
+Robust summaries, transformations, and sensitivity analyses are preferable when extreme but valid observations materially affect a model.</p>
+</div>
+<div class="section level2 hasAnchor" number="2.8">
+<h2 id="eda-checklist">
+<span class="header-section-number">2.8</span> EDA checklist</h2>
+<p>Before inferential analysis, the analyst should be able to state:
+- the observational unit and whether observations are independent, paired, clustered, or repeated;
+- the outcome type and clinically meaningful direction of effect;
+- treatment/reference categories and factor coding;
+- the amount and pattern of missingness;
+- plausible ranges and units;
+- distributional shape, outliers, and group-specific spread;
+- whether a transformation has a scientific interpretation;
+- which baseline variables are genuinely pre-treatment covariates;
+- which variables are post-randomization and therefore require caution in causal treatment models.</p>
+<p>For example, the adherence to treatment percentage<code>adherence_pct</code>is measured after randomization and may itself be affected by treatment. Adjusting for it can therefore change the treatment-effect estimand and introduce bias. For this reason, it is excluded from the primary treatment-effect models and considered only in clearly labeled associational analyses.</p>
+
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

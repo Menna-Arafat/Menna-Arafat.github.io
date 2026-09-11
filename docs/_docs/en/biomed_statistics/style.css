@@ -1,0 +1,271 @@
+:root {
+  --ink: #173648;
+  --muted: #657985;
+  --blue: #315B74;
+  --teal: #3F7F8D;
+  --rose: #9A3E76;
+  --coral: #DD765F;
+  --paper: #FBFCFD;
+  --line: #DDE5E9;
+}
+
+body {
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.68;
+}
+
+.book .book-body .page-wrapper .page-inner,
+main {
+  max-width: 980px;
+}
+
+h1, h2, h3, h4 {
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+
+h1 {
+  font-weight: 750;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.35rem;
+}
+
+h2 {
+  margin-top: 2rem;
+  font-weight: 720;
+}
+
+a {
+  color: var(--blue);
+}
+
+.hero {
+  margin: 0.3rem 0 2.2rem;
+  padding: 2.1rem 2.25rem;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(49,91,116,.10), rgba(154,62,118,.07)),
+    #ffffff;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 36px rgba(23,54,72,.07);
+}
+
+.hero h1 {
+  margin: .25rem 0 .65rem;
+  border: 0;
+  padding: 0;
+  font-size: 2.4rem;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: .11em;
+  font-size: .78rem;
+  color: var(--rose);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .85rem;
+  margin-top: 1.4rem;
+}
+
+.hero-grid > div {
+  background: rgba(255,255,255,.72);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: .95rem 1rem;
+}
+
+.note, .warning, .correction, .principle, .solution {
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  margin: 1.25rem 0;
+  border-left: 5px solid var(--blue);
+  background: #F4F8FA;
+}
+
+.warning {
+  border-left-color: var(--coral);
+  background: #FFF6F1;
+}
+
+.correction {
+  border-left-color: var(--rose);
+  background: #FBF3F8;
+}
+
+.principle {
+  border-left-color: var(--teal);
+  background: #F2F8F7;
+}
+
+.solution {
+  border-left-color: #7A6A3A;
+  background: #FCFAF1;
+}
+
+pre {
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+code {
+  color: #284B5F;
+}
+
+table {
+  width: 100%;
+  margin: 1.2rem 0 1.8rem;
+  border-collapse: collapse;
+}
+
+thead th {
+  border-bottom: 2px solid var(--blue) !important;
+  color: var(--ink);
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(49,91,116,.035);
+}
+
+caption {
+  color: var(--muted);
+  font-weight: 650;
+  margin-bottom: .55rem;
+}
+
+.figure {
+  margin-top: 1.35rem;
+  margin-bottom: 1.7rem;
+}
+
+p.caption {
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+blockquote {
+  border-left: 4px solid var(--line);
+  color: var(--muted);
+  padding-left: 1rem;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    padding: 1.35rem;
+  }
+
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   LARGE, COMPACT, SCROLLABLE R CODE
+   ========================================================= */
+
+/* Wrapper used by copy-code.js. The button is anchored here. */
+.code-block-wrapper,
+div.sourceCode.code-block-wrapper {
+  position: relative !important;
+  max-width: 100%;
+  overflow: visible !important;
+  margin: .65rem 0 .85rem;
+}
+
+/* The PRE element itself owns horizontal scrolling. */
+pre,
+pre.sourceCode,
+div.sourceCode pre {
+  position: relative;
+  max-width: 100%;
+  margin: 0;
+  padding: .72rem .9rem;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* R source code: large but not vertically loose. */
+pre.sourceCode,
+pre.sourceCode code,
+div.sourceCode pre,
+div.sourceCode pre code,
+code.sourceCode {
+  font-size: 17px !important;
+  line-height: 1.32 !important;
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* knitr/console output: slightly smaller. */
+pre:not(.sourceCode),
+pre:not(.sourceCode) code {
+  font-size: 16px !important;
+  line-height: 1.3 !important;
+}
+
+/* Inline code in prose and tables. */
+p code, li code, td code, th code {
+  font-size: .95em;
+}
+
+/* Horizontal scrollbar. */
+pre::-webkit-scrollbar,
+div.sourceCode pre::-webkit-scrollbar { height: 10px; }
+pre::-webkit-scrollbar-track,
+div.sourceCode pre::-webkit-scrollbar-track { background: #edf2f4; }
+pre::-webkit-scrollbar-thumb,
+div.sourceCode pre::-webkit-scrollbar-thumb {
+  background: #8299a5;
+  border-radius: 6px;
+}
+pre,
+div.sourceCode pre {
+  scrollbar-width: auto;
+  scrollbar-color: #8299a5 #edf2f4;
+}
+
+/* Copy button overlays the upper-right corner without adding height. */
+.copy-code-button {
+  position: absolute; top: 6px; right: 7px;
+  width: 30px; height: 30px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #d5dfe4; border-radius: 6px;
+  background: #fff; color: var(--blue);
+  font-size: 19px !important; font-weight: 700;
+  cursor: pointer; z-index: 20;
+}
+.copy-code-button:hover { background: #f2f6f8; }
+.copy-code-button.copied { color: #2f7258; }
+
+/* Reserve only a little space so code does not sit under the button. */
+.code-block-wrapper pre.sourceCode,
+div.sourceCode.code-block-wrapper pre {
+  padding-right: 4.8rem;
+}
+
+@media (max-width: 760px) {
+  pre.sourceCode, pre.sourceCode code,
+  div.sourceCode pre, div.sourceCode pre code,
+  code.sourceCode { font-size: 16px !important; }
+
+  pre:not(.sourceCode), pre:not(.sourceCode) code {
+    font-size: 14px !important;
+  }
+}

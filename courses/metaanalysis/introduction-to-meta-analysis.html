@@ -1,0 +1,187 @@
+---
+layout: article
+title: Introduction to meta-analysis
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.6!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.65rem 0 .9rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.75rem 4.8rem .75rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<!--bookdown:title:end-->
+<!--bookdown:title:start-->
+<div id="introduction-to-meta-analysis" class="section level1 hasAnchor" number="1">
+
+<p>Meta-analysis combines results from multiple studies that address the same or closely related research question. Rather than treating each study separately, it summarizes the available evidence using a common <strong>effect-size measure</strong>.</p>
+<p>A meta-analysis usually involves four main components:</p>
+<ul>
+<li>estimating an effect size for each study;</li>
+<li>weighting studies according to their statistical precision;</li>
+<li>combining the study-specific effects into an overall estimate;</li>
+<li>assessing how much the effects vary across studies.</li>
+</ul>
+<div id="effect-sizes" class="section level2 hasAnchor" number="1.1">
+<h2>
+<span class="header-section-number">1.1</span> Effect sizes</h2>
+<p>Studies must be expressed on a comparable scale before they can be combined. The appropriate effect measure depends on the type of outcome.</p>
+<p>Common effect measures include:</p>
+<ul>
+<li>
+<strong>mean difference (MD)</strong> for continuous outcomes measured on the same scale;</li>
+<li>
+<strong>standardized mean difference (SMD)</strong> when continuous outcomes are measured using different scales;</li>
+<li>
+<strong>risk ratio (RR)</strong> or <strong>odds ratio (OR)</strong> for binary outcomes;</li>
+<li>
+<strong>hazard ratio (HR)</strong> for time-to-event outcomes;</li>
+<li>
+<strong>correlation coefficients</strong> for associations between continuous variables.</li>
+</ul>
+<p>For study <span class="math inline">\(i\)</span>, let the estimated effect be</p>
+<p><span class="math display">\[
+\hat{\theta}_i
+\]</span></p>
+<p>with standard error</p>
+<p><span class="math display">\[
+SE_i.
+\]</span></p>
+<p>A study with a smaller standard error provides a more precise estimate and therefore usually receives greater weight in the meta-analysis.</p>
+</div>
+<div id="inverse-variance-weighting" class="section level2 hasAnchor" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> Inverse-variance weighting</h2>
+<p>A common approach is to weight each study by the inverse of its variance:</p>
+<p><span class="math display">\[
+w_i=\frac{1}{SE_i^2}.
+\]</span></p>
+<p>The pooled effect is then calculated as</p>
+<p><span class="math display">\[
+\hat{\theta}_{pooled}
+=
+\frac{\sum_{i=1}^{k} w_i\hat{\theta}_i}
+{\sum_{i=1}^{k} w_i},
+\]</span></p>
+<p>where <span class="math inline">\(k\)</span> is the number of studies.</p>
+<p>This means that <strong>more precise studies contribute more strongly to the pooled estimate</strong>.</p>
+<div id="simple-inverse-variance-example" class="section level3 hasAnchor" number="1.2.1">
+<h3>
+<span class="header-section-number">1.2.1</span> Simple inverse-variance example</h3>
+<p>Suppose four studies report effect estimates and their standard errors.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>effect <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">1.5</span>, <span class="sc">-</span><span class="fl">2.8</span>, <span class="sc">-</span><span class="fl">1.9</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.50</span>, <span class="fl">0.40</span>, <span class="fl">0.70</span>, <span class="fl">0.45</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>weight <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> se<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>pooled <span class="ot">&lt;-</span> <span class="fu">sum</span>(weight <span class="sc">*</span> effect) <span class="sc">/</span> <span class="fu">sum</span>(weight)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>pooled</span></code></pre></div>
+<pre><code>## [1] -1.907936</code></pre>
+<p>The pooled estimate is a weighted average rather than a simple arithmetic mean.</p>
+</div>
+</div>
+<div id="fixed-effect-and-random-effects-models" class="section level2 hasAnchor" number="1.3">
+<h2>
+<span class="header-section-number">1.3</span> Fixed-effect and random-effects models</h2>
+<p>Two common approaches are the <strong>fixed-effect model</strong> and the <strong>random-effects model</strong>.</p>
+<div id="fixed-effect-model" class="section level3 hasAnchor" number="1.3.1">
+<h3>
+<span class="header-section-number">1.3.1</span> Fixed-effect model</h3>
+<p>A fixed-effect model assumes that all studies estimate the same underlying true effect:</p>
+<p><span class="math display">\[
+\theta_1=\theta_2=\cdots=\theta_k=\theta.
+\]</span></p>
+<p>Differences between observed study estimates are therefore attributed to sampling variation.</p>
+<p>This model is most appropriate when the studies are sufficiently similar and the scientific question concerns a common effect.</p>
+</div>
+<div id="random-effects-model" class="section level3 hasAnchor" number="1.3.2">
+<h3>
+<span class="header-section-number">1.3.2</span> Random-effects model</h3>
+<p>A random-effects model allows the true effect to vary across studies:</p>
+<p><span class="math display">\[
+\theta_i \sim N(\mu,\tau^2),
+\]</span></p>
+<p>where:</p>
+<ul>
+<li>
+<span class="math inline">\(\mu\)</span> is the average underlying effect;</li>
+<li>
+<span class="math inline">\(\tau^2\)</span> represents <strong>between-study heterogeneity</strong>.</li>
+</ul>
+<p>The random-effects model therefore incorporates both within-study uncertainty and variation between studies.</p>
+</div>
+</div>
+<div id="heterogeneity" class="section level2 hasAnchor" number="1.4">
+<h2>
+<span class="header-section-number">1.4</span> Heterogeneity</h2>
+<p><strong>Heterogeneity</strong> describes differences in effect sizes across studies beyond what would be expected from sampling variation alone.</p>
+<p>Two commonly reported measures are <span class="math inline">\(Q\)</span> and <span class="math inline">\(I^2\)</span>.</p>
+<p>The <span class="math inline">\(I^2\)</span> statistic is often written as</p>
+<p><span class="math display">\[
+I^2 =
+\max\left(0,\frac{Q-(k-1)}{Q}\right)\times100\%.
+\]</span></p>
+<p>It describes the proportion of observed variation in study estimates that is attributed to heterogeneity rather than sampling error.</p>
+<p>For example:</p>
+<ul>
+<li>
+<span class="math inline">\(I^2=0\%\)</span> indicates little evidence of heterogeneity;</li>
+<li>larger values indicate increasing between-study variation.</li>
+</ul>
+<p>These values should not be interpreted using rigid cut-offs alone. The magnitude and clinical importance of heterogeneity should also be considered.</p>
+</div>
+<div id="forest-plots" class="section level2 hasAnchor" number="1.5">
+<h2>
+<span class="header-section-number">1.5</span> Forest plots</h2>
+<p>A <strong>forest plot</strong> displays the effect estimate and confidence interval from each study together with the pooled estimate.</p>
+<p>It allows the reader to examine:</p>
+<ul>
+<li>the direction of effects;</li>
+<li>the precision of individual studies;</li>
+<li>consistency between studies;</li>
+<li>the pooled effect and its confidence interval.</li>
+</ul>
+<p>Studies with narrower confidence intervals are generally more precise and receive greater statistical weight.</p>
+</div>
+<div id="interpretation" class="section level2 hasAnchor" number="1.6">
+<h2>
+<span class="header-section-number">1.6</span> Interpretation</h2>
+<p>A pooled estimate should not be interpreted without considering the studies that produced it. Important questions include:</p>
+<ul>
+<li>Are the study populations comparable?</li>
+<li>Are the interventions or exposures sufficiently similar?</li>
+<li>Are the outcomes defined in comparable ways?</li>
+<li>Is there substantial statistical or clinical heterogeneity?</li>
+<li>Are some studies at high risk of bias?</li>
+</ul>
+<p>Meta-analysis can increase precision by combining evidence, but it <strong>cannot correct systematic bias in the included studies</strong>. The validity of the pooled result therefore depends on both the statistical model and the quality and comparability of the underlying evidence.</p>
+
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+{% endraw %}

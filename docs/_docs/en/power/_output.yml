@@ -1,0 +1,20 @@
+bookdown::bs4_book:
+  css: style.css
+  theme:
+    primary: "#315B74"
+    secondary: "#657985"
+    success: "#3F7F8D"
+    info: "#547D8E"
+    warning: "#DD765F"
+    danger: "#9A3E76"
+
+bookdown::gitbook:
+  css: style.css
+  config:
+    toc:
+      collapse: section
+    sharing: null
+
+bookdown::pdf_book:
+  latex_engine: xelatex
+  keep_tex: false

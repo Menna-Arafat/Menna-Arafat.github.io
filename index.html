@@ -1,36 +1,75 @@
 ---
-layout: default
-title: Menna Arafat
+layout: home
 ---
 
-<div class="home" id="home">
-	<h1 class="pageTitle">Posts</h1>
-	<div class="posts noList">
-		{%- for post in paginator.posts -%}
-		<article>
-			<span class="date">{{ post.date | date: '%B %d, %Y' }}</span>
-			<h3>
-				<a class="post-link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
-			</h3>
-			<p>
-				{%- if post.description -%}{{ post.description }}{%- else -%}{{
-				post.excerpt | strip_html }}{%- endif -%}
-			</p>
-		</article>
-		{%- endfor -%}
-	</div>
-	<!-- Pagination links -->
-	<div class="pagination">
-		{%- if paginator.previous_page -%}
-		<a
-			href="{{ paginator.previous_page_path | relative_url }}"
-			class="previous button__outline"
-			>Newer Posts</a
-		>
-		{%- endif -%} {%- if paginator.next_page -%}
-		<a href="{{ paginator.next_page_path | relative_url }}" class="next button__outline"
-			>Older Posts</a
-		>
-		{%- endif -%}
-	</div>
-</div>
+{%- assign home_intro_logo = '/assets/images/logo/logo.svg' -%}
+{%- assign home_intro_photo = '/files/myphoto_clean.png' -%}
+{%- assign home_intro_photo_stamp = site.time | date: '%s' -%}
+{%- assign home_intro_logo_stamp = site.time | date: '%s' -%}
+{%- for static_file in site.static_files -%}
+  {%- if static_file.path == '/files/logo.jpg' -%}
+    {%- assign home_intro_logo = '/files/logo.jpg' -%}
+    {%- assign home_intro_logo_stamp = static_file.modified_time | date: '%s' -%}
+  {%- endif -%}
+  {%- if static_file.path == home_intro_photo -%}
+    {%- assign home_intro_photo_stamp = static_file.modified_time | date: '%s' -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<section class="home-intro-section">
+  <div class="article__content home-intro">
+    <div class="home-intro__copy" style="--home-intro-logo: url('{{ home_intro_logo | relative_url }}?v={{ home_intro_logo_stamp }}');">
+      <p class="home-intro__lead">
+        I develop computational frameworks to model disease biology, reconstruct
+        disease trajectories, and identify interventions that can reverse
+        pathological states, with the aim of making disease 
+        predictable, controllable, and reprogrammable.
+      </p>
+      <ul class="menu menu--center home-intro__actions">
+        <li>
+          <a class="home-intro__action" href="#projects" aria-label="Jump to projects">
+            <i class="fas fa-folder-open"></i>
+            <span>Projects</span>
+          </a>
+        </li>
+        <li>
+          <a class="home-intro__action" href="mailto:mennaarafat.md@gmail.com" aria-label="Email Menna Arafat">
+            <i class="fas fa-envelope"></i>
+            <span>Email</span>
+          </a>
+        </li>
+        <li>
+          <a class="home-intro__action" href="https://wa.me/201094107444" aria-label="Chat with Menna Arafat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <figure class="home-intro__media">
+      <img class="home-intro__photo" src="{{ home_intro_photo | relative_url }}?v={{ home_intro_photo_stamp }}" alt="Menna Arafat">
+    </figure>
+  </div>
+</section>
+
+<section id="projects" class="home-posts-section home-projects-section">
+  <div class="layout--articles">
+    <section class="my-5">
+      <header><h2 id="peer-reviewed-papers">Peer Reviewed Papers</h2></header>
+      {%- assign published_projects = site.projects | where: 'project_group', 'peer-reviewed' -%}
+      {%- include article-list.html articles=published_projects type='grid' -%}
+    </section>
+
+    <section class="my-5">
+      <header><h2 id="preprints-softwares">Preprints & Softwares</h2></header>
+      {%- assign method_projects = site.projects | where: 'project_group', 'preprints-software' -%}
+      {%- include article-list.html articles=method_projects type='grid' -%}
+    </section>
+
+    <section class="my-5">
+      <header><h2 id="selected-work">Selected Work</h2></header>
+      {%- assign ongoing_projects = site.projects | where: 'project_group', 'selected-work' -%}
+      {%- include article-list.html articles=ongoing_projects type='grid' -%}
+    </section>
+  </div>
+</section>

@@ -1,0 +1,446 @@
+---
+layout: article
+title: 16 Linear regression and diagnostics
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="linear-regression-and-diagnostics" class="section level1 hasAnchor" number="16">
+
+<div class="section level2 hasAnchor" number="16.1">
+<h2 id="linear-model-framework">
+<span class="header-section-number">16.1</span> Linear-model framework</h2>
+<p>Linear regression provides a common language for simple regression, multiple regression, ANOVA, ANCOVA, and interactions. The word <em>linear</em> refers to linearity in the <strong>coefficients</strong>, not necessarily a straight-line relationship in the raw predictor. A model containing <span class="math inline">\(x^2\)</span>, <span class="math inline">\(\log x\)</span>, or a spline basis remains a linear regression model if the coefficients enter linearly.</p>
+<p>For observation <span class="math inline">\(i\)</span>, a multiple linear regression model is</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_1X_{i1}+\cdots+\beta_qX_{iq}+\varepsilon_i,
+\]</span></p>
+<p>where <span class="math inline">\(Y_i\)</span> is the outcome, <span class="math inline">\(X_{i1},\ldots,X_{iq}\)</span> are predictors, the <span class="math inline">\(\beta\)</span>’s are regression coefficients, and <span class="math inline">\(\varepsilon_i\)</span> is the unexplained error.</p>
+<p>Least squares chooses the coefficients that minimize the <strong>sum of squared errors</strong>:</p>
+<p><span class="math display">\[
+\text{SSE}=\sum_i(Y_i-\hat Y_i)^2.
+\]</span></p>
+<p>The total variation in the outcome is</p>
+<p><span class="math display">\[
+\text{SST}=\text{SSR}+\text{SSE},
+\]</span></p>
+<p>where:</p>
+<ul>
+<li>
+<strong>SST</strong> = total variation;</li>
+<li>
+<strong>SSR</strong> = variation explained by the model;</li>
+<li>
+<strong>SSE</strong> = unexplained variation.</li>
+</ul>
+<p>Therefore,</p>
+<p><span class="math display">\[
+R^2=\frac{\text{SSR}}{\text{SST}},
+\]</span></p>
+<p>which is the proportion of outcome variation explained by the model.
+Adjusted <span class="math inline">\(R^2\)</span> also accounts for the number of predictors and therefore discourages adding variables that contribute little.</p>
+<div class="section level4 hasAnchor" number="16.1.0.1">
+<h4 id="simple-linear-regression-model">
+<span class="header-section-number">16.1.0.1</span> Simple linear regression model</h4>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="linear-regression-and-diagnostics.html#cb80-1" tabindex="-1"></a>sbp_simple <span class="ot">&lt;-</span> <span class="fu">lm</span>(sbp_week12_mmHg<span class="sc">~</span>sbp_baseline_mmHg, <span class="at">data=</span>dat)</span>
+<span id="cb80-2"><a href="linear-regression-and-diagnostics.html#cb80-2" tabindex="-1"></a></span>
+<span id="cb80-3"><a href="linear-regression-and-diagnostics.html#cb80-3" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(sbp_simple, <span class="at">conf.int=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb80-4"><a href="linear-regression-and-diagnostics.html#cb80-4" tabindex="-1"></a>       <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>, <span class="at">caption=</span><span class="st">"Simple regression of week-12 SBP on baseline SBP"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:simple-sbp-model">Table 16.1: </span>Simple regression of week-12 SBP on baseline SBP</caption>
+<colgroup>
+<col width="24%">
+<col width="12%">
+<col width="13%">
+<col width="13%">
+<col width="10%">
+<col width="12%">
+<col width="13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-3.775</td>
+<td align="right">4.580</td>
+<td align="right">-0.824</td>
+<td align="right">0.41</td>
+<td align="right">-12.783</td>
+<td align="right">5.232</td>
+</tr>
+<tr class="even">
+<td align="left">sbp_baseline_mmHg</td>
+<td align="right">0.987</td>
+<td align="right">0.035</td>
+<td align="right">28.175</td>
+<td align="right">0.00</td>
+<td align="right">0.918</td>
+<td align="right">1.056</td>
+</tr>
+</tbody>
+</table></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="linear-regression-and-diagnostics.html#cb81-1" tabindex="-1"></a></span>
+<span id="cb81-2"><a href="linear-regression-and-diagnostics.html#cb81-2" tabindex="-1"></a><span class="fu">summary</span>(sbp_simple)<span class="sc">$</span>r.squared</span>
+<span id="cb81-3"><a href="linear-regression-and-diagnostics.html#cb81-3" tabindex="-1"></a><span class="co">#&gt; [1] 0.6934</span></span></code></pre></div>
+</div>
+<div class="section level3 hasAnchor" number="16.1.1">
+<h3 id="visualization">
+<span class="header-section-number">16.1.1</span> Visualization</h3>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="linear-regression-and-diagnostics.html#cb82-1" tabindex="-1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(sbp_baseline_mmHg, sbp_week12_mmHg)) <span class="sc">+</span> </span>
+<span id="cb82-2"><a href="linear-regression-and-diagnostics.html#cb82-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">42</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">+</span> </span>
+<span id="cb82-3"><a href="linear-regression-and-diagnostics.html#cb82-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">"lm"</span>, <span class="at">se=</span><span class="cn">TRUE</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb82-4"><a href="linear-regression-and-diagnostics.html#cb82-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Baseline SBP (mmHg)"</span>, <span class="at">y=</span><span class="st">"Week-12 SBP (mmHg)"</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:simple-sbp-plot"></span>
+<img src="biomed_statistics_files/figure-html/simple-sbp-plot-1.png" alt="Week-12 SBP versus baseline SBP with the simple regression line." width="100%">
+<p class="caption">
+Figure 16.1: Week-12 SBP versus baseline SBP with the simple regression line.
+</p>
+</div>
+<p>The slope is the expected difference in week-12 SBP associated with a 1-mmHg higher baseline SBP. In this descriptive model it is not a causal effect of baseline SBP.</p>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="16.2">
+<h2 id="multiple-linear-regression">
+<span class="header-section-number">16.2</span> Multiple linear regression</h2>
+<div class="section level3 hasAnchor" number="16.2.1">
+<h3 id="prespecified-adjustment-set">
+<span class="header-section-number">16.2.1</span> Prespecified adjustment set</h3>
+<p>A treatment-adjusted SBP model can include prespecified baseline covariates. The following model uses treatment, age, and BMI in addition to baseline SBP; all are measured before or at randomization.</p>
+<div class="section level4 hasAnchor" number="16.2.1.1">
+<h4 id="multiple-linear-regression-specification">
+<span class="header-section-number">16.2.1.1</span> Multiple linear regression specification</h4>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="linear-regression-and-diagnostics.html#cb83-1" tabindex="-1"></a>sbp_multi_dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">drop_na</span>(sbp_week12_mmHg, sbp_baseline_mmHg, treatment_arm, age_years, bmi_kg_m2)</span>
+<span id="cb83-2"><a href="linear-regression-and-diagnostics.html#cb83-2" tabindex="-1"></a></span>
+<span id="cb83-3"><a href="linear-regression-and-diagnostics.html#cb83-3" tabindex="-1"></a>sbp_multi <span class="ot">&lt;-</span> <span class="fu">lm</span>(sbp_week12_mmHg<span class="sc">~</span>sbp_baseline_mmHg<span class="sc">+</span>treatment_arm<span class="sc">+</span>age_years<span class="sc">+</span>bmi_kg_m2, <span class="at">data=</span>sbp_multi_dat)</span>
+<span id="cb83-4"><a href="linear-regression-and-diagnostics.html#cb83-4" tabindex="-1"></a></span>
+<span id="cb83-5"><a href="linear-regression-and-diagnostics.html#cb83-5" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">R2=</span><span class="fu">summary</span>(sbp_multi)<span class="sc">$</span>r.squared, <span class="at">adjusted_R2=</span><span class="fu">summary</span>(sbp_multi)<span class="sc">$</span>adj.r.squared) <span class="sc">|&gt;</span> <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<thead>
+<tr class="header">
+<th align="right">R2</th>
+<th align="right">adjusted_R2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.748</td>
+<td align="right">0.744</td>
+</tr>
+</tbody>
+</table></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="linear-regression-and-diagnostics.html#cb84-1" tabindex="-1"></a></span>
+<span id="cb84-2"><a href="linear-regression-and-diagnostics.html#cb84-2" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(sbp_multi, <span class="at">conf.int=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb84-3"><a href="linear-regression-and-diagnostics.html#cb84-3" tabindex="-1"></a>       <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>, <span class="at">caption=</span><span class="st">"Multiple linear regression for week-12 SBP"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table style="width:100%;">
+<caption>
+<span id="tab:multiple-sbp-model">Table 16.2: </span>Multiple linear regression for week-12 SBP</caption>
+<colgroup>
+<col width="26%">
+<col width="11%">
+<col width="13%">
+<col width="13%">
+<col width="10%">
+<col width="11%">
+<col width="13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-0.792</td>
+<td align="right">4.576</td>
+<td align="right">-0.173</td>
+<td align="right">0.863</td>
+<td align="right">-9.792</td>
+<td align="right">8.207</td>
+</tr>
+<tr class="even">
+<td align="left">sbp_baseline_mmHg</td>
+<td align="right">1.020</td>
+<td align="right">0.036</td>
+<td align="right">28.421</td>
+<td align="right">0.000</td>
+<td align="right">0.950</td>
+<td align="right">1.091</td>
+</tr>
+<tr class="odd">
+<td align="left">treatment_armDrug_A</td>
+<td align="right">-4.666</td>
+<td align="right">1.054</td>
+<td align="right">-4.425</td>
+<td align="right">0.000</td>
+<td align="right">-6.740</td>
+<td align="right">-2.592</td>
+</tr>
+<tr class="even">
+<td align="left">treatment_armDrug_B</td>
+<td align="right">-8.789</td>
+<td align="right">1.052</td>
+<td align="right">-8.353</td>
+<td align="right">0.000</td>
+<td align="right">-10.858</td>
+<td align="right">-6.720</td>
+</tr>
+<tr class="odd">
+<td align="left">age_years</td>
+<td align="right">-0.043</td>
+<td align="right">0.037</td>
+<td align="right">-1.160</td>
+<td align="right">0.247</td>
+<td align="right">-0.116</td>
+<td align="right">0.030</td>
+</tr>
+<tr class="even">
+<td align="left">bmi_kg_m2</td>
+<td align="right">-0.015</td>
+<td align="right">0.096</td>
+<td align="right">-0.155</td>
+<td align="right">0.877</td>
+<td align="right">-0.204</td>
+<td align="right">0.174</td>
+</tr>
+</tbody>
+</table></div>
+<p>A treatment coefficient is the <strong>mean difference between treatment groups after accounting for the other variables in the model</strong>.</p>
+<p>If the model includes a <strong>treatment interaction</strong>, the treatment effect depends on the interacting variable and should not be interpreted as one overall treatment effect.</p>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="16.2.2">
+<h3 id="multicollinearity">
+<span class="header-section-number">16.2.2</span> Multicollinearity</h3>
+<p>Variance inflation factor (VIF) measures how much collinearity with other predictors increases the variance of a regression coefficient. Values above 5 may indicate problematic collinearity, while values above 10 are often considered serious. These are guidelines, not absolute cutoffs.</p>
+<div class="section level4 hasAnchor" number="16.2.2.1">
+<h4 id="collinearity-assessment">
+<span class="header-section-number">16.2.2.1</span> Collinearity assessment</h4>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="linear-regression-and-diagnostics.html#cb85-1" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">vif</span>(sbp_multi)</span>
+<span id="cb85-2"><a href="linear-regression-and-diagnostics.html#cb85-2" tabindex="-1"></a><span class="co">#&gt;                    GVIF Df GVIF^(1/(2*Df))</span></span>
+<span id="cb85-3"><a href="linear-regression-and-diagnostics.html#cb85-3" tabindex="-1"></a><span class="co">#&gt; sbp_baseline_mmHg 1.261  1           1.123</span></span>
+<span id="cb85-4"><a href="linear-regression-and-diagnostics.html#cb85-4" tabindex="-1"></a><span class="co">#&gt; treatment_arm     1.031  2           1.008</span></span>
+<span id="cb85-5"><a href="linear-regression-and-diagnostics.html#cb85-5" tabindex="-1"></a><span class="co">#&gt; age_years         1.194  1           1.093</span></span>
+<span id="cb85-6"><a href="linear-regression-and-diagnostics.html#cb85-6" tabindex="-1"></a><span class="co">#&gt; bmi_kg_m2         1.077  1           1.038</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="16.3">
+<h2 id="model-assumptions-and-diagnostics">
+<span class="header-section-number">16.3</span> Model assumptions and diagnostics</h2>
+<p>Linear regression assumes that the model describes the outcome appropriately and that the residuals behave reasonably.</p>
+<p>The main checks are:</p>
+<ul>
+<li>
+<strong>Linearity:</strong> residuals should not show a clear curved pattern.</li>
+<li>
+<strong>Constant variance:</strong> residual spread should be roughly similar across fitted values.</li>
+<li>
+<strong>Normality:</strong> the residual Q–Q plot should not show major departures from normality.</li>
+<li>
+<strong>Influential observations:</strong> no single observation should strongly affect the fitted model.</li>
+<li>
+<strong>Independence:</strong> observations should not be correlated unless that dependence is modeled.</li>
+</ul>
+<div class="section level3 hasAnchor" number="16.3.1">
+<h3 id="residual-diagnostics">
+<span class="header-section-number">16.3.1</span> Residual diagnostics</h3>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="linear-regression-and-diagnostics.html#cb86-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)); <span class="fu">plot</span>(sbp_multi,<span class="at">which=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>)); <span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:multiple-sbp-diagnostics"></span>
+<img src="biomed_statistics_files/figure-html/multiple-sbp-diagnostics-1.png" alt="Residual-versus-fitted, Q–Q, and Cook's-distance diagnostics for the multiple SBP model." width="100%">
+<p class="caption">
+Figure 16.2: Residual-versus-fitted, Q–Q, and Cook’s-distance diagnostics for the multiple SBP model.
+</p>
+</div>
+</div>
+<div class="section level3 hasAnchor" number="16.3.2">
+<h3 id="test-for-unequal-residual-variance">
+<span class="header-section-number">16.3.2</span> Test for unequal residual variance</h3>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="linear-regression-and-diagnostics.html#cb87-1" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">bptest</span>(sbp_multi)</span>
+<span id="cb87-2"><a href="linear-regression-and-diagnostics.html#cb87-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb87-3"><a href="linear-regression-and-diagnostics.html#cb87-3" tabindex="-1"></a><span class="co">#&gt;  studentized Breusch-Pagan test</span></span>
+<span id="cb87-4"><a href="linear-regression-and-diagnostics.html#cb87-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb87-5"><a href="linear-regression-and-diagnostics.html#cb87-5" tabindex="-1"></a><span class="co">#&gt; data:  sbp_multi</span></span>
+<span id="cb87-6"><a href="linear-regression-and-diagnostics.html#cb87-6" tabindex="-1"></a><span class="co">#&gt; BP = 5, df = 5, p-value = 0.4</span></span></code></pre></div>
+<p>A small Breusch–Pagan p-value suggests that the residual variance is not constant.</p>
+</div>
+<div class="section level3 hasAnchor" number="16.3.3">
+<h3 id="robust-standard-errors">
+<span class="header-section-number">16.3.3</span> Robust standard errors</h3>
+<p>If the mean model is appropriate but the residual variance is unequal, <strong>HC3 robust standard errors</strong> can provide more reliable confidence intervals and p-values.</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="linear-regression-and-diagnostics.html#cb88-1" tabindex="-1"></a><span class="fu">robust_lm_tidy</span>(sbp_multi) <span class="sc">|&gt;</span> </span>
+<span id="cb88-2"><a href="linear-regression-and-diagnostics.html#cb88-2" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>,<span class="at">caption=</span><span class="st">"HC3-robust coefficient inference for the SBP model"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table style="width:100%;">
+<caption>
+<span id="tab:multiple-sbp-robust">Table 16.3: </span>HC3-robust coefficient inference for the SBP model</caption>
+<colgroup>
+<col width="26%">
+<col width="11%">
+<col width="13%">
+<col width="13%">
+<col width="10%">
+<col width="11%">
+<col width="13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-0.792</td>
+<td align="right">4.738</td>
+<td align="right">-0.167</td>
+<td align="right">0.867</td>
+<td align="right">-10.112</td>
+<td align="right">8.527</td>
+</tr>
+<tr class="even">
+<td align="left">sbp_baseline_mmHg</td>
+<td align="right">1.020</td>
+<td align="right">0.038</td>
+<td align="right">27.090</td>
+<td align="right">0.000</td>
+<td align="right">0.946</td>
+<td align="right">1.094</td>
+</tr>
+<tr class="odd">
+<td align="left">treatment_armDrug_A</td>
+<td align="right">-4.666</td>
+<td align="right">1.095</td>
+<td align="right">-4.262</td>
+<td align="right">0.000</td>
+<td align="right">-6.819</td>
+<td align="right">-2.513</td>
+</tr>
+<tr class="even">
+<td align="left">treatment_armDrug_B</td>
+<td align="right">-8.789</td>
+<td align="right">1.029</td>
+<td align="right">-8.544</td>
+<td align="right">0.000</td>
+<td align="right">-10.812</td>
+<td align="right">-6.766</td>
+</tr>
+<tr class="odd">
+<td align="left">age_years</td>
+<td align="right">-0.043</td>
+<td align="right">0.040</td>
+<td align="right">-1.067</td>
+<td align="right">0.287</td>
+<td align="right">-0.123</td>
+<td align="right">0.036</td>
+</tr>
+<tr class="even">
+<td align="left">bmi_kg_m2</td>
+<td align="right">-0.015</td>
+<td align="right">0.091</td>
+<td align="right">-0.165</td>
+<td align="right">0.869</td>
+<td align="right">-0.193</td>
+<td align="right">0.163</td>
+</tr>
+</tbody>
+</table></div>
+
+</div>
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

@@ -1,0 +1,111 @@
+## Power and sample size
+
+Power calculations are mainly used **before a study begins** to decide how many participants are needed.
+
+**Power** is the probability of detecting a real effect of a specified size. For example, 90% power means that if the true effect is the one assumed in the calculation, the study has about a 90% chance of producing a statistically significant result at the chosen significance level.
+
+Sample size depends on several assumptions:
+
+- the smallest clinically important effect;
+- expected variability for continuous outcomes;
+- expected event or response rates for binary outcomes;
+- significance level, usually \(\alpha=0.05\);
+- desired power, commonly 80% or 90%;
+- allocation ratio between groups;
+- expected dropout or missing data.
+
+Larger samples are usually required when the expected treatment effect is small, variability is high, or higher power is required.
+
+### Continuous-outcome planning example
+
+Suppose a two-arm trial is designed to detect a **5-mmHg difference in mean SBP**, with an expected SD of **12 mmHg**, a two-sided significance level of 0.05, and 90% power.
+
+```{r power-continuous}
+power.t.test(
+  delta=5,
+  sd=12,
+  sig.level=.05,
+  power=.90,
+  type="two.sample",
+  alternative="two.sided"
+)
+```
+
+Here:
+
+- `delta=5` is the mean difference we want to detect;
+- `sd=12` is the expected within-group standard deviation;
+- `sig.level=.05` is the Type I error rate;
+- `power=.90` requests 90% power.
+
+The function returns the approximate **sample size required per group**.
+
+### Binary-outcome planning example
+
+Suppose the expected clinical response rate is **30% in the control group** and **45% in the treatment group**.
+
+```{r power-binary}
+power.prop.test(
+  p1=.30,
+  p2=.45,
+  sig.level=.05,
+  power=.90,
+  alternative="two.sided"
+)
+```
+
+Here, the effect of interest is the difference between response rates:
+
+\[
+0.45-0.30=0.15.
+\]
+
+The calculation estimates how many participants are needed to detect this **15-percentage-point difference** with 90% power.
+
+These calculations are for **planning**. After the study is completed, the estimated treatment effect and its confidence interval are more informative than calculating "observed power" from the observed result.
+
+## Standard deviation, standard error, and confidence intervals
+
+These quantities describe different things.
+
+**Standard deviation (SD)** describes how much individual observations vary.
+
+For example, if mean SBP is 130 mmHg with SD 12 mmHg, the SD describes the spread of individual SBP measurements around the mean.
+
+**Standard error (SE)** describes the uncertainty in an estimated statistic, such as the sample mean.
+
+For a sample mean,
+
+\[
+SE(\bar{x})=\frac{s}{\sqrt{n}}.
+\]
+
+For example, if \(s=12\) and \(n=100\),
+
+\[
+SE=\frac{12}{\sqrt{100}}=1.2.
+\]
+
+Thus, individual SBP values may vary considerably (\(SD=12\)), while the estimated mean can still be relatively precise (\(SE=1.2\)).
+
+A **confidence interval (CI)** gives a range of plausible values for the population parameter. An approximate 95% CI for a mean is
+
+\[
+\bar{x}\pm1.96\,SE.
+\]
+
+If the estimated mean is 130 and \(SE=1.2\),
+
+\[
+130\pm1.96(1.2)\approx(127.6,\;132.4).
+\]
+
+In short:
+
+**SD = variability between individuals**
+
+**SE = uncertainty in the estimate**
+
+**CI = plausible range for the population parameter**
+
+Increasing sample size usually decreases the SE and narrows the confidence interval, but a large sample cannot correct bias caused by poor study design, measurement error, or inappropriate analysis.

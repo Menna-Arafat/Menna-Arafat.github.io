@@ -1,0 +1,131 @@
+# Data foundations and R essentials
+
+Exploratory data analysis (EDA) is the point at which the statistical problem becomes concrete. Before testing hypotheses, the analyst should know what each row represents, how variables are coded, where missing values occur, whether units are plausible, and how distributions differ across clinically relevant groups. EDA is therefore not a preliminary formality; it is part of model specification.
+
+## R essentials for a biomedical dataset
+
+R is object-oriented in the practical sense that data, models, tables, and plots are stored as named objects and passed to functions. A compact working vocabulary is enough for most analyses:
+
+| Task | Core R tools |
+|---|---|
+| inspect an object | `class()`, `str()`, `dplyr::glimpse()` |
+| view dimensions | `nrow()`, `ncol()`, `dim()` |
+| select variables | `dplyr::select()` |
+| filter observations | `dplyr::filter()` |
+| create variables | `dplyr::mutate()` |
+| grouped summaries | `group_by()` + `summarise()` |
+| reshape data | `pivot_longer()`, `pivot_wider()` |
+| missingness | `is.na()`, `complete.cases()`, `drop_na()` |
+| fit a model | `lm()`, `glm()`, `aov()`, `survival::coxph()` |
+| inspect model output | `summary()`, `broom::tidy()`, `confint()` |
+
+### First look at the data
+
+A few direct checks establish the data structure.
+
+#### Dataset dimensions and variable names
+
+```{r data-first-look}
+dim(dat);
+dplyr::glimpse(dat[, 1:12]);
+head(dat[, c("patient_id","treatment_arm","age_years","baseline_severity")], 4)
+```
+
+### Dataset audit
+
+The current workbook contains one row per participant. Patient IDs should therefore be unique.
+
+#### Structural integrity checks
+
+```{r data-audit}
+audit <- tibble(metric=c("Participants","Variables","Unique patient IDs","Duplicate patient IDs","Missing cells"),
+               value=c(nrow(dat), ncol(dat_raw), dplyr::n_distinct(dat$patient_id), sum(duplicated(dat$patient_id)), sum(is.na(dat_raw))))
+
+kbl(audit, digits=0, caption="Dataset audit")
+```
+
+## Variable types and analytical consequences
+
+The distinction between continuous, discrete, categorical, binary, and ordinal data determines what summaries and models are meaningful.
+
+| Data type | Definition | Examples in this workbook | Typical analytical consequence |
+|---|---|---|---|
+| Continuous | values on a quantitative scale where arithmetic differences are meaningful | age, BMI, SBP, CRP, biomarker, QoL | means/SDs or robust summaries; linear models when appropriate |
+| Discrete/count | integer-valued event or counts | `ae_count_12w`, `hospital_days_90` | count summaries; Poisson/negative-binomial models may be appropriate |
+| Categorical | membership in one of a fixed set of nominal groups | treatment, site, region, smoking | frequencies/proportions; contingency tables or factor terms in models |
+| Binary | categorical variable with two levels | response, adverse event, event observed | risks/proportions; binomial models; paired binary data need special methods |
+| Ordinal | categories with a meaningful order | mild/moderate/severe baseline severity | preserve ordering; do not assume equal numeric spacing without justification |
+
+The supplied data dictionary can be read directly from the workbook.
+
+#### Variable roles and measurement scales
+
+```{r data-dictionary}
+kbl(dict, digits=2, caption="Workbook data dictionary")
+```
+
+### Storage class versus scientific role
+
+A variable's storage class is not always identical to its scientific type. For example, a 0/1 endpoint can be stored as numeric yet remain binary for analysis. Likewise, disease severity can be stored as a factor with ordered labels; treating it as 1, 2, 3 in a regression imposes an equal-spacing assumption that may not be scientifically defensible. In this book it is generally modeled as a factor unless a proportional ordinal trend is explicitly intended.
+
+## Missing data
+
+Missingness should be quantified **before** derived analyses are run. `na.rm=TRUE` is useful for descriptive statistics, but silently dropping different observations in different models can make results difficult to compare.
+
+### Quantify missingness
+
+```{r missingness-table}
+missing <- dat_raw |> summarise(across(everything(), ~sum(is.na(.x)))) |>
+                      pivot_longer(everything(), names_to="variable", values_to="n_missing")
+
+missing <- missing |> mutate(percent=100*n_missing/nrow(dat_raw)) |>
+                      filter(n_missing>0) |> arrange(desc(percent))
+
+kbl(missing, digits=2, caption="Variables with missing values")
+```
+
+#### Visual pattern of missingness
+
+```{r missingness-plot, fig.cap="Percentage missing by variable."}
+ggplot(missing, aes(percent, reorder(variable, percent))) + 
+  geom_col(width=.65, fill="#547D8E") +
+  geom_text(aes(label=sprintf("%.1f%%", percent)), hjust=-.12, size=3.2) +
+  scale_x_continuous(expand=expansion(mult=c(0,.18))) + 
+  labs(x="Missing observations (%)", y=NULL)
+```
+
+### Interpret the missingness mechanism
+
+The missing percentages are small, but their mechanism is not specified. This distinction matters. A low percentage of missing values does not by itself prove that complete-case analysis is unbiased. In a real study, the analysis plan should consider why values are missing, whether missingness depends on observed or unobserved variables, and whether multiple imputation or other sensitivity analyses are required.
+
+#### Filtering, selecting, and recoding
+
+```{r basic-data-handling}
+older <- dat |> filter(age_years>=65) |> 
+         dplyr::select(patient_id, treatment_arm, age_years, sbp_baseline_mmHg)
+
+control_a <- dat |> filter(treatment_arm %in% c("Control","Drug_A")) |> droplevels()
+
+highest_crp <- dat |> arrange(desc(crp_baseline_mg_L)) |>
+               dplyr::select(patient_id, treatment_arm, crp_baseline_mg_L) |> head(6)
+
+older; highest_crp
+```
+
+### Derived change scores
+
+The change variables represent the difference between the measurement at 12 weeks and the baseline measurement.
+A negative SBP change therefore indicates a decrease in blood pressure, whereas a positive SBP change indicates an increase.
+
+\[
+\Delta Y_i = Y_{i,12\text{wk}}-Y_{i,0}.
+\]
+
+
+```{r derive-change-scores}
+dat <- dat |>
+       mutate( sbp_change = sbp_week12_mmHg - sbp_baseline_mmHg)
+
+head(dat |> dplyr::select(patient_id, sbp_change))
+```
+

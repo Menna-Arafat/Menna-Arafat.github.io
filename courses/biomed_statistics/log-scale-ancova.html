@@ -1,0 +1,189 @@
+---
+layout: article
+title: 19 Log-scale ANCOVA
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="log-scale-ancova" class="section level1 hasAnchor" number="19">
+
+<p>CRP is positive and strongly right-skewed, so a log-scale model is more appropriate than modeling raw CRP directly.</p>
+<p><span class="math display">\[
+\log(CRP_{12})
+=
+\beta_0+\beta_1\log(CRP_0)+\beta_2I(A)+\beta_3I(B)+\varepsilon.
+\]</span></p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="log-scale-ancova.html#cb94-1" tabindex="-1"></a>crp_anc <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span></span>
+<span id="cb94-2"><a href="log-scale-ancova.html#cb94-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(crp_baseline_mg_L),<span class="sc">!</span><span class="fu">is.na</span>(crp_week12_mg_L),</span>
+<span id="cb94-3"><a href="log-scale-ancova.html#cb94-3" tabindex="-1"></a>         crp_baseline_mg_L<span class="sc">&gt;</span><span class="dv">0</span>,crp_week12_mg_L<span class="sc">&gt;</span><span class="dv">0</span>)</span>
+<span id="cb94-4"><a href="log-scale-ancova.html#cb94-4" tabindex="-1"></a></span>
+<span id="cb94-5"><a href="log-scale-ancova.html#cb94-5" tabindex="-1"></a>crp_common <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(crp_week12_mg_L)<span class="sc">~</span> <span class="fu">log</span>(crp_baseline_mg_L)<span class="sc">+</span>treatment_arm,<span class="at">data=</span>crp_anc)</span>
+<span id="cb94-6"><a href="log-scale-ancova.html#cb94-6" tabindex="-1"></a></span>
+<span id="cb94-7"><a href="log-scale-ancova.html#cb94-7" tabindex="-1"></a>crp_int <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(crp_week12_mg_L)<span class="sc">~</span> <span class="fu">log</span>(crp_baseline_mg_L)<span class="sc">*</span>treatment_arm,<span class="at">data=</span>crp_anc)</span>
+<span id="cb94-8"><a href="log-scale-ancova.html#cb94-8" tabindex="-1"></a></span>
+<span id="cb94-9"><a href="log-scale-ancova.html#cb94-9" tabindex="-1"></a><span class="fu">hc3_interaction_test</span>(crp_int)</span>
+<span id="cb94-10"><a href="log-scale-ancova.html#cb94-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb94-11"><a href="log-scale-ancova.html#cb94-11" tabindex="-1"></a><span class="co">#&gt; Linear hypothesis test:</span></span>
+<span id="cb94-12"><a href="log-scale-ancova.html#cb94-12" tabindex="-1"></a><span class="co">#&gt; log(crp_baseline_mg_L):treatment_armDrug_A = 0</span></span>
+<span id="cb94-13"><a href="log-scale-ancova.html#cb94-13" tabindex="-1"></a><span class="co">#&gt; log(crp_baseline_mg_L):treatment_armDrug_B = 0</span></span>
+<span id="cb94-14"><a href="log-scale-ancova.html#cb94-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb94-15"><a href="log-scale-ancova.html#cb94-15" tabindex="-1"></a><span class="co">#&gt; Model 1: restricted model</span></span>
+<span id="cb94-16"><a href="log-scale-ancova.html#cb94-16" tabindex="-1"></a><span class="co">#&gt; Model 2: log(crp_week12_mg_L) ~ log(crp_baseline_mg_L) * treatment_arm</span></span>
+<span id="cb94-17"><a href="log-scale-ancova.html#cb94-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb94-18"><a href="log-scale-ancova.html#cb94-18" tabindex="-1"></a><span class="co">#&gt; Note: Coefficient covariance matrix supplied.</span></span>
+<span id="cb94-19"><a href="log-scale-ancova.html#cb94-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb94-20"><a href="log-scale-ancova.html#cb94-20" tabindex="-1"></a><span class="co">#&gt;   Res.Df Df    F Pr(&gt;F)</span></span>
+<span id="cb94-21"><a href="log-scale-ancova.html#cb94-21" tabindex="-1"></a><span class="co">#&gt; 1    332               </span></span>
+<span id="cb94-22"><a href="log-scale-ancova.html#cb94-22" tabindex="-1"></a><span class="co">#&gt; 2    330  2 1.05   0.35</span></span></code></pre></div>
+<p>The interaction is not needed, so the common-slope log model is retained.</p>
+<div class="section level2 hasAnchor" number="19.1">
+<h2 id="treatment-effects-as-geometric-mean-ratios">
+<span class="header-section-number">19.1</span> Treatment effects as geometric-mean ratios</h2>
+<p>Because CRP is modeled on the <strong>log scale</strong>, <code>emmeans()</code> estimates baseline-adjusted treatment means on that scale. <code>contrast()</code> then compares each active treatment with Control.</p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="log-scale-ancova.html#cb95-1" tabindex="-1"></a>crp_emm <span class="ot">&lt;-</span> emmeans<span class="sc">::</span><span class="fu">emmeans</span>(</span>
+<span id="cb95-2"><a href="log-scale-ancova.html#cb95-2" tabindex="-1"></a>  crp_common,<span class="sc">~</span>treatment_arm,</span>
+<span id="cb95-3"><a href="log-scale-ancova.html#cb95-3" tabindex="-1"></a>  <span class="at">vcov.=</span>sandwich<span class="sc">::</span><span class="fu">vcovHC</span>(crp_common,<span class="at">type=</span><span class="st">"HC3"</span>)</span>
+<span id="cb95-4"><a href="log-scale-ancova.html#cb95-4" tabindex="-1"></a>)</span>
+<span id="cb95-5"><a href="log-scale-ancova.html#cb95-5" tabindex="-1"></a></span>
+<span id="cb95-6"><a href="log-scale-ancova.html#cb95-6" tabindex="-1"></a>crp_ctrl <span class="ot">&lt;-</span> <span class="fu">summary</span>(</span>
+<span id="cb95-7"><a href="log-scale-ancova.html#cb95-7" tabindex="-1"></a>  <span class="fu">contrast</span>(crp_emm,<span class="at">method=</span><span class="st">"trt.vs.ctrl"</span>,<span class="at">ref=</span><span class="dv">1</span>,<span class="at">adjust=</span><span class="st">"holm"</span>),</span>
+<span id="cb95-8"><a href="log-scale-ancova.html#cb95-8" tabindex="-1"></a>  <span class="at">infer=</span><span class="fu">c</span>(<span class="cn">TRUE</span>,<span class="cn">TRUE</span>)</span>
+<span id="cb95-9"><a href="log-scale-ancova.html#cb95-9" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb95-10"><a href="log-scale-ancova.html#cb95-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ratio=</span><span class="fu">exp</span>(estimate),</span>
+<span id="cb95-11"><a href="log-scale-ancova.html#cb95-11" tabindex="-1"></a>         <span class="at">ratio_low=</span><span class="fu">exp</span>(lower.CL),</span>
+<span id="cb95-12"><a href="log-scale-ancova.html#cb95-12" tabindex="-1"></a>         <span class="at">ratio_high=</span><span class="fu">exp</span>(upper.CL)) <span class="sc">|&gt;</span></span>
+<span id="cb95-13"><a href="log-scale-ancova.html#cb95-13" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(contrast,ratio,ratio_low,ratio_high,p.value)</span>
+<span id="cb95-14"><a href="log-scale-ancova.html#cb95-14" tabindex="-1"></a></span>
+<span id="cb95-15"><a href="log-scale-ancova.html#cb95-15" tabindex="-1"></a><span class="fu">kbl</span>(crp_ctrl,<span class="at">digits=</span><span class="dv">3</span>,</span>
+<span id="cb95-16"><a href="log-scale-ancova.html#cb95-16" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">"Adjusted CRP geometric-mean ratios"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:crp-log-contrasts">Table 19.1: </span>Adjusted CRP geometric-mean ratios</caption>
+<thead>
+<tr class="header">
+<th align="left">contrast</th>
+<th align="right">ratio</th>
+<th align="right">ratio_low</th>
+<th align="right">ratio_high</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Drug_A - Control</td>
+<td align="right">0.904</td>
+<td align="right">0.853</td>
+<td align="right">0.958</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_B - Control</td>
+<td align="right">0.804</td>
+<td align="right">0.758</td>
+<td align="right">0.854</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table></div>
+<p>The treatment contrasts are first estimated as differences on the <strong>log scale</strong>. Exponentiating these differences converts them to <strong>ratios of adjusted geometric means</strong>:</p>
+<p><span class="math display">\[
+\text{Ratio}
+=
+\frac{\text{adjusted geometric mean in treatment}}
+{\text{adjusted geometric mean in Control}}.
+\]</span></p>
+<p>A ratio of <strong>1</strong> indicates no difference between groups. A ratio of <strong>0.80</strong> means the active-treatment group has about <strong>20% lower CRP</strong>, while a ratio of <strong>1.25</strong> means about <strong>25% higher CRP</strong>, after adjustment for baseline CRP.</p>
+</div>
+<div class="section level2 hasAnchor" number="19.2">
+<h2 id="diagnostics-1">
+<span class="header-section-number">19.2</span> Diagnostics</h2>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="log-scale-ancova.html#cb96-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)); <span class="fu">plot</span>(crp_common,<span class="at">which=</span><span class="dv">1</span>); <span class="fu">plot</span>(crp_common,<span class="at">which=</span><span class="dv">2</span>); <span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code></pre></div>
+<p><img src="biomed_statistics_files/figure-html/crp-log-diagnostics-1.png" alt="" width="100%"></p>
+</div>
+<div class="section level2 hasAnchor" number="19.3">
+<h2 id="key-interpretation">
+<span class="header-section-number">19.3</span> Key interpretation</h2>
+<p>The meaning of a treatment effect depends on the model:</p>
+<ul>
+<li>
+<strong>Standard ANCOVA:</strong> adjusted mean difference.</li>
+<li>
+<strong>Interaction model:</strong> treatment effect depends on baseline value.</li>
+<li>
+<strong>Log-scale ANCOVA:</strong> exponentiated treatment effect is a ratio of adjusted geometric means.</li>
+</ul>
+<p>Always interpret the treatment effect according to the model that was fitted.</p>
+
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

@@ -1,0 +1,408 @@
+---
+layout: article
+title: 25 The Art of Choosing Statistical Methods
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="the-art-of-choosing-statistical-methods" class="section level1 hasAnchor" number="25">
+
+<p>Choosing a statistical method is not primarily a matter of searching for the test that best matches the appearance of the data. It begins with the <strong>scientific question</strong>, the <strong>study design</strong>, and the <strong>quantity that should be estimated</strong>.</p>
+<p>A sound analysis preserves those elements from beginning to end.</p>
+<div class="section level2 hasAnchor" number="25.1">
+<h2 id="start-with-the-scientific-question">
+<span class="header-section-number">25.1</span> Start with the scientific question</h2>
+<p>Before examining assumptions or p-values, identify what the analysis is intended to estimate.</p>
+<p>A treatment study may ask whether groups differ in:</p>
+<ul>
+<li>an average continuous outcome;</li>
+<li>the probability of an event;</li>
+<li>the number of events;</li>
+<li>the time until an event;</li>
+<li>or the way an outcome changes according to another variable.</li>
+</ul>
+<p>These are different questions and require different statistical models.</p>
+<p>The central principle is:</p>
+<p><span class="math display">\[
+\text{scientific question}
+\;\longrightarrow\;
+\text{estimand}
+\;\longrightarrow\;
+\text{model}
+\;\longrightarrow\;
+\text{diagnostics}.
+\]</span></p>
+<p>Diagnostics come <strong>after</strong> the question and estimand have been defined. They may refine the model, but they should not casually redefine what is being estimated.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.2">
+<h2 id="respect-the-study-design">
+<span class="header-section-number">25.2</span> Respect the study design</h2>
+<p>The structure of the observations determines which comparisons are valid.</p>
+<p>Independent treatment groups require methods for independent observations. Measurements taken repeatedly from the same participant are paired or correlated and must be analyzed accordingly. Clustered observations require methods that account for clustering.</p>
+<p>This distinction is fundamental. A sophisticated model cannot repair an analysis that ignores the dependence created by the study design.</p>
+<p>Randomization also matters. In a randomized trial, treatment groups are created by the allocation mechanism. Baseline characteristics are described to characterize the sample and identify clinically important chance imbalances; significance testing of baseline variables is not needed to determine whether randomization succeeded.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.3">
+<h2 id="define-the-effect-before-choosing-the-method">
+<span class="header-section-number">25.3</span> Define the effect before choosing the method</h2>
+<p>The same dataset can support several legitimate analyses because different methods estimate different quantities.</p>
+<p>For a continuous outcome, the target might be a <strong>mean difference</strong>. For a binary outcome, it might be a <strong>risk difference</strong>, <strong>risk ratio</strong>, or <strong>odds ratio</strong>. For counts, it may be a <strong>count ratio</strong> or <strong>rate ratio</strong>. For time-to-event data, it may be a <strong>survival probability</strong> or <strong>hazard ratio</strong>.</p>
+<p>The appropriate method follows from that choice.</p>
+<div class="course-table-scroll"><table>
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scientific target</th>
+<th>Typical analysis</th>
+<th>Main effect measure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>mean difference between two independent groups</td>
+<td>Welch two-sample t-test</td>
+<td>difference in means</td>
+</tr>
+<tr class="even">
+<td>mean difference in paired measurements</td>
+<td>paired t-test</td>
+<td>mean paired difference</td>
+</tr>
+<tr class="odd">
+<td>rank-based comparison between two independent groups</td>
+<td>Wilcoxon rank-sum test</td>
+<td>rank/distributional comparison</td>
+</tr>
+<tr class="even">
+<td>rank-based paired comparison</td>
+<td>Wilcoxon signed-rank test</td>
+<td>paired rank comparison</td>
+</tr>
+<tr class="odd">
+<td>mean comparison across several groups</td>
+<td>ANOVA or Welch ANOVA</td>
+<td>differences in means</td>
+</tr>
+<tr class="even">
+<td>rank-based comparison across several groups</td>
+<td>Kruskal–Wallis test</td>
+<td>rank/distributional differences</td>
+</tr>
+<tr class="odd">
+<td>association between categorical variables</td>
+<td>chi-square or Fisher exact test</td>
+<td>association, risks, odds</td>
+</tr>
+<tr class="even">
+<td>paired binary comparison</td>
+<td>McNemar test</td>
+<td>change in paired proportions</td>
+</tr>
+<tr class="odd">
+<td>adjusted continuous outcome</td>
+<td>linear regression or ANCOVA</td>
+<td>adjusted mean difference</td>
+</tr>
+<tr class="even">
+<td>binary outcome with covariates</td>
+<td>logistic regression</td>
+<td>odds ratio</td>
+</tr>
+<tr class="odd">
+<td>count outcome</td>
+<td>Poisson or negative binomial regression</td>
+<td>count or rate ratio</td>
+</tr>
+<tr class="even">
+<td>time-to-event outcome</td>
+<td>Kaplan–Meier, log-rank, Cox regression</td>
+<td>survival probability or hazard ratio</td>
+</tr>
+</tbody>
+</table></div>
+<p>The table is a starting framework, not a mechanical decision tree. The scientific interpretation of the effect remains more important than the name of the procedure.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.4">
+<h2 id="continuous-outcomes-decide-what-kind-of-difference-matters">
+<span class="header-section-number">25.4</span> Continuous outcomes: decide what kind of difference matters</h2>
+<p>For two independent groups, a mean comparison is naturally expressed as</p>
+<p><span class="math display">\[
+\Delta=\mu_1-\mu_0.
+\]</span></p>
+<p>Welch’s t-test is generally a sensible default for this question because it does not require equal group variances.</p>
+<p>For paired observations, the analysis instead concerns within-participant differences,</p>
+<p><span class="math display">\[
+D_i=Y_{i,\text{after}}-Y_{i,\text{before}},
+\]</span></p>
+<p>so the relevant distribution is the distribution of the <strong>paired differences</strong>, not the two measurements considered separately.</p>
+<p>Rank-based procedures answer a different question. A small normality-test p-value does not by itself justify replacing a mean comparison with a rank comparison. That decision changes the statistical target and should therefore be scientifically defensible.</p>
+<p>The same distinction applies when more than two groups are compared. ANOVA and Welch ANOVA address differences in means; Kruskal–Wallis provides a rank-based comparison. The method should reflect the estimand rather than serve as an automatic response to a diagnostic test.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.5">
+<h2 id="baseline-and-follow-up-measurements-model-the-question-directly">
+<span class="header-section-number">25.5</span> Baseline and follow-up measurements: model the question directly</h2>
+<p>When a continuous outcome is measured both before and after treatment, the most informative analysis is often a baseline-adjusted follow-up model:</p>
+<p><span class="math display">\[
+Y_{\text{follow-up}}
+=
+\beta_0
++
+\beta_1Y_{\text{baseline}}
++
+\beta_2\text{Treatment}
++
+\varepsilon.
+\]</span></p>
+<p>This ANCOVA formulation estimates treatment differences at follow-up while accounting for baseline outcome values.</p>
+<p>It is generally preferable to treating change scores as the only analysis because baseline adjustment can improve precision and gives a direct estimate of the adjusted follow-up difference.</p>
+<p>The next question is whether that treatment difference is reasonably constant across baseline values. If not, a baseline-by-treatment interaction may be required:</p>
+<p><span class="math display">\[
+Y_{\text{follow-up}}
+=
+\beta_0
++
+\beta_1Y_{\text{baseline}}
++
+\beta_2\text{Treatment}
++
+\beta_3
+\left(
+Y_{\text{baseline}}\times\text{Treatment}
+\right)
++
+\varepsilon.
+\]</span></p>
+<p>Once an interaction is present, there may no longer be one treatment effect that applies to everyone. Treatment contrasts should then be reported at clinically meaningful or representative baseline values.</p>
+<p>Interactions are therefore not merely technical additions to a model. They change the interpretation of the treatment effect.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.6">
+<h2 id="transformations-should-serve-interpretation">
+<span class="header-section-number">25.6</span> Transformations should serve interpretation</h2>
+<p>Transforming an outcome should have a statistical and scientific purpose.</p>
+<p>For a positive, strongly right-skewed variable such as CRP, a log-scale model may be useful because multiplicative effects are often more meaningful than additive differences.</p>
+<p>If</p>
+<p><span class="math display">\[
+\log(Y)
+\]</span></p>
+<p>is modeled, treatment contrasts are initially estimated on the log scale. Exponentiating them converts the comparison to a ratio:</p>
+<p><span class="math display">\[
+\exp(\Delta_{\log})
+=
+\frac{\text{adjusted geometric mean in treatment}}
+{\text{adjusted geometric mean in reference}}.
+\]</span></p>
+<p>A ratio of 1 indicates no difference, a ratio below 1 indicates a lower adjusted level, and a ratio above 1 indicates a higher adjusted level.</p>
+<p>The transformation therefore changes the scale of interpretation, not merely the shape of a histogram.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.7">
+<h2 id="binary-outcomes-probability-and-odds-are-not-the-same">
+<span class="header-section-number">25.7</span> Binary outcomes: probability and odds are not the same</h2>
+<p>For a binary endpoint, the most immediate quantities are usually the observed risks,</p>
+<p><span class="math display">\[
+P(Y=1),
+\]</span></p>
+<p>and treatment contrasts such as the risk difference</p>
+<p><span class="math display">\[
+RD=p_1-p_0
+\]</span></p>
+<p>or risk ratio</p>
+<p><span class="math display">\[
+RR=\frac{p_1}{p_0}.
+\]</span></p>
+<p>These measures are often clinically intuitive.</p>
+<p>Logistic regression becomes useful when adjustment for baseline covariates is required. It models the log odds,</p>
+<p><span class="math display">\[
+\log\left(\frac{\pi}{1-\pi}\right),
+\]</span></p>
+<p>and exponentiating a treatment coefficient produces an odds ratio.</p>
+<p>An odds ratio should not be described as though it were a risk ratio. The two measures can differ substantially when the outcome is common.</p>
+<p>For clinical interpretation, adjusted logistic models can also be translated back to the probability scale using standardized predicted probabilities. This allows the model to retain its statistical advantages while presenting results on a scale clinicians can interpret directly.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.8">
+<h2 id="categorical-tests-depend-on-both-design-and-table-structure">
+<span class="header-section-number">25.8</span> Categorical tests depend on both design and table structure</h2>
+<p>For independent categorical variables, Pearson’s chi-square test compares observed counts with the counts expected under independence.</p>
+<p>When expected counts are too small for the chi-square approximation to be reliable, Fisher’s exact test provides exact inference.</p>
+<p>The decision depends on <strong>expected counts</strong>, not simply on the observed values in individual cells.</p>
+<p>Paired binary data require a different analysis. McNemar’s test focuses on participants whose status changes between the two measurements. Treating those observations as independent would discard the paired structure and answer the wrong statistical question.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.9">
+<h2 id="count-outcomes-require-a-count-model">
+<span class="header-section-number">25.9</span> Count outcomes require a count model</h2>
+<p>Counts are non-negative integers and usually require models designed for that structure.</p>
+<p>Poisson regression begins with</p>
+<p><span class="math display">\[
+Y_i\sim\text{Poisson}(\mu_i)
+\]</span></p>
+<p>and models</p>
+<p><span class="math display">\[
+\log(\mu_i)=X_i^T\beta.
+\]</span></p>
+<p>Exponentiating a treatment coefficient produces a multiplicative comparison of expected counts.</p>
+<p>A central Poisson assumption is</p>
+<p><span class="math display">\[
+\operatorname{Var}(Y_i\mid X_i)
+=
+E(Y_i\mid X_i).
+\]</span></p>
+<p>When the variance is substantially larger than the mean, the data are <strong>overdispersed</strong>. Negative binomial regression provides an explicit model for this additional variability.</p>
+<p>If participants have different observation times, the analysis should also account for exposure time. The effect then becomes a <strong>rate ratio</strong> rather than simply a ratio of expected counts.</p>
+<p>Overdispersion should therefore influence the choice between plausible count models, but it does not change the endpoint from a count into something else.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.10">
+<h2 id="time-to-event-outcomes-require-survival-methods">
+<span class="header-section-number">25.10</span> Time-to-event outcomes require survival methods</h2>
+<p>Time-to-event data contain two pieces of information:</p>
+<p><span class="math display">\[
+(\text{follow-up time},\text{event indicator}).
+\]</span></p>
+<p>A participant who does not experience the event is not equivalent to a participant with an event at the end of follow-up. The participant is <strong>censored</strong>: the event time is unknown, but event-free survival is known up to the censoring time.</p>
+<p>Kaplan–Meier analysis estimates</p>
+<p><span class="math display">\[
+S(t)=P(T&gt;t),
+\]</span></p>
+<p>the probability of remaining event-free beyond time <span class="math inline">\(t\)</span>.</p>
+<p>The log-rank test provides a global comparison of survival curves, while Cox regression estimates the effect of predictors on the hazard:</p>
+<p><span class="math display">\[
+h(t\mid X)=h_0(t)\exp(X^T\beta).
+\]</span></p>
+<p>Exponentiating a treatment coefficient gives a hazard ratio.</p>
+<p>A hazard ratio is not a fixed-time risk ratio. It compares instantaneous event hazards among participants who remain at risk.</p>
+<p>The Cox model also introduces an important modeling assumption: proportional hazards. If the treatment hazard ratio changes substantially over time, a single constant hazard ratio may no longer summarize the treatment effect adequately. The appropriate alternative depends on the scientific question and the pattern of non-proportionality.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.11">
+<h2 id="diagnostics-refine-models-they-do-not-choose-the-scientific-question">
+<span class="header-section-number">25.11</span> Diagnostics refine models; they do not choose the scientific question</h2>
+<p>Statistical assumptions should be examined at the level at which the model requires them.</p>
+<p>For linear regression, the relevant issues include the adequacy of the mean structure, residual variance, residual shape, influential observations, and independence. Normality concerns the <strong>residuals</strong>, not necessarily the raw outcome.</p>
+<p>For paired t-tests, normality concerns the paired differences.</p>
+<p>For chi-square tests, expected cell counts matter.</p>
+<p>For Poisson models, dispersion matters.</p>
+<p>For Cox regression, proportional hazards matter.</p>
+<p>This is why a universal sequence such as</p>
+<p><span class="math display">\[
+\text{test normality}
+\;\Longrightarrow\;
+\text{choose parametric or nonparametric test}
+\]</span></p>
+<p>is too simplistic.</p>
+<p>A diagnostic result should instead lead to a more focused question:</p>
+<p><strong>Which assumption is affected, how important is the departure, and is there a method that preserves the original estimand while addressing it?</strong></p>
+<p>Unequal residual variance, for example, may be handled with heteroskedasticity-robust standard errors without abandoning the regression model or changing the treatment effect being estimated.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.12">
+<h2 id="separate-model-choice-from-significance-hunting">
+<span class="header-section-number">25.12</span> Separate model choice from significance hunting</h2>
+<p>A statistical model should not be assembled by repeatedly adding and removing variables according to whichever p-values happen to be below .05.</p>
+<p>Covariates should primarily enter a model because of the study design, scientific rationale, or prespecified adjustment strategy.</p>
+<p>Likewise, a transformation, interaction, spline, or alternative distribution should address a genuine feature of the relationship being modeled.</p>
+<p>The objective is not to construct the model that produces the smallest p-value. It is to construct the model that most credibly represents the scientific question and the data-generating structure.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.13">
+<h2 id="report-the-effect-not-only-the-test">
+<span class="header-section-number">25.13</span> Report the effect, not only the test</h2>
+<p>A statistical test reduces evidence to a statistic and a p-value. Scientific interpretation requires more.</p>
+<p>The core result is usually</p>
+<p><span class="math display">\[
+\text{estimate}
+\;+\;
+\text{confidence interval}
+\;+\;
+\text{clinical interpretation}.
+\]</span></p>
+<p>A confidence interval shows both the estimated magnitude and its precision. A p-value addresses compatibility with a null hypothesis, but it does not measure effect size, clinical importance, or the probability that the null hypothesis is true.</p>
+<p>The effect measure should therefore remain visible throughout the analysis:</p>
+<p><span class="math display">\[
+\text{mean difference},\quad
+\text{risk difference},\quad
+\text{risk ratio},\quad
+\text{odds ratio},\quad
+\text{count ratio},\quad
+\text{hazard ratio}.
+\]</span></p>
+<p>Each has a different interpretation. They should not be treated as interchangeable simply because they are all accompanied by p-values.</p>
+</div>
+<div class="section level2 hasAnchor" number="25.14">
+<h2 id="the-statistical-question-should-survive-the-entire-analysis">
+<span class="header-section-number">25.14</span> The statistical question should survive the entire analysis</h2>
+<p>The best statistical method is therefore not the one that makes every diagnostic p-value large, produces the smallest treatment p-value, or appears most sophisticated.</p>
+<p>It is the method that <strong>respects the design, estimates the quantity that matters, represents the outcome appropriately, and communicates the magnitude and uncertainty of the result clearly</strong>.</p>
+<p>That is the central skill behind choosing a statistical analysis: not memorizing which test belongs to which dataset, but learning to recognize <strong>what question the data are capable of answering and which model answers that question faithfully</strong>.</p>
+
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

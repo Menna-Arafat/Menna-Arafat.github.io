@@ -1,0 +1,342 @@
+# The Art of Choosing Statistical Methods
+
+Choosing a statistical method is not primarily a matter of searching for the test that best matches the appearance of the data. It begins with the **scientific question**, the **study design**, and the **quantity that should be estimated**.
+
+A sound analysis preserves those elements from beginning to end.
+
+## Start with the scientific question
+
+Before examining assumptions or p-values, identify what the analysis is intended to estimate.
+
+A treatment study may ask whether groups differ in:
+
+- an average continuous outcome;
+- the probability of an event;
+- the number of events;
+- the time until an event;
+- or the way an outcome changes according to another variable.
+
+These are different questions and require different statistical models.
+
+The central principle is:
+
+\[
+\text{scientific question}
+\;\longrightarrow\;
+\text{estimand}
+\;\longrightarrow\;
+\text{model}
+\;\longrightarrow\;
+\text{diagnostics}.
+\]
+
+Diagnostics come **after** the question and estimand have been defined. They may refine the model, but they should not casually redefine what is being estimated.
+
+## Respect the study design
+
+The structure of the observations determines which comparisons are valid.
+
+Independent treatment groups require methods for independent observations. Measurements taken repeatedly from the same participant are paired or correlated and must be analyzed accordingly. Clustered observations require methods that account for clustering.
+
+This distinction is fundamental. A sophisticated model cannot repair an analysis that ignores the dependence created by the study design.
+
+Randomization also matters. In a randomized trial, treatment groups are created by the allocation mechanism. Baseline characteristics are described to characterize the sample and identify clinically important chance imbalances; significance testing of baseline variables is not needed to determine whether randomization succeeded.
+
+## Define the effect before choosing the method
+
+The same dataset can support several legitimate analyses because different methods estimate different quantities.
+
+For a continuous outcome, the target might be a **mean difference**. For a binary outcome, it might be a **risk difference**, **risk ratio**, or **odds ratio**. For counts, it may be a **count ratio** or **rate ratio**. For time-to-event data, it may be a **survival probability** or **hazard ratio**.
+
+The appropriate method follows from that choice.
+
+| Scientific target | Typical analysis | Main effect measure |
+|---|---|---|
+| mean difference between two independent groups | Welch two-sample t-test | difference in means |
+| mean difference in paired measurements | paired t-test | mean paired difference |
+| rank-based comparison between two independent groups | Wilcoxon rank-sum test | rank/distributional comparison |
+| rank-based paired comparison | Wilcoxon signed-rank test | paired rank comparison |
+| mean comparison across several groups | ANOVA or Welch ANOVA | differences in means |
+| rank-based comparison across several groups | Kruskal–Wallis test | rank/distributional differences |
+| association between categorical variables | chi-square or Fisher exact test | association, risks, odds |
+| paired binary comparison | McNemar test | change in paired proportions |
+| adjusted continuous outcome | linear regression or ANCOVA | adjusted mean difference |
+| binary outcome with covariates | logistic regression | odds ratio |
+| count outcome | Poisson or negative binomial regression | count or rate ratio |
+| time-to-event outcome | Kaplan–Meier, log-rank, Cox regression | survival probability or hazard ratio |
+
+The table is a starting framework, not a mechanical decision tree. The scientific interpretation of the effect remains more important than the name of the procedure.
+
+## Continuous outcomes: decide what kind of difference matters
+
+For two independent groups, a mean comparison is naturally expressed as
+
+\[
+\Delta=\mu_1-\mu_0.
+\]
+
+Welch's t-test is generally a sensible default for this question because it does not require equal group variances.
+
+For paired observations, the analysis instead concerns within-participant differences,
+
+\[
+D_i=Y_{i,\text{after}}-Y_{i,\text{before}},
+\]
+
+so the relevant distribution is the distribution of the **paired differences**, not the two measurements considered separately.
+
+Rank-based procedures answer a different question. A small normality-test p-value does not by itself justify replacing a mean comparison with a rank comparison. That decision changes the statistical target and should therefore be scientifically defensible.
+
+The same distinction applies when more than two groups are compared. ANOVA and Welch ANOVA address differences in means; Kruskal–Wallis provides a rank-based comparison. The method should reflect the estimand rather than serve as an automatic response to a diagnostic test.
+
+## Baseline and follow-up measurements: model the question directly
+
+When a continuous outcome is measured both before and after treatment, the most informative analysis is often a baseline-adjusted follow-up model:
+
+\[
+Y_{\text{follow-up}}
+=
+\beta_0
++
+\beta_1Y_{\text{baseline}}
++
+\beta_2\text{Treatment}
++
+\varepsilon.
+\]
+
+This ANCOVA formulation estimates treatment differences at follow-up while accounting for baseline outcome values.
+
+It is generally preferable to treating change scores as the only analysis because baseline adjustment can improve precision and gives a direct estimate of the adjusted follow-up difference.
+
+The next question is whether that treatment difference is reasonably constant across baseline values. If not, a baseline-by-treatment interaction may be required:
+
+\[
+Y_{\text{follow-up}}
+=
+\beta_0
++
+\beta_1Y_{\text{baseline}}
++
+\beta_2\text{Treatment}
++
+\beta_3
+\left(
+Y_{\text{baseline}}\times\text{Treatment}
+\right)
++
+\varepsilon.
+\]
+
+Once an interaction is present, there may no longer be one treatment effect that applies to everyone. Treatment contrasts should then be reported at clinically meaningful or representative baseline values.
+
+Interactions are therefore not merely technical additions to a model. They change the interpretation of the treatment effect.
+
+## Transformations should serve interpretation
+
+Transforming an outcome should have a statistical and scientific purpose.
+
+For a positive, strongly right-skewed variable such as CRP, a log-scale model may be useful because multiplicative effects are often more meaningful than additive differences.
+
+If
+
+\[
+\log(Y)
+\]
+
+is modeled, treatment contrasts are initially estimated on the log scale. Exponentiating them converts the comparison to a ratio:
+
+\[
+\exp(\Delta_{\log})
+=
+\frac{\text{adjusted geometric mean in treatment}}
+{\text{adjusted geometric mean in reference}}.
+\]
+
+A ratio of 1 indicates no difference, a ratio below 1 indicates a lower adjusted level, and a ratio above 1 indicates a higher adjusted level.
+
+The transformation therefore changes the scale of interpretation, not merely the shape of a histogram.
+
+## Binary outcomes: probability and odds are not the same
+
+For a binary endpoint, the most immediate quantities are usually the observed risks,
+
+\[
+P(Y=1),
+\]
+
+and treatment contrasts such as the risk difference
+
+\[
+RD=p_1-p_0
+\]
+
+or risk ratio
+
+\[
+RR=\frac{p_1}{p_0}.
+\]
+
+These measures are often clinically intuitive.
+
+Logistic regression becomes useful when adjustment for baseline covariates is required. It models the log odds,
+
+\[
+\log\left(\frac{\pi}{1-\pi}\right),
+\]
+
+and exponentiating a treatment coefficient produces an odds ratio.
+
+An odds ratio should not be described as though it were a risk ratio. The two measures can differ substantially when the outcome is common.
+
+For clinical interpretation, adjusted logistic models can also be translated back to the probability scale using standardized predicted probabilities. This allows the model to retain its statistical advantages while presenting results on a scale clinicians can interpret directly.
+
+## Categorical tests depend on both design and table structure
+
+For independent categorical variables, Pearson's chi-square test compares observed counts with the counts expected under independence.
+
+When expected counts are too small for the chi-square approximation to be reliable, Fisher's exact test provides exact inference.
+
+The decision depends on **expected counts**, not simply on the observed values in individual cells.
+
+Paired binary data require a different analysis. McNemar's test focuses on participants whose status changes between the two measurements. Treating those observations as independent would discard the paired structure and answer the wrong statistical question.
+
+## Count outcomes require a count model
+
+Counts are non-negative integers and usually require models designed for that structure.
+
+Poisson regression begins with
+
+\[
+Y_i\sim\text{Poisson}(\mu_i)
+\]
+
+and models
+
+\[
+\log(\mu_i)=X_i^T\beta.
+\]
+
+Exponentiating a treatment coefficient produces a multiplicative comparison of expected counts.
+
+A central Poisson assumption is
+
+\[
+\operatorname{Var}(Y_i\mid X_i)
+=
+E(Y_i\mid X_i).
+\]
+
+When the variance is substantially larger than the mean, the data are **overdispersed**. Negative binomial regression provides an explicit model for this additional variability.
+
+If participants have different observation times, the analysis should also account for exposure time. The effect then becomes a **rate ratio** rather than simply a ratio of expected counts.
+
+Overdispersion should therefore influence the choice between plausible count models, but it does not change the endpoint from a count into something else.
+
+## Time-to-event outcomes require survival methods
+
+Time-to-event data contain two pieces of information:
+
+\[
+(\text{follow-up time},\text{event indicator}).
+\]
+
+A participant who does not experience the event is not equivalent to a participant with an event at the end of follow-up. The participant is **censored**: the event time is unknown, but event-free survival is known up to the censoring time.
+
+Kaplan–Meier analysis estimates
+
+\[
+S(t)=P(T>t),
+\]
+
+the probability of remaining event-free beyond time \(t\).
+
+The log-rank test provides a global comparison of survival curves, while Cox regression estimates the effect of predictors on the hazard:
+
+\[
+h(t\mid X)=h_0(t)\exp(X^T\beta).
+\]
+
+Exponentiating a treatment coefficient gives a hazard ratio.
+
+A hazard ratio is not a fixed-time risk ratio. It compares instantaneous event hazards among participants who remain at risk.
+
+The Cox model also introduces an important modeling assumption: proportional hazards. If the treatment hazard ratio changes substantially over time, a single constant hazard ratio may no longer summarize the treatment effect adequately. The appropriate alternative depends on the scientific question and the pattern of non-proportionality.
+
+## Diagnostics refine models; they do not choose the scientific question
+
+Statistical assumptions should be examined at the level at which the model requires them.
+
+For linear regression, the relevant issues include the adequacy of the mean structure, residual variance, residual shape, influential observations, and independence. Normality concerns the **residuals**, not necessarily the raw outcome.
+
+For paired t-tests, normality concerns the paired differences.
+
+For chi-square tests, expected cell counts matter.
+
+For Poisson models, dispersion matters.
+
+For Cox regression, proportional hazards matter.
+
+This is why a universal sequence such as
+
+\[
+\text{test normality}
+\;\Longrightarrow\;
+\text{choose parametric or nonparametric test}
+\]
+
+is too simplistic.
+
+A diagnostic result should instead lead to a more focused question:
+
+**Which assumption is affected, how important is the departure, and is there a method that preserves the original estimand while addressing it?**
+
+Unequal residual variance, for example, may be handled with heteroskedasticity-robust standard errors without abandoning the regression model or changing the treatment effect being estimated.
+
+## Separate model choice from significance hunting
+
+A statistical model should not be assembled by repeatedly adding and removing variables according to whichever p-values happen to be below .05.
+
+Covariates should primarily enter a model because of the study design, scientific rationale, or prespecified adjustment strategy.
+
+Likewise, a transformation, interaction, spline, or alternative distribution should address a genuine feature of the relationship being modeled.
+
+The objective is not to construct the model that produces the smallest p-value. It is to construct the model that most credibly represents the scientific question and the data-generating structure.
+
+## Report the effect, not only the test
+
+A statistical test reduces evidence to a statistic and a p-value. Scientific interpretation requires more.
+
+The core result is usually
+
+\[
+\text{estimate}
+\;+\;
+\text{confidence interval}
+\;+\;
+\text{clinical interpretation}.
+\]
+
+A confidence interval shows both the estimated magnitude and its precision. A p-value addresses compatibility with a null hypothesis, but it does not measure effect size, clinical importance, or the probability that the null hypothesis is true.
+
+The effect measure should therefore remain visible throughout the analysis:
+
+\[
+\text{mean difference},\quad
+\text{risk difference},\quad
+\text{risk ratio},\quad
+\text{odds ratio},\quad
+\text{count ratio},\quad
+\text{hazard ratio}.
+\]
+
+Each has a different interpretation. They should not be treated as interchangeable simply because they are all accompanied by p-values.
+
+## The statistical question should survive the entire analysis
+
+The best statistical method is therefore not the one that makes every diagnostic p-value large, produces the smallest treatment p-value, or appears most sophisticated.
+
+It is the method that **respects the design, estimates the quantity that matters, represents the outcome appropriately, and communicates the magnitude and uncertainty of the result clearly**.
+
+That is the central skill behind choosing a statistical analysis: not memorizing which test belongs to which dataset, but learning to recognize **what question the data are capable of answering and which model answers that question faithfully**.
+

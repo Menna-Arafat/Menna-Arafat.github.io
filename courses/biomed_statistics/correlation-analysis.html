@@ -1,0 +1,212 @@
+---
+layout: article
+title: 15 Correlation analysis
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="correlation-analysis" class="section level1 hasAnchor" number="15">
+
+<p>Correlation measures the strength and direction of association between two continuous variables.</p>
+<div class="course-table-scroll"><table>
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Measures</th>
+<th>Useful when</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Pearson</strong></td>
+<td>linear association</td>
+<td>the relationship is approximately linear without influential outliers</td>
+</tr>
+<tr class="even">
+<td><strong>Spearman</strong></td>
+<td>monotonic rank association</td>
+<td>data are skewed, contain outliers, or the relationship is not strictly linear</td>
+</tr>
+</tbody>
+</table></div>
+<div class="section level2 hasAnchor" number="15.1">
+<h2 id="pearson-correlation">
+<span class="header-section-number">15.1</span> Pearson correlation</h2>
+<p>Pearson’s correlation coefficient measures the strength and direction of a <strong>linear relationship</strong>:</p>
+<p><span class="math display">\[
+r=\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sqrt{\sum_i(x_i-\bar{x})^2\sum_i(y_i-\bar{y})^2}}.
+\]</span></p>
+<p>It ranges from <span class="math inline">\(-1\)</span> to <span class="math inline">\(1\)</span>. Values closer to <span class="math inline">\(-1\)</span> or <span class="math inline">\(1\)</span> indicate stronger linear association.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="correlation-analysis.html#cb75-1" tabindex="-1"></a><span class="fu">cor.test</span>(<span class="sc">~</span>biomarker_baseline_ng_mL<span class="sc">+</span>biomarker_week12_ng_mL,</span>
+<span id="cb75-2"><a href="correlation-analysis.html#cb75-2" tabindex="-1"></a>         <span class="at">data=</span>dat,<span class="at">method=</span><span class="st">"pearson"</span>)</span>
+<span id="cb75-3"><a href="correlation-analysis.html#cb75-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb75-4"><a href="correlation-analysis.html#cb75-4" tabindex="-1"></a><span class="co">#&gt;  Pearson's product-moment correlation</span></span>
+<span id="cb75-5"><a href="correlation-analysis.html#cb75-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb75-6"><a href="correlation-analysis.html#cb75-6" tabindex="-1"></a><span class="co">#&gt; data:  biomarker_baseline_ng_mL and biomarker_week12_ng_mL</span></span>
+<span id="cb75-7"><a href="correlation-analysis.html#cb75-7" tabindex="-1"></a><span class="co">#&gt; t = 52, df = 347, p-value &lt;0.0000000000000002</span></span>
+<span id="cb75-8"><a href="correlation-analysis.html#cb75-8" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true correlation is not equal to 0</span></span>
+<span id="cb75-9"><a href="correlation-analysis.html#cb75-9" tabindex="-1"></a><span class="co">#&gt; 95 percent confidence interval:</span></span>
+<span id="cb75-10"><a href="correlation-analysis.html#cb75-10" tabindex="-1"></a><span class="co">#&gt;  0.9286 0.9526</span></span>
+<span id="cb75-11"><a href="correlation-analysis.html#cb75-11" tabindex="-1"></a><span class="co">#&gt; sample estimates:</span></span>
+<span id="cb75-12"><a href="correlation-analysis.html#cb75-12" tabindex="-1"></a><span class="co">#&gt;    cor </span></span>
+<span id="cb75-13"><a href="correlation-analysis.html#cb75-13" tabindex="-1"></a><span class="co">#&gt; 0.9418</span></span></code></pre></div>
+<p>A scatterplot should accompany Pearson correlation to assess the form of the relationship and identify influential observations.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="correlation-analysis.html#cb76-1" tabindex="-1"></a><span class="fu">ggplot</span>(dat,<span class="fu">aes</span>(biomarker_baseline_ng_mL,biomarker_week12_ng_mL,<span class="at">colour=</span>treatment_arm)) <span class="sc">+</span></span>
+<span id="cb76-2"><a href="correlation-analysis.html#cb76-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">45</span>,<span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb76-3"><a href="correlation-analysis.html#cb76-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">"lm"</span>,<span class="at">se=</span><span class="cn">FALSE</span>,<span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb76-4"><a href="correlation-analysis.html#cb76-4" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values=</span>pal) <span class="sc">+</span></span>
+<span id="cb76-5"><a href="correlation-analysis.html#cb76-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Baseline biomarker (ng/mL)"</span>,<span class="at">y=</span><span class="st">"Week-12 biomarker (ng/mL)"</span>,<span class="at">colour=</span><span class="st">"Treatment"</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:pearson-biomarker-plot"></span>
+<img src="biomed_statistics_files/figure-html/pearson-biomarker-plot-1.png" alt="Baseline and week-12 biomarker with a linear fit." width="100%">
+<p class="caption">
+Figure 15.1: Baseline and week-12 biomarker with a linear fit.
+</p>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="15.2">
+<h2 id="spearman-rank-correlation">
+<span class="header-section-number">15.2</span> Spearman rank correlation</h2>
+<p>Spearman correlation uses the <strong>ranks of the observations</strong> rather than their original values. It measures the strength and direction of a <strong>monotonic relationship</strong> and is useful for skewed data.</p>
+<p>Because CRP is strongly right-skewed, Spearman correlation is appropriate for describing the association between baseline and week-12 CRP.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="correlation-analysis.html#cb77-1" tabindex="-1"></a><span class="fu">cor.test</span>(<span class="sc">~</span>crp_baseline_mg_L<span class="sc">+</span>crp_week12_mg_L,</span>
+<span id="cb77-2"><a href="correlation-analysis.html#cb77-2" tabindex="-1"></a>         <span class="at">data=</span>dat,<span class="at">method=</span><span class="st">"spearman"</span>,<span class="at">exact=</span><span class="cn">FALSE</span>)</span>
+<span id="cb77-3"><a href="correlation-analysis.html#cb77-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb77-4"><a href="correlation-analysis.html#cb77-4" tabindex="-1"></a><span class="co">#&gt;  Spearman's rank correlation rho</span></span>
+<span id="cb77-5"><a href="correlation-analysis.html#cb77-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb77-6"><a href="correlation-analysis.html#cb77-6" tabindex="-1"></a><span class="co">#&gt; data:  crp_baseline_mg_L and crp_week12_mg_L</span></span>
+<span id="cb77-7"><a href="correlation-analysis.html#cb77-7" tabindex="-1"></a><span class="co">#&gt; S = 264568, p-value &lt;0.0000000000000002</span></span>
+<span id="cb77-8"><a href="correlation-analysis.html#cb77-8" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true rho is not equal to 0</span></span>
+<span id="cb77-9"><a href="correlation-analysis.html#cb77-9" tabindex="-1"></a><span class="co">#&gt; sample estimates:</span></span>
+<span id="cb77-10"><a href="correlation-analysis.html#cb77-10" tabindex="-1"></a><span class="co">#&gt;    rho </span></span>
+<span id="cb77-11"><a href="correlation-analysis.html#cb77-11" tabindex="-1"></a><span class="co">#&gt; 0.9582</span></span></code></pre></div>
+<p>A strong Pearson or Spearman correlation does not imply that two measurements <strong>agree</strong>, nor does it establish <strong>causation</strong>.</p>
+</div>
+<div class="section level2 hasAnchor" number="15.3">
+<h2 id="correlation-matrix">
+<span class="header-section-number">15.3</span> Correlation matrix</h2>
+<p>A correlation matrix summarizes associations among several continuous variables. Here, Spearman correlations are used because some variables are skewed.</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="correlation-analysis.html#cb78-1" tabindex="-1"></a>cor_vars <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">transmute</span>(</span>
+<span id="cb78-2"><a href="correlation-analysis.html#cb78-2" tabindex="-1"></a>  <span class="at">Age=</span>age_years,<span class="at">BMI=</span>bmi_kg_m2,<span class="st">`</span><span class="at">Baseline SBP</span><span class="st">`</span><span class="ot">=</span>sbp_baseline_mmHg,</span>
+<span id="cb78-3"><a href="correlation-analysis.html#cb78-3" tabindex="-1"></a>  <span class="at">HbA1c=</span>hba1c_pct,<span class="at">LDL=</span>ldl_mg_dL,<span class="at">HDL=</span>hdl_mg_dL,<span class="at">eGFR=</span>egfr_mL_min_1_73m2,</span>
+<span id="cb78-4"><a href="correlation-analysis.html#cb78-4" tabindex="-1"></a>  <span class="st">`</span><span class="at">Baseline CRP</span><span class="st">`</span><span class="ot">=</span>crp_baseline_mg_L,</span>
+<span id="cb78-5"><a href="correlation-analysis.html#cb78-5" tabindex="-1"></a>  <span class="st">`</span><span class="at">Baseline biomarker</span><span class="st">`</span><span class="ot">=</span>biomarker_baseline_ng_mL,</span>
+<span id="cb78-6"><a href="correlation-analysis.html#cb78-6" tabindex="-1"></a>  <span class="st">`</span><span class="at">Baseline QoL</span><span class="st">`</span><span class="ot">=</span>qol_baseline_0_100)</span>
+<span id="cb78-7"><a href="correlation-analysis.html#cb78-7" tabindex="-1"></a></span>
+<span id="cb78-8"><a href="correlation-analysis.html#cb78-8" tabindex="-1"></a>cm <span class="ot">&lt;-</span> <span class="fu">cor</span>(cor_vars,<span class="at">use=</span><span class="st">"pairwise.complete.obs"</span>,<span class="at">method=</span><span class="st">"spearman"</span>)</span>
+<span id="cb78-9"><a href="correlation-analysis.html#cb78-9" tabindex="-1"></a><span class="fu">round</span>(cm,<span class="dv">2</span>)</span>
+<span id="cb78-10"><a href="correlation-analysis.html#cb78-10" tabindex="-1"></a><span class="co">#&gt;                      Age   BMI Baseline SBP HbA1c   LDL   HDL  eGFR Baseline CRP Baseline biomarker Baseline QoL</span></span>
+<span id="cb78-11"><a href="correlation-analysis.html#cb78-11" tabindex="-1"></a><span class="co">#&gt; Age                 1.00  0.06         0.35  0.24  0.03 -0.02 -0.76         0.15               0.13        -0.32</span></span>
+<span id="cb78-12"><a href="correlation-analysis.html#cb78-12" tabindex="-1"></a><span class="co">#&gt; BMI                 0.06  1.00         0.28  0.30  0.01 -0.10 -0.04         0.04               0.12        -0.21</span></span>
+<span id="cb78-13"><a href="correlation-analysis.html#cb78-13" tabindex="-1"></a><span class="co">#&gt; Baseline SBP        0.35  0.28         1.00  0.20  0.08 -0.05 -0.21         0.02               0.13        -0.20</span></span>
+<span id="cb78-14"><a href="correlation-analysis.html#cb78-14" tabindex="-1"></a><span class="co">#&gt; HbA1c               0.24  0.30         0.20  1.00  0.07  0.03 -0.21         0.00               0.09        -0.13</span></span>
+<span id="cb78-15"><a href="correlation-analysis.html#cb78-15" tabindex="-1"></a><span class="co">#&gt; LDL                 0.03  0.01         0.08  0.07  1.00 -0.01  0.01        -0.09              -0.03        -0.01</span></span>
+<span id="cb78-16"><a href="correlation-analysis.html#cb78-16" tabindex="-1"></a><span class="co">#&gt; HDL                -0.02 -0.10        -0.05  0.03 -0.01  1.00  0.00        -0.06              -0.04         0.10</span></span>
+<span id="cb78-17"><a href="correlation-analysis.html#cb78-17" tabindex="-1"></a><span class="co">#&gt; eGFR               -0.76 -0.04        -0.21 -0.21  0.01  0.00  1.00        -0.11              -0.07         0.26</span></span>
+<span id="cb78-18"><a href="correlation-analysis.html#cb78-18" tabindex="-1"></a><span class="co">#&gt; Baseline CRP        0.15  0.04         0.02  0.00 -0.09 -0.06 -0.11         1.00               0.07        -0.19</span></span>
+<span id="cb78-19"><a href="correlation-analysis.html#cb78-19" tabindex="-1"></a><span class="co">#&gt; Baseline biomarker  0.13  0.12         0.13  0.09 -0.03 -0.04 -0.07         0.07               1.00        -0.14</span></span>
+<span id="cb78-20"><a href="correlation-analysis.html#cb78-20" tabindex="-1"></a><span class="co">#&gt; Baseline QoL       -0.32 -0.21        -0.20 -0.13 -0.01  0.10  0.26        -0.19              -0.14         1.00</span></span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="correlation-analysis.html#cb79-1" tabindex="-1"></a>cm_long <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(cm) <span class="sc">|&gt;</span></span>
+<span id="cb79-2"><a href="correlation-analysis.html#cb79-2" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">rownames_to_column</span>(<span class="st">"x"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb79-3"><a href="correlation-analysis.html#cb79-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>x,<span class="at">names_to=</span><span class="st">"y"</span>,<span class="at">values_to=</span><span class="st">"rho"</span>)</span>
+<span id="cb79-4"><a href="correlation-analysis.html#cb79-4" tabindex="-1"></a></span>
+<span id="cb79-5"><a href="correlation-analysis.html#cb79-5" tabindex="-1"></a><span class="fu">ggplot</span>(cm_long,<span class="fu">aes</span>(x,y,<span class="at">fill=</span>rho)) <span class="sc">+</span></span>
+<span id="cb79-6"><a href="correlation-analysis.html#cb79-6" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">colour=</span><span class="st">"white"</span>,<span class="at">linewidth=</span>.<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb79-7"><a href="correlation-analysis.html#cb79-7" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span><span class="fu">sprintf</span>(<span class="st">"%.2f"</span>,rho)),<span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb79-8"><a href="correlation-analysis.html#cb79-8" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low=</span><span class="st">"#B45252"</span>,<span class="at">mid=</span><span class="st">"white"</span>,<span class="at">high=</span><span class="st">"#3F7F8D"</span>,<span class="at">limits=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb79-9"><a href="correlation-analysis.html#cb79-9" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb79-10"><a href="correlation-analysis.html#cb79-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="cn">NULL</span>,<span class="at">y=</span><span class="cn">NULL</span>,<span class="at">fill=</span><span class="st">"Spearman ρ"</span>) <span class="sc">+</span></span>
+<span id="cb79-11"><a href="correlation-analysis.html#cb79-11" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">45</span>,<span class="at">hjust=</span><span class="dv">1</span>))</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:correlation-heatmap"></span>
+<img src="biomed_statistics_files/figure-html/correlation-heatmap-1.png" alt="Spearman correlation matrix for selected baseline variables." width="100%">
+<p class="caption">
+Figure 15.2: Spearman correlation matrix for selected baseline variables.
+</p>
+</div>
+</div>
+<div class="section level2 hasAnchor" number="15.4">
+<h2 id="correlation-is-not-causation">
+<span class="header-section-number">15.4</span> Correlation is not causation</h2>
+<p>Correlation shows whether two variables move together, but it does not show that one causes the other.</p>
+<p>A strong correlation between baseline and follow-up measurements may indicate that baseline is useful to include in a regression model. However, the treatment effect is estimated by the regression model, not by the correlation coefficient.</p>
+
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

@@ -1,0 +1,224 @@
+---
+layout: article
+title: 22 Model comparison using a likelihood-ratio test
+nav_key: docs
+sidebar:
+  nav: docs-en
+aside:
+  toc: true
+full_width: false
+show_date: false
+show_edit_on_github: false
+show_subscribe: false
+license: false
+mathjax: true
+course_chapter: true
+---
+{% raw %}
+<style id="course-code-style">
+/* Compact chapter rhythm while keeping the TeXt theme layout. */
+.course-chapter p,.course-chapter li{font-size:19px!important;line-height:1.5!important}
+.course-chapter p{margin-top:.35rem!important;margin-bottom:.75rem!important}
+.course-chapter ul,.course-chapter ol{margin-top:.35rem!important;margin-bottom:.8rem!important}
+.course-chapter h2{margin-top:1.35rem!important;margin-bottom:.55rem!important}
+.course-chapter h3{margin-top:1.05rem!important;margin-bottom:.45rem!important}
+.course-chapter h4{margin-top:.9rem!important;margin-bottom:.4rem!important}
+.course-chapter h5,.course-chapter h6{margin-top:.8rem!important;margin-bottom:.35rem!important}
+.course-chapter h2+*,.course-chapter h3+*,.course-chapter h4+*{margin-top:.35rem!important}
+.course-chapter table{font-size:16px!important}.course-table-scroll{max-width:100%;overflow-x:auto;margin:.55rem 0 .8rem}
+.course-chapter div.sourceCode{position:relative;max-width:100%;margin:.55rem 0 .75rem}
+.course-chapter div.sourceCode pre,.course-chapter pre.sourceCode{max-width:100%;overflow-x:auto!important;overflow-y:hidden;white-space:pre!important;margin:0;padding:.72rem 4.8rem .72rem 1rem;box-sizing:border-box;border:1px solid #DDE5E9;border-radius:8px;font-size:17px!important;line-height:1.4!important;scrollbar-width:auto;scrollbar-color:#8299a5 #edf2f4;-webkit-overflow-scrolling:touch}
+.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode code,.course-chapter code.sourceCode{font-size:17px!important;line-height:1.4!important;white-space:pre!important;word-break:normal!important;overflow-wrap:normal!important}
+.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:14px!important;line-height:1.3!important}
+.course-chapter p code,.course-chapter li code,.course-chapter td code{font-size:.95em}
+.course-chapter pre::-webkit-scrollbar{height:10px}.course-chapter pre::-webkit-scrollbar-track{background:#edf2f4}.course-chapter pre::-webkit-scrollbar-thumb{background:#8299a5;border-radius:6px}
+.course-copy-btn{position:absolute;top:6px;right:8px;z-index:20;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #d5dfe4;border-radius:6px;background:#fff;color:#315B74;cursor:pointer;box-shadow:0 1px 4px rgba(23,54,72,.08)}
+.course-copy-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}.course-copy-btn:hover{background:#f2f6f8}.course-copy-btn.copied{color:#2f7258}
+@media(max-width:760px){.course-chapter p,.course-chapter li{font-size:17px!important}.course-chapter div.sourceCode pre,.course-chapter div.sourceCode pre code,.course-chapter pre.sourceCode,.course-chapter pre.sourceCode code,.course-chapter pre:not(.sourceCode),.course-chapter pre:not(.sourceCode) code{font-size:13px!important}}
+</style>
+
+<div class="course-chapter">
+
+<div id="model-comparison-using-a-likelihood-ratio-test" class="section level1 hasAnchor" number="22">
+
+<p>To assess whether treatment adds information to the logistic regression model, compare the full model, which includes treatment, with a reduced model containing the same baseline covariates but excluding treatment.</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-1" tabindex="-1"></a>logit_no_trt <span class="ot">&lt;-</span> <span class="fu">update</span>(logit_fit,.<span class="sc">~</span>.<span class="sc">-</span>treatment_arm)</span>
+<span id="cb99-2"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-2" tabindex="-1"></a><span class="fu">anova</span>(logit_no_trt,logit_fit,<span class="at">test=</span><span class="st">"LRT"</span>)</span>
+<span id="cb99-3"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-3" tabindex="-1"></a><span class="co">#&gt; Analysis of Deviance Table</span></span>
+<span id="cb99-4"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb99-5"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-5" tabindex="-1"></a><span class="co">#&gt; Model 1: clinical_response_12w ~ age10 + baseline_severity + biomarker50</span></span>
+<span id="cb99-6"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-6" tabindex="-1"></a><span class="co">#&gt; Model 2: clinical_response_12w ~ treatment_arm + age10 + baseline_severity + </span></span>
+<span id="cb99-7"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-7" tabindex="-1"></a><span class="co">#&gt;     biomarker50</span></span>
+<span id="cb99-8"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-8" tabindex="-1"></a><span class="co">#&gt;   Resid. Df Resid. Dev Df Deviance  Pr(&gt;Chi)    </span></span>
+<span id="cb99-9"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-9" tabindex="-1"></a><span class="co">#&gt; 1       355        484                          </span></span>
+<span id="cb99-10"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-10" tabindex="-1"></a><span class="co">#&gt; 2       353        459  2     24.4 0.0000052 ***</span></span>
+<span id="cb99-11"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-11" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb99-12"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb99-12" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
+<p>The likelihood-ratio test evaluates whether the treatment terms improve model fit.</p>
+<p><span class="math display">\[
+H_0:\text{treatment does not improve the model}.
+\]</span></p>
+<p>A small p-value indicates that including treatment provides additional information about clinical response after adjustment for the baseline covariates.</p>
+<div class="section level2 hasAnchor" number="22.1">
+<h2 id="logistic-regression-odds-ratios-for-treatment-comparisons">
+<span class="header-section-number">22.1</span> Logistic regression odds ratios for treatment comparisons</h2>
+<p>Logistic-regression coefficients are estimated on the <strong>log-odds scale</strong>. Exponentiating the treatment coefficients gives adjusted odds ratios comparing each active treatment with Control while accounting for the other variables in the model.</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb100-1" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(logit_fit,<span class="at">conf.int=</span><span class="cn">TRUE</span>,<span class="at">exponentiate=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb100-2"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb100-2" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^treatment_arm"</span>,term)) <span class="sc">|&gt;</span></span>
+<span id="cb100-3"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb100-3" tabindex="-1"></a>      <span class="fu">kbl</span>(<span class="at">digits=</span><span class="dv">3</span>,<span class="at">caption=</span><span class="st">"Adjusted treatment odds ratios for clinical response"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table style="width:100%;">
+<caption>
+<span id="tab:logistic-or">Table 22.1: </span>Adjusted treatment odds ratios for clinical response</caption>
+<colgroup>
+<col width="26%">
+<col width="11%">
+<col width="13%">
+<col width="13%">
+<col width="10%">
+<col width="11%">
+<col width="13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">conf.low</th>
+<th align="right">conf.high</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">treatment_armDrug_A</td>
+<td align="right">2.127</td>
+<td align="right">0.285</td>
+<td align="right">2.648</td>
+<td align="right">0.008</td>
+<td align="right">1.223</td>
+<td align="right">3.746</td>
+</tr>
+<tr class="even">
+<td align="left">treatment_armDrug_B</td>
+<td align="right">3.925</td>
+<td align="right">0.286</td>
+<td align="right">4.786</td>
+<td align="right">0.000</td>
+<td align="right">2.261</td>
+<td align="right">6.942</td>
+</tr>
+</tbody>
+</table></div>
+<p>An odds ratio of <strong>1</strong> indicates equal odds of response. Values above 1 indicate higher odds and values below 1 indicate lower odds. For example, an odds ratio of <strong>2</strong> means twice the odds of response, not twice the probability.</p>
+</div>
+<div class="section level2 hasAnchor" number="22.2">
+<h2 id="regression-standardized-response-probabilities">
+<span class="header-section-number">22.2</span> Regression-standardized response probabilities</h2>
+<p>Odds ratios are useful for inference, but probabilities are often easier to interpret clinically. The fitted model can therefore also be used to estimate an adjusted response probability for each treatment group.</p>
+<p>For each treatment arm, the model predicts every participant’s response probability as if that participant received that treatment, while keeping the participant’s baseline covariates unchanged. The predicted probabilities are then averaged across all participants.</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-1" tabindex="-1"></a>std_risk <span class="ot">&lt;-</span> <span class="cf">function</span>(model,data,arm){</span>
+<span id="cb101-2"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-2" tabindex="-1"></a>  nd <span class="ot">&lt;-</span> data</span>
+<span id="cb101-3"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-3" tabindex="-1"></a>  nd<span class="sc">$</span>treatment_arm <span class="ot">&lt;-</span> <span class="fu">factor</span>(arm,<span class="at">levels=</span><span class="fu">levels</span>(data<span class="sc">$</span>treatment_arm))</span>
+<span id="cb101-4"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-4" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="fu">delete.response</span>(<span class="fu">terms</span>(model)),nd)</span>
+<span id="cb101-5"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-5" tabindex="-1"></a>  eta <span class="ot">&lt;-</span> <span class="fu">drop</span>(X<span class="sc">%*%</span><span class="fu">coef</span>(model));</span>
+<span id="cb101-6"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-6" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">plogis</span>(eta)</span>
+<span id="cb101-7"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-7" tabindex="-1"></a>  grad <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(X<span class="sc">*</span><span class="fu">as.numeric</span>(p<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>p)))</span>
+<span id="cb101-8"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-8" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">drop</span>(<span class="fu">t</span>(grad)<span class="sc">%*%</span><span class="fu">vcov</span>(model)<span class="sc">%*%</span>grad))</span>
+<span id="cb101-9"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-9" tabindex="-1"></a></span>
+<span id="cb101-10"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-10" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">treatment_arm=</span>arm, <span class="at">probability=</span><span class="fu">mean</span>(p), <span class="at">lower=</span><span class="fu">max</span>(<span class="dv">0</span>,<span class="fu">mean</span>(p)<span class="sc">-</span><span class="fu">qnorm</span>(.<span class="dv">975</span>)<span class="sc">*</span>se),<span class="at">upper=</span><span class="fu">min</span>(<span class="dv">1</span>,<span class="fu">mean</span>(p)<span class="sc">+</span><span class="fu">qnorm</span>(.<span class="dv">975</span>)<span class="sc">*</span>se))</span>
+<span id="cb101-11"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-11" tabindex="-1"></a>}</span>
+<span id="cb101-12"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-12" tabindex="-1"></a></span>
+<span id="cb101-13"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-13" tabindex="-1"></a>std_prob <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb101-14"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-14" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">levels</span>(logit_dat<span class="sc">$</span>treatment_arm), \(a) <span class="fu">std_risk</span>(logit_fit,logit_dat,a))</span>
+<span id="cb101-15"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-15" tabindex="-1"></a>)</span>
+<span id="cb101-16"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-16" tabindex="-1"></a></span>
+<span id="cb101-17"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-17" tabindex="-1"></a><span class="fu">kbl</span>(std_prob,<span class="at">digits=</span><span class="dv">3</span>,</span>
+<span id="cb101-18"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb101-18" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">"Adjusted clinical-response probabilities"</span>)</span></code></pre></div>
+<div class="course-table-scroll"><table>
+<caption>
+<span id="tab:standardized-risk-function">Table 22.2: </span>Adjusted clinical-response probabilities</caption>
+<thead>
+<tr class="header">
+<th align="left">treatment_arm</th>
+<th align="right">probability</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Control</td>
+<td align="right">0.267</td>
+<td align="right">0.187</td>
+<td align="right">0.347</td>
+</tr>
+<tr class="even">
+<td align="left">Drug_A</td>
+<td align="right">0.433</td>
+<td align="right">0.345</td>
+<td align="right">0.522</td>
+</tr>
+<tr class="odd">
+<td align="left">Drug_B</td>
+<td align="right">0.582</td>
+<td align="right">0.494</td>
+<td align="right">0.670</td>
+</tr>
+</tbody>
+</table></div>
+<p>The resulting value for each treatment arm is the <strong>average predicted probability of response after accounting for the baseline covariates in the model</strong>.</p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb102-1" tabindex="-1"></a><span class="fu">ggplot</span>(std_prob,<span class="fu">aes</span>(treatment_arm,probability,<span class="at">fill=</span>treatment_arm)) <span class="sc">+</span></span>
+<span id="cb102-2"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb102-2" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width=</span>.<span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb102-3"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb102-3" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper),<span class="at">width=</span>.<span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb102-4"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb102-4" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>pal,<span class="at">guide=</span><span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb102-5"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb102-5" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels=</span>scales<span class="sc">::</span>percent,</span>
+<span id="cb102-6"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb102-6" tabindex="-1"></a>                     <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fu">max</span>(std_prob<span class="sc">$</span>upper)<span class="sc">*</span><span class="fl">1.08</span>)) <span class="sc">+</span></span>
+<span id="cb102-7"><a href="model-comparison-using-a-likelihood-ratio-test.html#cb102-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="cn">NULL</span>,<span class="at">y=</span><span class="st">"Adjusted probability"</span>)</span></code></pre></div>
+<div class="figure">
+<span style="display:block;" id="fig:standardized-risk-plot"></span>
+<img src="biomed_statistics_files/figure-html/standardized-risk-plot-1.png" alt="Adjusted clinical-response probabilities with approximate 95% confidence intervals." width="100%">
+<p class="caption">
+Figure 22.1: Adjusted clinical-response probabilities with approximate 95% confidence intervals.
+</p>
+</div>
+<p>The adjusted probabilities express the model results directly on the <strong>probability scale</strong> and complement the odds ratios.</p>
+</div>
+</div>
+            
+</div>
+<script id="course-code-copy">
+(function(){function fb(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var o=false;try{o=document.execCommand('copy')}catch(e){}a.remove();return o}async function cp(t){if(navigator.clipboard&&window.isSecureContext)try{await navigator.clipboard.writeText(t);return true}catch(e){}return fb(t)}function init(){document.querySelectorAll('.course-chapter div.sourceCode').forEach(function(w){if(w.querySelector(':scope > .course-copy-btn'))return;var p=w.querySelector('pre');if(!p)return;var i='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="10" height="10" rx="1.5"></rect><path d="M15 9V6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16H9"></path></svg>',b=document.createElement('button');b.type='button';b.className='course-copy-btn';b.innerHTML=i;b.title='Copy code';b.setAttribute('aria-label','Copy code');b.addEventListener('click',async function(){var c=p.querySelector('code'),o=await cp(c?c.innerText:p.innerText);b.innerHTML=o?'✓':'!';b.classList.toggle('copied',o);setTimeout(function(){b.innerHTML=i;b.classList.remove('copied')},1400)});w.appendChild(b)})}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init()})();
+</script>
+
+<script id="course-text-native-toc-fix">
+(function(){
+  function initTextToc(){
+    var root=document.querySelector('.js-toc-root');
+    var article=document.querySelector('.js-article-content');
+    if(!root||!article)return;
+    if(root.querySelector('a,li'))return;
+    if(!window.jQuery||!jQuery.fn||typeof jQuery.fn.toc!=='function')return;
+    if(!article.querySelector('h2,h3,h4'))return;
+
+    jQuery(root).toc({
+      selectors:'h2,h3,h4',
+      container:'.js-article-content'
+    });
+
+    // TeXt's affix code has already run by this point; let it recalculate
+    // after the TOC has acquired its real height.
+    jQuery(window).trigger('resize');
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(initTextToc,0);
+    });
+  }else{
+    setTimeout(initTextToc,0);
+  }
+})();
+</script>
+
+{% endraw %}

@@ -1,0 +1,122 @@
+# Survival analysis and time-to-event models
+
+Survival analysis is used when the outcome is **time until an event**, while allowing for participants who do not experience the event during follow-up.
+
+## Time-to-event data and censoring
+
+A participant who remains event-free at the end of follow-up is **censored**. The exact event time is unknown, but the participant is known to have remained event-free up to the last observed time.
+
+For example, if a participant has no event by day 90,
+
+\[
+T>90.
+\]
+
+```{r survival-data}
+surv_dat <- dat |>
+  dplyr::select(treatment_arm,time_to_event_days,event_observed_90d) |>
+  drop_na()
+```
+
+```{r survival-summary}
+surv_dat |>
+  group_by(treatment_arm) |>
+  summarise(n=n(),
+            events=sum(event_observed_90d==1),
+            censored=sum(event_observed_90d==0),
+            .groups="drop") |>
+  kbl(digits=0,caption="Events and censoring by treatment group")
+```
+
+The precision of survival analyses depends strongly on the **number of observed events**.
+
+## Kaplan–Meier curves and log-rank test
+
+The Kaplan–Meier method estimates the probability of remaining event-free beyond time \(t\):
+
+\[
+S(t)=P(T>t).
+\]
+
+```{r km-fit}
+surv_obj <- survival::Surv(surv_dat$time_to_event_days,
+                           surv_dat$event_observed_90d)
+
+km_fit <- survival::survfit(surv_obj~treatment_arm,data=surv_dat)
+
+summary(km_fit,times=c(30,60,90))
+```
+
+```{r km-plot, fig.cap="Kaplan–Meier event-free survival by treatment group."}
+plot(km_fit,col=unname(pal),lwd=2,mark.time=TRUE,
+     xlab="Days",ylab="Event-free survival",conf.int=FALSE)
+
+legend("bottomleft",legend=levels(surv_dat$treatment_arm),
+       col=unname(pal),lwd=2,bty="n")
+```
+
+The **log-rank test** provides a global comparison of the survival curves.
+
+```{r logrank}
+survival::survdiff(surv_obj~treatment_arm,data=surv_dat)
+```
+
+A small p-value indicates evidence that survival differs across treatment groups.
+
+## Cox proportional-hazards regression
+
+The Cox model estimates how treatment or other predictors are associated with the **hazard of experiencing the event**:
+
+\[
+h(t\mid X)=h_0(t)\exp(\beta^TX),
+\]
+
+where \(h_0(t)\) is the baseline hazard.
+
+Exponentiating a coefficient gives a **hazard ratio**:
+
+\[
+HR=e^\beta.
+\]
+
+A hazard ratio below 1 indicates a lower hazard, while a value above 1 indicates a higher hazard relative to the reference group.
+
+```{r cox-models}
+cox_trt <- survival::coxph(
+  survival::Surv(time_to_event_days,event_observed_90d)~treatment_arm,
+  data=surv_dat,ties="efron"
+)
+
+broom::tidy(cox_trt,exponentiate=TRUE,conf.int=TRUE) |>
+  kbl(digits=3,caption="Treatment Cox proportional-hazards model")
+```
+
+A hazard ratio compares the **instantaneous hazard among participants who are still at risk**. It should not be interpreted as a risk ratio at a fixed time point.
+
+## Proportional-hazards assumption
+
+The Cox model assumes that the hazard ratio is approximately **constant over time**.
+
+```{r cox-ph}
+cox_ph <- survival::cox.zph(cox_trt)
+cox_ph
+```
+
+```{r cox-ph-plot, fig.height=4.5, fig.cap="Schoenfeld-residual diagnostic for the Cox model."}
+plot(cox_ph)
+```
+
+A small p-value or a clear time-related pattern suggests that the proportional-hazards assumption may not hold. If so, the appropriate alternative depends on how the treatment effect changes over time and on the scientific question.
+
+## Key distinction
+
+These models describe different types of outcomes:
+
+| Model | Outcome | Effect measure |
+|---|---|---|
+| Logistic regression | whether an event occurred | odds ratio |
+| Poisson or negative binomial regression | number of events | count or rate ratio |
+| Cox regression | time until an event | hazard ratio |
+
+The model should be chosen according to the **outcome and the effect of interest**.
+

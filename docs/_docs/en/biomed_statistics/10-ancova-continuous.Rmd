@@ -1,0 +1,185 @@
+# ANCOVA and interactions for continuous outcomes
+
+## Why adjust for baseline?
+
+When a continuous outcome is measured at baseline and follow-up, ANCOVA compares treatment groups at follow-up while adjusting for the baseline measurement. This can improve precision compared with analyzing change scores alone [@vickers2001].
+
+A basic ANCOVA model is
+
+\[
+Y_{12}=\beta_0+\beta_1Y_0+\beta_2I(A)+\beta_3I(B)+\varepsilon.
+\]
+
+Here, \(\beta_2\) and \(\beta_3\) represent adjusted treatment differences relative to Control.
+
+Before interpreting these as constant treatment effects, check whether the treatment effect **changes with the baseline value** by adding a baseline-by-treatment interaction.
+
+```{r ancova-hc3-interaction-helper, include=FALSE}
+hc3_interaction_test <- function(model){
+  b <- coef(model); idx <- grep(":",names(b),fixed=TRUE)
+  L <- matrix(0,length(idx),length(b),dimnames=list(names(b)[idx],names(b)))
+  L[cbind(seq_along(idx),idx)] <- 1
+  car::linearHypothesis(model,L,rhs=rep(0,length(idx)),
+                        vcov.=sandwich::vcovHC(model,type="HC3"),test="F")
+}
+```
+
+# ANCOVA with baseline-by-treatment interaction
+
+The biomarker provides an example where one treatment effect is not appropriate for all baseline values. 
+
+## Analysis dataset
+
+```{r biomarker-model-data}
+bio_dat <- dat |>
+  dplyr::select(treatment_arm,biomarker_baseline_ng_mL,biomarker_week12_ng_mL) |>
+  drop_na()
+
+bio_center <- median(bio_dat$biomarker_baseline_ng_mL)
+bio_dat <- bio_dat |> mutate(base_c=biomarker_baseline_ng_mL-bio_center)
+```
+
+Because regression coefficients are interpreted when the other predictors equal **zero**, a raw baseline value of zero may give an unrealistic treatment comparison. Therefore, baseline is centered at its median, so that a centered value of zero corresponds to the **median baseline biomarker value** and the treatment coefficients represent group differences at that typical baseline level.
+
+## Test for interaction
+
+```{r biomarker-interaction-test}
+bio_common <- lm(biomarker_week12_ng_mL~base_c+treatment_arm,data=bio_dat)
+bio_int <- lm(biomarker_week12_ng_mL~base_c*treatment_arm,data=bio_dat)
+
+hc3_interaction_test(bio_int)
+```
+
+The interaction tests whether the **treatment effect changes with baseline biomarker**. Here, the interaction is important, so the interaction model is retained.
+
+## Treatment effects at different baseline values
+
+Because the treatment effect changes with baseline biomarker, **one overall treatment effect would be misleading**. Instead, treatment groups are compared at representative baseline values: the 25th, 50th, and 75th percentiles.
+
+```{r biomarker-emmeans}
+bio_q <- quantile(bio_dat$biomarker_baseline_ng_mL,c(.25,.50,.75))
+bio_at <- as.numeric(bio_q-bio_center)
+bio_levels <- tibble(base_c=bio_at,quantile=c("25th percentile","50th percentile","75th percentile"))
+
+bio_emm <- emmeans::emmeans(
+  bio_int,~treatment_arm|base_c,
+  at=list(base_c=bio_at),
+  vcov.=sandwich::vcovHC(bio_int,type="HC3")
+)
+
+summary(pairs(bio_emm,adjust="tukey"),infer=c(TRUE,TRUE)) |>
+  left_join(bio_levels,by="base_c") |>
+  mutate(baseline_biomarker=base_c+bio_center) |>
+  dplyr::select(quantile,baseline_biomarker,contrast,estimate,lower.CL,upper.CL,p.value) |>
+  kbl(digits=3,caption="Treatment effects at the 25th, 50th, and 75th percentiles of baseline biomarker")
+```
+
+A negative active-treatment versus Control difference means a lower adjusted week-12 biomarker at that baseline value.
+
+## Interaction plot
+
+```{r biomarker-interaction-plot, fig.cap="Observed biomarker values and fitted treatment-specific relationships."}
+bio_grid <- expand_grid(
+  base_c=seq(min(bio_dat$base_c),max(bio_dat$base_c),length.out=150),
+  treatment_arm=levels(bio_dat$treatment_arm)
+)
+
+bio_grid$predicted <- predict(bio_int,newdata=bio_grid)
+bio_grid$baseline_biomarker <- bio_grid$base_c+bio_center
+
+ggplot(bio_dat,aes(biomarker_baseline_ng_mL,biomarker_week12_ng_mL,colour=treatment_arm)) +
+  geom_point(alpha=.24) +
+  geom_line(data=bio_grid,aes(baseline_biomarker,predicted,colour=treatment_arm),linewidth=1.05) +
+  scale_colour_manual(values=pal) +
+  labs(x="Baseline biomarker (ng/mL)",
+       y="Week-12 biomarker (ng/mL)",
+       colour="Treatment")
+```
+
+Different slopes show why the treatment effect must be interpreted **at specific baseline biomarker values**, rather than as one overall mean difference. :contentReference[oaicite:4]{index=4}
+
+## Diagnostics
+
+```{r biomarker-interaction-diagnostics, fig.width=9, fig.height=3.5}
+par(mfrow=c(1,3)); plot(bio_int,which=c(1,2,4)); par(mfrow=c(1,1))
+```
+
+## Key takeaway
+The analysis is based on a **linear regression model** fitted with `lm()` that includes a baseline-by-treatment interaction. The interaction is tested with `hc3_interaction_test()`, and treatment effects at selected baseline values are estimated using `emmeans()` and `pairs()`. **HC3 robust standard errors**, calculated with `sandwich::vcovHC(..., type="HC3")`, are used for both tests and treatment comparisons.
+
+
+# Log-scale ANCOVA
+
+CRP is positive and strongly right-skewed, so a log-scale model is more appropriate than modeling raw CRP directly. 
+
+\[
+\log(CRP_{12})
+=
+\beta_0+\beta_1\log(CRP_0)+\beta_2I(A)+\beta_3I(B)+\varepsilon.
+\]
+
+```{r crp-log-data}
+crp_anc <- dat |>
+  filter(!is.na(crp_baseline_mg_L),!is.na(crp_week12_mg_L),
+         crp_baseline_mg_L>0,crp_week12_mg_L>0)
+
+crp_common <- lm(log(crp_week12_mg_L)~ log(crp_baseline_mg_L)+treatment_arm,data=crp_anc)
+
+crp_int <- lm(log(crp_week12_mg_L)~ log(crp_baseline_mg_L)*treatment_arm,data=crp_anc)
+
+hc3_interaction_test(crp_int)
+```
+
+The interaction is not needed, so the common-slope log model is retained.
+
+## Treatment effects as geometric-mean ratios
+
+Because CRP is modeled on the **log scale**, `emmeans()` estimates baseline-adjusted treatment means on that scale. `contrast()` then compares each active treatment with Control.
+
+```{r crp-log-contrasts}
+crp_emm <- emmeans::emmeans(
+  crp_common,~treatment_arm,
+  vcov.=sandwich::vcovHC(crp_common,type="HC3")
+)
+
+crp_ctrl <- summary(
+  contrast(crp_emm,method="trt.vs.ctrl",ref=1,adjust="holm"),
+  infer=c(TRUE,TRUE)
+) |>
+  mutate(ratio=exp(estimate),
+         ratio_low=exp(lower.CL),
+         ratio_high=exp(upper.CL)) |>
+  dplyr::select(contrast,ratio,ratio_low,ratio_high,p.value)
+
+kbl(crp_ctrl,digits=3,
+    caption="Adjusted CRP geometric-mean ratios")
+```
+
+The treatment contrasts are first estimated as differences on the **log scale**. Exponentiating these differences converts them to **ratios of adjusted geometric means**:
+
+\[
+\text{Ratio}
+=
+\frac{\text{adjusted geometric mean in treatment}}
+{\text{adjusted geometric mean in Control}}.
+\]
+
+A ratio of **1** indicates no difference between groups. A ratio of **0.80** means the active-treatment group has about **20% lower CRP**, while a ratio of **1.25** means about **25% higher CRP**, after adjustment for baseline CRP.
+
+
+## Diagnostics
+
+```{r crp-log-diagnostics, fig.width=8.5, fig.height=3.8}
+par(mfrow=c(1,2)); plot(crp_common,which=1); plot(crp_common,which=2); par(mfrow=c(1,1))
+```
+
+## Key interpretation
+
+The meaning of a treatment effect depends on the model:
+
+- **Standard ANCOVA:** adjusted mean difference.
+- **Interaction model:** treatment effect depends on baseline value.
+- **Log-scale ANCOVA:** exponentiated treatment effect is a ratio of adjusted geometric means.
+
+Always interpret the treatment effect according to the model that was fitted.
+

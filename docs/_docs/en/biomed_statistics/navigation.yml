@@ -1,0 +1,126 @@
+header:
+  - title: Home
+    url: /
+  - title: Courses
+    url: /docs/en/courses
+    key: docs
+  - title: Posts
+    url: /samples.html
+    key: samples
+  - title: Services
+    url: /service.html
+  - title: Archive
+    url: /archive.html
+  - title: About
+    url: /about.html
+  - title: GitHub
+    url: https://github.com/Menna-Arafat
+docs-en:
+  - title: Courses
+    children:
+      - title: Overview
+        url: /docs/en/courses
+  - title:      Biomedical Statistics
+    children:
+      - title:  Overview
+        url:    /docs/en/biomed_statistics
+      - title:  "Preface"
+        url:    /courses/biomed_statistics/index.html
+      - title:  "1 Data foundations & R essentials"
+        url:    /courses/biomed_statistics/data-foundations-and-r-essentials.html
+      - title:  "2 Descriptive statistics & EDA"
+        url:    /courses/biomed_statistics/descriptive-statistics-and-exploratory-data-analysis.html
+      - title:  "3 Sampling distributions & CIs"
+        url:    /courses/biomed_statistics/sampling-distributions-and-confidence-intervals.html
+      - title:  "4 Bootstrap, probability & power"
+        url:    /courses/biomed_statistics/bootstrap-probability-models-power-and-uncertainty.html
+      - title:  "5 Continuous two-group & paired inference"
+        url:    /courses/biomed_statistics/continuous-two-group-and-paired-inference.html
+      - title:  "6 Categorical inference & resampling"
+        url:    /courses/biomed_statistics/categorical-inference-resampling-and-multiplicity.html
+      - title:  "7 ANOVA & robust multi-group comparisons"
+        url:    /courses/biomed_statistics/anova-and-robust-multi-group-comparisons.html
+      - title:  "8 MANOVA & correlation"
+        url:    /courses/biomed_statistics/manova-and-correlation.html
+      - title:  "9 Linear regression & diagnostics"
+        url:    /courses/biomed_statistics/linear-regression-and-diagnostics.html
+      - title:  "10 ANCOVA, interactions & continuous outcomes"
+        url:    /courses/biomed_statistics/ancova-interactions-and-continuous-outcomes.html
+      - title:  "11 Logistic & count regression"
+        url:    /courses/biomed_statistics/logistic-and-count-regression.html
+      - title:  "12 Survival & time-to-event models"
+        url:    /courses/biomed_statistics/survival-analysis-and-time-to-event-models.html
+      - title:  "13 Integrated I: plan, audit & rules"
+        url:    /courses/biomed_statistics/integrated-analysis-i-analysis-plan-data-audit-and-automated-decision-rules.html
+      - title:  "14 Integrated II: continuous outcomes"
+        url:    /courses/biomed_statistics/integrated-analysis-ii-continuous-outcomes.html
+      - title:  "15 Integrated III: binary, count & survival"
+        url:    /courses/biomed_statistics/integrated-analysis-iii-binary-count-and-time-to-event-outcomes.html
+      - title:  "References"
+        url:    /courses/biomed_statistics/references.html
+  - title: Integrative Meta-analysis
+    children:
+      - title: Meta-analysis
+        url: /docs/en/metaanalysis
+docs-zh:
+  - title: 开始
+    children:
+      - title: 快速开始
+        url: /docs/zh/quick-start
+      - title: 从 1.x 升级到 2.x
+        url: /docs/zh/update-from-1-to-2
+  - title: 定制
+    children:
+      - title: 配置
+        url: /docs/zh/configuration
+      - title: 导航栏
+        url: /docs/zh/navigation
+      - title: 布局
+        url: /docs/zh/layouts
+      - title: Logo 和 Favicon
+        url: /docs/zh/logo-and-favicon
+      - title: 作者
+        url: /docs/zh/authors
+      - title: 国际化
+        url: /docs/zh/i18n
+  - title: 内容
+    children:
+      - title: 撰写博客
+        url: /docs/zh/writing-posts
+      - title: 附加样式
+        url: /docs/zh/additional-styles
+      - title: 扩展
+        url: /docs/zh/extensions
+      - title: Markdown 增强
+        url: /docs/zh/markdown-enhancements
+  - title: 其他语言
+    children:
+      - title: English
+        url: /docs/en/quick-start
+layouts:
+  - title: Layouts
+    children:
+      - title: Single
+        url: /page/single.html
+      - title: Aside
+        url: /page/aside.html
+      - title: Sidebar
+        url: /page/sidebar.html
+      - title: Sidebar (Aside)
+        url: /page/sidebar-aside.html
+      - title: Article Header Overlay Background Fill
+        url: /page/article-header-overlay-background-fill.html
+      - title: Article Header Overlay Background Image
+        url: /page/article-header-overlay-background-image.html
+      - title: Article Header Image
+        url: /page/article-header-cover-image.html
+      - title: Article Header Overlay Background Image (Customized Header Background)
+        url: /page/article-header-overlay-background-image-header-background.html
+      - title: Article Header Image (Customized Header Background)
+        url: /page/article-header-cover-image-header-background.html
+      - title: Article Header Overlay Background Fill (Immersive + Translucent Header)
+        url: /page/article-header-overlay-background-fill-immersive-translucent-header.html
+      - title: Article Header Overlay Background Image (Immersive + Translucent Header)
+        url: /page/article-header-overlay-background-image-immersive-translucent-header.html
+      - title: Article Header Image (Immersive + Translucent Header)
+        url: /page/article-header-cover-image-immersive-translucent-header.html

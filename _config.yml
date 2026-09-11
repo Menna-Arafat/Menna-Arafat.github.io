@@ -165,6 +165,7 @@ highlighter : rouge
 permalink   : date
 
 exclude:
+  - AGENTS.md
   - CHANGELOG.md
   - HOW_TO_RELEASE.md
   - Gemfile

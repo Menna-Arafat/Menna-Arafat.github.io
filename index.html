@@ -1,5 +1,6 @@
 ---
 layout: home
+home_theme: true
 ---
 
 {%- assign home_intro_logo = '/assets/images/logo/logo.svg' -%}
@@ -20,12 +21,15 @@ layout: home
   <div class="article__content home-intro">
     <div class="home-intro__copy" style="--home-intro-logo: url('{{ home_intro_logo | relative_url }}?v={{ home_intro_logo_stamp }}');">
       <p class="home-intro__lead">
-        I develop computational frameworks to model disease biology, reconstruct
-        disease trajectories, and identify interventions that can reverse
-        pathological states, with the aim of making disease 
-        predictable, controllable, and reprogrammable.
+        I develop computational frameworks to model disease trajectories and identify interventions to reverse disease states, with the goal of making disease predictable, controllable, and reprogrammable.
       </p>
       <ul class="menu menu--center home-intro__actions">
+        <li>
+          <a class="home-intro__action" href="https://scholar.google.com/citations?hl=en&amp;user=C18b3M0AAAAJ" aria-label="Google Scholar profile">
+            <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+            <span>Google Scholar</span>
+          </a>
+        </li>
         <li>
           <a class="home-intro__action" href="#projects" aria-label="Jump to projects">
             <i class="fas fa-folder-open"></i>
@@ -54,19 +58,19 @@ layout: home
 
 <section id="projects" class="home-posts-section home-projects-section">
   <div class="layout--articles">
-    <section class="my-5">
+    <section class="home-work-section" aria-labelledby="peer-reviewed-papers">
       <header><h2 id="peer-reviewed-papers">Peer Reviewed Papers</h2></header>
       {%- assign published_projects = site.projects | where: 'project_group', 'peer-reviewed' -%}
       {%- include article-list.html articles=published_projects type='grid' -%}
     </section>
 
-    <section class="my-5">
+    <section class="home-work-section" aria-labelledby="preprints-softwares">
       <header><h2 id="preprints-softwares">Preprints & Softwares</h2></header>
       {%- assign method_projects = site.projects | where: 'project_group', 'preprints-software' -%}
       {%- include article-list.html articles=method_projects type='grid' -%}
     </section>
 
-    <section class="my-5">
+    <section class="home-work-section" aria-labelledby="selected-work">
       <header><h2 id="selected-work">Selected Work</h2></header>
       {%- assign ongoing_projects = site.projects | where: 'project_group', 'selected-work' -%}
       {%- include article-list.html articles=ongoing_projects type='grid' -%}

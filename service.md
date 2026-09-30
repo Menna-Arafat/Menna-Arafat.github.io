@@ -2,6 +2,7 @@
 layout: article
 title: Services
 services_page: true
+show_title: false
 show_date: false
 show_subscribe: false
 license: false
@@ -12,7 +13,7 @@ license: false
     <div>
       <h2 id="services-intro">Rigorous analysis for complex data.</h2>
       <p class="consulting-lead">I help researchers and clinical teams move from a well-defined question to a reproducible analysis and a clear scientific conclusion.</p>
-      <div class="consulting-actions"><a class="consulting-button" href="#project-enquiry">Contact me <span aria-hidden="true">↘</span></a><a class="consulting-text-link" href="#services">View services <span aria-hidden="true">↓</span></a></div>
+      <div class="consulting-actions"><a class="consulting-button" href="#project-enquiry">Contact me <span aria-hidden="true">↘</span></a><a class="consulting-button" href="#services">View services <span aria-hidden="true">↓</span></a></div>
     </div>
   </section>
 
@@ -36,7 +37,7 @@ license: false
 </div>
 
 <style>
-  .consulting { --svc-ink: #0b3533; --svc-ink-soft: #315e5b; --svc-muted: #627471; --svc-line: #d5dfdb; --svc-paper: #eff5f2; --svc-accent: #c17a2b; }
+  .consulting { --svc-ink: #0b3533; --svc-ink-soft: #315e5b; --svc-muted: #627471; --svc-line: #d5dfdb; --svc-paper: #f0f1f2; --svc-accent: #c17a2b; }
   .consulting-hero { position: relative; display: block; max-width: none; padding: clamp(1rem, 3vw, 2.5rem) 0 clamp(2.5rem, 5vw, 4rem); border-bottom: 0; overflow: hidden; }
   .consulting-hero::after { content: none; }
   .consulting-hero > div { position: relative; z-index: 1; max-width: 56rem; }

@@ -47,7 +47,7 @@ layout: base
       </div>
 
 {%- else -%}
-<div class="layout--page js-page-root">
+<div class="layout--page js-page-root{% if page.home_theme %} home-theme{% endif %}{% if page.services_page %} services-theme{% endif %}">
 {%- endif -%}
 
     {%- assign _page_main_class = 'page__main js-page-main' -%}
